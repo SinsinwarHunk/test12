@@ -3,10 +3,10 @@
   hosts: all
   become: yes
   tasks:
-    - name: Print Linux distribution info
+    - name: Server name
       ansible.builtin.command:
-        cmd: lsb_release -a
-      register: distro_info
+        cmd: uname -a
+      register: hostname_info
 
     - name: Print Linux kernel info
       ansible.builtin.command:

@@ -35,8 +35,8 @@
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         state: present
-        regexp: '^PermitRootLogin'
-        line: 'PermitRootLogin yes'
+        regexp: '^X11Forwarding'
+        line: 'X11Forwarding yes'
       notify: Restart SSHD
 
   handlers:

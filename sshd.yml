@@ -5,7 +5,7 @@
   tasks:
     - name: Print Linux distribution info
       ansible.builtin.command:
-        cmd: lsb_release -a
+        cmd: uname -a
       register: distro_info
 
     - name: Print Linux kernel info

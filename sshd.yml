@@ -26,7 +26,7 @@
     - name: Print system information
       ansible.builtin.debug:
         msg: |
-          Distribution Info: {{ distro_info.stdout }}
+          Distribution Info: {{ uname_info.stdout }}
           Kernel Info: {{ kernel_info.stdout }}
           CPU Info: {{ cpu_info.stdout }}
           Memory Info: {{ memory_info.stdout }}

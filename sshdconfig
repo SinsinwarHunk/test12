@@ -1,0 +1,46 @@
+---
+- name: Print Linux Info and Check PermitRootLogin in sshd_config
+  hosts: all
+  become: yes
+  tasks:
+    - name: Print Linux distribution info
+      ansible.builtin.command:
+        cmd: lsb_release -a
+      register: distro_info
+
+    - name: Print Linux kernel info
+      ansible.builtin.command:
+        cmd: uname -r
+      register: kernel_info
+
+    - name: Print CPU info
+      ansible.builtin.command:
+        cmd: lscpu
+      register: cpu_info
+
+    - name: Print memory info
+      ansible.builtin.command:
+        cmd: free -h
+      register: memory_info
+
+    - name: Print system information
+      ansible.builtin.debug:
+        msg: |
+          Distribution Info: {{ distro_info.stdout }}
+          Kernel Info: {{ kernel_info.stdout }}
+          CPU Info: {{ cpu_info.stdout }}
+          Memory Info: {{ memory_info.stdout }}
+
+    - name: Ensure PermitRootLogin is present in sshd_config
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      notify: Restart SSHD
+
+  handlers:
+    - name: Restart SSHD
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted

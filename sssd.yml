@@ -1,6 +1,6 @@
 ---
 - name: Add line in sssd.conf and restart sssd service
-  hosts: all
+  hosts: localhost
   become: yes
   tasks:
 
@@ -10,6 +10,7 @@
         insertafter: '^access_provider = ad'
         line: 'ignore_group_members = true'
         state: present
+        backup: yes  # Enables backup of the file before modification
       notify:
         - Restart SSSD
 

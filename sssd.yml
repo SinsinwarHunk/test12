@@ -2,7 +2,7 @@
 - name: Add line in sssd.conf and restart sssd service
   hosts: localhost
   gather_facts: no  # Disable automatic fact gathering
-  become: yes
+  become: no
   tasks:
 
     - name: Gather facts manually if needed

@@ -1,8 +1,13 @@
 ---
 - name: Add line in sssd.conf and restart sssd service
   hosts: localhost
+  gather_facts: no  # Disable automatic fact gathering
   become: yes
   tasks:
+
+    - name: Gather facts manually if needed
+      setup:
+      when: false  # Skip manual fact gathering unless needed (adjust as required)
 
     - name: Ensure 'ignore_group_members = true' line exists after 'access_provider = ad'
       lineinfile:
@@ -10,7 +15,7 @@
         insertafter: '^access_provider = ad'
         line: 'ignore_group_members = true'
         state: present
-        backup: yes  # Enables backup of the file before modification
+        backup: yes  # Enable backup before modification
       notify:
         - Restart SSSD
 

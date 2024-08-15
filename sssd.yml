@@ -1,0 +1,24 @@
+---
+- name: Add line in sssd.conf and restart sssd service
+  hosts: "{{ target_hosts }}"
+  become: yes
+  vars_prompt:
+    - name: "target_hosts"
+      prompt: "Please enter the target hosts (e.g., webservers, dbservers)"
+      private: no
+  tasks:
+
+    - name: Ensure 'ignore_group_members = true' line exists after 'access_provider = ad'
+      lineinfile:
+        path: /etc/sssd/sssd.conf
+        insertafter: '^access_provider = ad'
+        line: 'ignore_group_members = true'
+        state: present
+      notify:
+        - Restart SSSD
+
+  handlers:
+    - name: Restart SSSD
+      service:
+        name: sssd
+        state: restarted

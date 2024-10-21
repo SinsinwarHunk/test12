@@ -22,7 +22,7 @@
       ansible.builtin.lineinfile:
         path: /etc/cups/cupsd.conf
         regexp: '^MaxJobTime'
-        line: 'MaxJobTime 3600'  # Set to 1 hour (3600 seconds)
+        line: 'MaxJobTime 60'  # Set to 1 hour (3600 seconds)
         backup: yes
         validate: '/usr/sbin/cupsd -t'  # Validate config before applying
 

@@ -1,0 +1,37 @@
+---
+- name: Check Printer Queue Status and MaxJobTime on Servers
+  hosts: all  # This targets all hosts in the inventory
+  gather_facts: no
+  tasks:
+    - name: Check printer queue status (list all queues)
+      shell: /usr/bin/lpstat -a
+      register: printer_queues
+
+    - name: Get the print queue count
+      shell: /usr/bin/lpstat -o | wc -l
+      register: print_queue_count
+
+    - name: Check MaxJobTime value in CUPS configuration
+      shell: grep MaxJobTime /etc/cups/cupsd.conf
+      register: max_job_time
+
+    - name: Create server-specific summary report
+      set_fact:
+        report: |
+          Printer Queue Status Report for {{ inventory_hostname }}:
+          =========================================================
+          Queues:
+          {% for queue in printer_queues.stdout_lines %}
+            - {{ queue }}
+          {% endfor %}
+          Total Number of Print Jobs: {{ print_queue_count.stdout }}
+          MaxJobTime Value: {{ max_job_time.stdout | default('Not configured') }}
+
+    - name: Display summary report for each server
+      debug:
+        msg: "{{ report }}"
+
+    - name: Fail if MaxJobTime is not configured
+      fail:
+        msg: "MaxJobTime is not configured on the server!"
+      when: max_job_time.stdout == ""

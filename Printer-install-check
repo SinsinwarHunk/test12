@@ -1,0 +1,27 @@
+---
+- name: Check Printer Installation Status and Gather Server Name
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Get server hostname
+      ansible.builtin.command:
+        cmd: hostname
+      register: server_hostname
+
+    - name: Check if printer is installed
+      ansible.builtin.shell: |
+        if lpstat -p; then
+          echo "Printer Installed"
+        else
+          echo "Printer Not Installed"
+        fi
+      register: printer_status
+      ignore_errors: yes
+
+    - name: Display Results
+      ansible.builtin.debug:
+        msg: |
+          Server: {{ server_hostname.stdout }}
+          Printer Status: {{ printer_status.stdout }}

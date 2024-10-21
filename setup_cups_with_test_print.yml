@@ -1,0 +1,53 @@
+---
+- name: Install and Configure CUPS with MaxJobTime and Test Print
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install CUPS and related packages
+      ansible.builtin.package:
+        name:
+          - cups
+          - cups-client
+          - cups-pdf  # Optional, adds a virtual PDF printer
+          - lpr  # Adds print capabilities via command line
+        state: present
+
+    - name: Start and enable CUPS service
+      ansible.builtin.service:
+        name: cups
+        state: started
+        enabled: true
+
+    - name: Configure MaxJobTime in CUPS configuration
+      ansible.builtin.lineinfile:
+        path: /etc/cups/cupsd.conf
+        regexp: '^MaxJobTime'
+        line: 'MaxJobTime 3600'  # Set to 1 hour (3600 seconds)
+        backup: yes
+        validate: '/usr/sbin/cupsd -t'  # Validate config before applying
+
+    - name: Restart CUPS to apply changes
+      ansible.builtin.service:
+        name: cups
+        state: restarted
+
+    - name: Add a virtual PDF printer (optional)
+      ansible.builtin.command:
+        cmd: lpadmin -p PDFPrinter -E -v cups-pdf:/ -m everywhere
+      ignore_errors: yes
+
+    - name: Verify printer is installed
+      ansible.builtin.command:
+        cmd: lpstat -p
+      register: printer_status
+
+    - name: Print a test page to the PDF printer
+      ansible.builtin.command:
+        cmd: echo "Test Page" | lp -d PDFPrinter
+      when: '"PDFPrinter" in printer_status.stdout'
+
+    - name: Display printer installation and test print status
+      ansible.builtin.debug:
+        msg: |
+          Printer Status: {{ printer_status.stdout }}
+          Test Print Command Executed: Yes

@@ -18,12 +18,14 @@
       register: printer_queue
       ignore_errors: true
 
-    - name: Gather printer configuration for each printer
-      command: lpoptions -p {{ item }} -l
-      register: printer_config
-      with_items: "{{ printer_status.stdout_lines | default([]) }}"
-      when: printer_status.stdout | length > 0
+    - name: Grab MaxJobTimeout from cupsd.conf
+      command: grep -i 'MaxJobTimeout' /etc/cups/cupsd.conf
+      register: max_job_timeout_result
       ignore_errors: true
+
+    - name: Set max job timeout fact
+      set_fact:
+        max_job_timeout: "{{ max_job_timeout_result.stdout | default('Not found') }}"
 
     - name: Prepare printer status report
       set_fact:
@@ -48,16 +50,10 @@
           No print jobs in the queue.
           {% endif %}
           
-          Printer Configuration:
+          Max Job Timeout:
           =======================
-          {% if printer_config.results %}
-          {% for result in printer_config.results %}
-          Printer: {{ result.item }}
-          Configuration: {{ result.stdout if result.stdout else 'Not found' }}
-          {% endfor %}
-          {% else %}
-          No printer configuration found.
-          {% endif %}
+          {{ max_job_timeout }}
+
           ----------------------  # Separator for clarity
 
     - name: Add individual report to the consolidated reports list

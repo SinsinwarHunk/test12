@@ -19,7 +19,7 @@
       ignore_errors: true
 
     - name: Grab MaxJobTimeout from cupsd.conf
-      command: grep -i 'MaxJobTimeout' /etc/cups/cupsd.conf
+      command: grep -i 'MaxJobTime' /etc/cups/cupsd.conf
       register: max_job_timeout_result
       ignore_errors: true
 

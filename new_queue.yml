@@ -68,7 +68,7 @@
     - name: Transfer consolidated report to central server
       copy:
         src: "{{ consolidated_output_file }}"
-        dest: "/path/to/central/output/directory/printer_status_report.log"  # Specify the path on Node C
+        dest: "/var/tmp/printer_status_report.log"  # Specify the path on Node C
         remote_src: true  # Tells Ansible the file is on the remote machine
       delegate_to: "{{ central_server }}"
 

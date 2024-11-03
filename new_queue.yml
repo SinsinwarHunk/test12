@@ -1,0 +1,81 @@
+---
+- name: Check Printer Status on Multiple Servers
+  hosts: "{{ servers }}"  # The servers provided in the survey
+  gather_facts: no
+  vars:
+    central_server: "192.168.11.159"  # IP of the central server (Node C)
+    consolidated_output_file: "/tmp/printer_status_report.log"  # Temporary output file for consolidation
+    individual_reports: []  # List to collect reports from each server
+
+  tasks:
+    - name: Check for configured printers
+      command: lpstat -p
+      register: printer_status
+      ignore_errors: true
+
+    - name: Get printer queue status
+      command: lpstat -o
+      register: printer_queue
+      ignore_errors: true
+
+    - name: Gather printer configuration for each printer
+      command: lpoptions -p {{ item }} -l
+      register: printer_config
+      with_items: "{{ printer_status.stdout_lines | default([]) }}"
+      when: printer_status.stdout | length > 0
+      ignore_errors: true
+
+    - name: Prepare printer status report
+      set_fact:
+        report: |
+          Printer Status Report for {{ inventory_hostname }}
+          =======================
+          
+          {% if printer_status.stdout %}
+          Configured Printers:
+          {% for line in printer_status.stdout_lines %}
+          {{ line }}
+          {% endfor %}
+          {% else %}
+          No configured printers found.
+          {% endif %}
+          
+          Printer Queue Status:
+          =======================
+          {% if printer_queue.stdout %}
+          {{ printer_queue.stdout }}
+          {% else %}
+          No print jobs in the queue.
+          {% endif %}
+          
+          Printer Configuration:
+          =======================
+          {% if printer_config.results %}
+          {% for result in printer_config.results %}
+          Printer: {{ result.item }}
+          Configuration: {{ result.stdout if result.stdout else 'Not found' }}
+          {% endfor %}
+          {% else %}
+          No printer configuration found.
+          {% endif %}
+          ----------------------  # Separator for clarity
+
+    - name: Add individual report to the consolidated reports list
+      set_fact:
+        individual_reports: "{{ individual_reports + [report] }}"
+
+    - name: Write consolidated report to a single file
+      copy:
+        dest: "{{ consolidated_output_file }}"
+        content: "{{ individual_reports | join('\n') }}"
+
+    - name: Transfer consolidated report to central server
+      copy:
+        src: "{{ consolidated_output_file }}"
+        dest: "/path/to/central/output/directory/printer_status_report.log"  # Specify the path on Node C
+      delegate_to: "{{ central_server }}"
+
+    - name: Cleanup temporary report file
+      file:
+        path: "{{ consolidated_output_file }}"
+        state: absent

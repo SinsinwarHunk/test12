@@ -30,7 +30,7 @@
     - name: Prepare printer status report
       set_fact:
         report: |
-          Printer Status Report for {{ inventory_hostname }}
+          ***** Printer Status Report for {{ inventory_hostname }} *******
           =======================
           
           {% if printer_status.stdout %}

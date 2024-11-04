@@ -1,6 +1,6 @@
 ---
 - name: Check Printer Status on Multiple Servers
-  hosts: "{{ servers.split(',') }}"  # The servers provided in the survey
+  hosts: "{{ servers }}"  # The servers provided in the survey
   gather_facts: no
   vars:
     central_server: "192.168.11.159"  # IP of the central server (Node C)

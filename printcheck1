@@ -1,0 +1,66 @@
+---
+- name: Check Printer Status on Depot Servers
+  hosts: "{{ servers }}"
+  gather_facts: no
+  vars:
+    report_server: "10.12.2.57"
+    consolidated_output_file: "/var/tmp/cups_reports/printer_status_report.log"
+    deployment_type: "{{ deployment_type | default('production') }}"
+    site_number: "{{ site_number | default('001') }}"
+    cups_vm: "{{ deployment_type | lower }}vlps{{ site_number }}-001"
+    start_time: "{{ ansible_date_time.iso8601 }}"
+
+  tasks:
+    - name: Check for configured printers
+      command: lpstat -p
+      register: printer_status
+      ignore_errors: true
+
+    - name: Get printer queue status
+      command: lpstat -o
+      register: printer_queue
+      ignore_errors: true
+
+    - name: Grab MaxJobTimeout from cupsd.conf
+      command: grep -i 'MaxJobTime' /etc/cups/cupsd.conf
+      register: max_job_timeout_result
+      ignore_errors: true
+
+    - name: Set max job timeout fact
+      set_fact:
+        max_job_timeout: "{{ max_job_timeout_result.stdout | default('Not found') }}"
+
+    - name: Prepare printer status report
+      set_fact:
+        report: |
+          ***** Printer Status Report for {{ cups_vm }} *******
+          =======================
+          Report generated at: {{ start_time }}
+          =======================
+          {% if printer_status.stdout %}
+          Configured Printers:
+          {% for line in printer_status.stdout_lines %}
+          {{ line }}
+          {% endfor %}
+          {% else %}
+          No configured printers found.
+          {% endif %}
+          Printer Queue Status:
+          =======================
+          {% if printer_queue.stdout %}
+          {{ printer_queue.stdout }}
+          {% else %}
+          No print jobs in the queue.
+          {% endif %}
+          Max Job Timeout:
+          =======================
+          {{ max_job_timeout }}
+          ----------------------
+
+    - name: Append individual report directly to consolidated file on report server
+      lineinfile:
+        path: "{{ consolidated_output_file }}"
+        line: "{{ report }}"
+        create: yes
+      delegate_to: "{{ report_server }}"
+      run_once: false  # Ensures each server appends its output

@@ -70,10 +70,8 @@
 
     - name: Compress all log files into a single zip file
       shell: |
-        cd {{ log_dir }} && zip printer_logs_{{ timestamp }}.zip *.log
+        cd {{ log_dir }} && zip printer_logs_{{ timestamp }}.zip *.log || true
       delegate_to: "{{ central_server }}"
-      args:
-        warn: false  # Avoid warnings if no files are present
 
     - name: Remove uncompressed log files after compression
       file:

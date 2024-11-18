@@ -1,10 +1,10 @@
 - name: Check Printer Status on Multiple Servers
-  hosts: "{{ servers }}"  # The servers provided in the survey
+  hosts: "{{ servers }}"
   gather_facts: no
   vars:
     central_server: "192.168.11.159"  # IP of the central server (Node C)
     log_dir: "/var/tmp/printer_reports"  # Centralized log directory
-    timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"  # Timestamp for file name
+    timestamp: "{{ lookup('pipe', 'date +%Y-%m-%d_%H-%M') }}"  # Dynamically generate timestamp
     log_retention_days: 5  # Retain logs for the last 5 days
 
   tasks:

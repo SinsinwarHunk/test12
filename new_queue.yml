@@ -8,20 +8,6 @@
     log_retention_days: 5  # Retain logs for the last 5 days
 
   tasks:
-    - name: Install zip utility on the central server
-      apt:
-        name: zip
-        state: present
-      delegate_to: "{{ central_server }}"
-      when: ansible_facts['os_family'] == 'Debian'
-
-    - name: Install zip utility on the central server (RHEL/CentOS)
-      yum:
-        name: zip
-        state: present
-      delegate_to: "{{ central_server }}"
-      when: ansible_facts['os_family'] == 'RedHat'
-
     - name: Ensure log directory exists on the central server
       file:
         path: "{{ log_dir }}"

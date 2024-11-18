@@ -27,7 +27,11 @@
     - name: Grab MaxJobTimeout from cupsd.conf
       command: grep -i 'MaxJobTime' /etc/cups/cupsd.conf
       register: max_job_timeout_result
-      ignore_errors: true
+      ignore_errors: true4
+      
+    - name: Set max job timeout fact
+      set_fact:
+        max_job_timeout: "{{ max_job_timeout_result.stdout | default('Not found') }}"
 
     - name: Prepare printer status report
       set_fact:

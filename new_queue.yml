@@ -1,13 +1,21 @@
----
 - name: Check Printer Status on Multiple Servers
-  hosts: "{{ servers }}"  # The servers provided in the survey
+  hosts: "{{ servers }}"  
   gather_facts: no
   vars:
     central_server: "192.168.11.159"  # IP of the central server (Node C)
     consolidated_output_file: "/tmp/printer_status_report.log"  # Temporary output file for consolidation
+    log_dir: "/var/tmp/printer_reports"  # Centralized log directory
+    timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"  # Timestamp for directory
+    log_retention_days: 5  # Retain logs for the last 5 days
     individual_reports: []  # List to collect reports from each server
 
   tasks:
+    - name: Ensure log directory exists on the central server
+      file:
+        path: "{{ log_dir }}"
+        state: directory
+      delegate_to: "{{ central_server }}"
+
     - name: Check for configured printers
       command: lpstat -p
       register: printer_status
@@ -65,13 +73,38 @@
         dest: "{{ consolidated_output_file }}"
         content: "{{ individual_reports | join('\n') }}"
 
-    - name: Transfer consolidated report to central server
+    - name: Transfer consolidated report to a timestamped directory on central server
       copy:
         src: "{{ consolidated_output_file }}"
-        dest: "/var/tmp/printer_status_report.log"  # Specify the path on Node C
-        remote_src: true  # Tells Ansible the file is on the remote machine
+        dest: "{{ log_dir }}/printer_status_{{ timestamp }}.log"
+        remote_src: true
       delegate_to: "{{ central_server }}"
 
+    - name: Compress the log file
+      command: tar -czf "{{ log_dir }}/printer_status_{{ timestamp }}.tar.gz" -C "{{ log_dir }}" "printer_status_{{ timestamp }}.log"
+      delegate_to: "{{ central_server }}"
+
+    - name: Remove uncompressed log file after compression
+      file:
+        path: "{{ log_dir }}/printer_status_{{ timestamp }}.log"
+        state: absent
+      delegate_to: "{{ central_server }}"
+
+    - name: Cleanup logs older than 5 days
+      find:
+        paths: "{{ log_dir }}"
+        patterns: "*.tar.gz"
+        age: "{{ log_retention_days }}d"
+        recurse: yes
+        register: old_logs
+      delegate_to: "{{ central_server }}"
+
+    - name: Remove old logs
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ old_logs.files }}"
+      delegate_to: "{{ central_server }}"
 
     - name: Cleanup temporary report file
       file:

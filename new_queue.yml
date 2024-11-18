@@ -8,6 +8,20 @@
     log_retention_days: 5  # Retain logs for the last 5 days
 
   tasks:
+    - name: Install zip utility on the central server
+      apt:
+        name: zip
+        state: present
+      delegate_to: "{{ central_server }}"
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install zip utility on the central server (RHEL/CentOS)
+      yum:
+        name: zip
+        state: present
+      delegate_to: "{{ central_server }}"
+      when: ansible_facts['os_family'] == 'RedHat'
+
     - name: Ensure log directory exists on the central server
       file:
         path: "{{ log_dir }}"
@@ -72,6 +86,8 @@
       shell: |
         cd {{ log_dir }} && zip printer_logs_{{ timestamp }}.zip *.log
       delegate_to: "{{ central_server }}"
+      args:
+        warn: false  # Avoid warnings if no files are present
 
     - name: Remove uncompressed log files after compression
       file:
@@ -80,14 +96,14 @@
       with_fileglob: "{{ log_dir }}/*.log"
       delegate_to: "{{ central_server }}"
 
-    - name: Cleanup zip files older than 5 days
+    - name: Find zip files older than retention period
       find:
         paths: "{{ log_dir }}"
         patterns: "*.zip"
         age: "{{ log_retention_days }}d"
         recurse: yes
-        register: old_logs
       delegate_to: "{{ central_server }}"
+      register: old_logs
 
     - name: Remove old zip files
       file:

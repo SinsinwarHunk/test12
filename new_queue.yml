@@ -1,13 +1,11 @@
 - name: Check Printer Status on Multiple Servers
-  hosts: "{{ servers }}"  
+  hosts: "{{ servers }}"  # The servers provided in the survey
   gather_facts: no
   vars:
     central_server: "192.168.11.159"  # IP of the central server (Node C)
-    consolidated_output_file: "/tmp/printer_status_report.log"  # Temporary output file for consolidation
     log_dir: "/var/tmp/printer_reports"  # Centralized log directory
-    timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"  # Timestamp for directory
+    timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"  # Timestamp for file name
     log_retention_days: 5  # Retain logs for the last 5 days
-    individual_reports: []  # List to collect reports from each server
 
   tasks:
     - name: Ensure log directory exists on the central server
@@ -30,10 +28,6 @@
       command: grep -i 'MaxJobTime' /etc/cups/cupsd.conf
       register: max_job_timeout_result
       ignore_errors: true
-
-    - name: Set max job timeout fact
-      set_fact:
-        max_job_timeout: "{{ max_job_timeout_result.stdout | default('Not found') }}"
 
     - name: Prepare printer status report
       set_fact:
@@ -64,30 +58,22 @@
 
           ----------------------  # Separator for clarity
 
-    - name: Add individual report to the consolidated reports list
-      set_fact:
-        individual_reports: "{{ individual_reports + [report] }}"
-
-    - name: Write consolidated report to a single file
+    - name: Save report directly to centralized server
       copy:
-        dest: "{{ consolidated_output_file }}"
-        content: "{{ individual_reports | join('\n') }}"
-
-    - name: Transfer consolidated report to a timestamped directory on central server
-      copy:
-        src: "{{ consolidated_output_file }}"
-        dest: "{{ log_dir }}/printer_status_{{ timestamp }}.log"
-        remote_src: true
+        content: "{{ report }}"
+        dest: "{{ log_dir }}/printer_status_{{ inventory_hostname }}_{{ timestamp }}.log"
       delegate_to: "{{ central_server }}"
 
-    - name: Compress the log file
-      command: tar -czf "{{ log_dir }}/printer_status_{{ timestamp }}.tar.gz" -C "{{ log_dir }}" "printer_status_{{ timestamp }}.log"
+    - name: Compress all log files on the central server
+      shell: |
+        cd {{ log_dir }} && tar -czf printer_logs_{{ timestamp }}.tar.gz *.log
       delegate_to: "{{ central_server }}"
 
-    - name: Remove uncompressed log file after compression
+    - name: Remove uncompressed log files after compression
       file:
-        path: "{{ log_dir }}/printer_status_{{ timestamp }}.log"
+        path: "{{ item }}"
         state: absent
+      with_fileglob: "{{ log_dir }}/*.log"
       delegate_to: "{{ central_server }}"
 
     - name: Cleanup logs older than 5 days
@@ -105,8 +91,3 @@
         state: absent
       with_items: "{{ old_logs.files }}"
       delegate_to: "{{ central_server }}"
-
-    - name: Cleanup temporary report file
-      file:
-        path: "{{ consolidated_output_file }}"
-        state: absent

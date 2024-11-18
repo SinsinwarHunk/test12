@@ -27,8 +27,8 @@
     - name: Grab MaxJobTimeout from cupsd.conf
       command: grep -i 'MaxJobTime' /etc/cups/cupsd.conf
       register: max_job_timeout_result
-      ignore_errors: true4
-      
+      ignore_errors: true
+
     - name: Set max job timeout fact
       set_fact:
         max_job_timeout: "{{ max_job_timeout_result.stdout | default('Not found') }}"
@@ -68,9 +68,9 @@
         dest: "{{ log_dir }}/printer_status_{{ inventory_hostname }}_{{ timestamp }}.log"
       delegate_to: "{{ central_server }}"
 
-    - name: Compress all log files on the central server
+    - name: Compress all log files into a single zip file
       shell: |
-        cd {{ log_dir }} && tar -czf printer_logs_{{ timestamp }}.tar.gz *.log
+        cd {{ log_dir }} && zip printer_logs_{{ timestamp }}.zip *.log
       delegate_to: "{{ central_server }}"
 
     - name: Remove uncompressed log files after compression
@@ -80,16 +80,16 @@
       with_fileglob: "{{ log_dir }}/*.log"
       delegate_to: "{{ central_server }}"
 
-    - name: Cleanup logs older than 5 days
+    - name: Cleanup zip files older than 5 days
       find:
         paths: "{{ log_dir }}"
-        patterns: "*.tar.gz"
+        patterns: "*.zip"
         age: "{{ log_retention_days }}d"
         recurse: yes
         register: old_logs
       delegate_to: "{{ central_server }}"
 
-    - name: Remove old logs
+    - name: Remove old zip files
       file:
         path: "{{ item.path }}"
         state: absent

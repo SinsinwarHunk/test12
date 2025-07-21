@@ -1,0 +1,552 @@
+bash-2.05# vxdiskadm
+
+Volume Manager Support Operations
+Menu: VolumeManager/Disk
+
+ 1      Add or initialize one or more disks
+ 2      Encapsulate one or more disks
+ 3      Remove a disk
+ 4      Remove a disk for replacement
+ 5      Replace a failed or removed disk
+ 6      Mirror volumes on a disk
+ 7      Move volumes from a disk
+ 8      Enable access to (import) a disk group
+ 9      Remove access to (deport) a disk group
+ 10     Enable (online) a disk device
+ 11     Disable (offline) a disk device
+ 12     Mark a disk as a spare for a disk group
+ 13     Turn off the spare flag on a disk
+ 14     Unrelocate subdisks back to a disk
+ 15     Exclude a disk from hot-relocation use
+ 16     Make a disk available for hot-relocation use
+ 17     Prevent multipathing/Suppress devices from VxVM's view
+ 18     Allow multipathing/Unsuppress devices from VxVM's view
+ 19     List currently suppressed/non-multipathed devices
+ 20     Change the disk naming scheme
+ 21     Get the newly connected/zoned disks in VxVM view
+ list   List disk information
+
+
+ ?      Display help about menu
+ ??     Display help about the menuing system
+ q      Exit from menus
+
+Select an operation to perform: 4
+
+Remove a disk for replacement
+Menu: VolumeManager/Disk/RemoveForReplace
+
+  Use this menu operation to remove a physical disk from a disk
+  group, while retaining the disk name.  This changes the state
+  for the disk name to a "removed" disk.  If there are any
+  initialized disks that are not part of a disk group, you will be
+  given the option of using one of these disks as a replacement.
+
+Enter disk name [<disk>,list,q,?] list
+
+Disk group: rootdg
+
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+
+dm rootdisk     c0t0d0s2     sliced   4711     35363560 -
+dm rootmirror   c0t8d0s2     sliced   4455     35358848 -
+
+Disk group: appsdg
+
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+
+dm appsdg01     c0t10d0s2    sliced   4711     35363560 -
+dm appsdg02     c0t11d0s2    sliced   4711     35363560 -
+dm appsdg03     c0t12d0s2    sliced   4455     35358848 -
+dm appsdg04     c0t9d0s2     sliced   4711     35363560 -
+dm c1t8d0       c1t8d0s2     sliced   2888     71124291 -
+dm c1t9d0       c1t9d0s2     sliced   2888     71124291 -
+dm c1t10d0      c1t10d0s2    sliced   2888     71124291 -
+dm c1t11d0      c1t11d0s2    sliced   2632     71121402 -
+dm c2t0d0       c2t0d0s2     sliced   2888     71124291 -
+dm c2t1d0       c2t1d0s2     sliced   2888     71124291 -
+dm c2t2d0       c2t2d0s2     sliced   2888     71124291 -
+dm c2t3d0       c2t3d0s2     sliced   2888     71124291 -
+
+Enter disk name [<disk>,list,q,?] rootmirror
+
+  The following volumes will lose mirrors as a result of this
+  operation:
+
+        rootvol swapvol
+
+  No data on these volumes will be lost.
+
+  The requested operation is to remove disk rootmirror from disk group
+  rootdg.  The disk name will be kept, along with any volumes using
+  the disk, allowing replacement of the disk.
+
+  Select "Replace a failed or removed disk" from the main menu
+  when you wish to replace the disk.
+
+Continue with operation? [y,n,q,?] (default: y) y
+
+  Removal of disk rootmirror completed successfully.
+
+Remove another disk? [y,n,q,?] (default: n)
+
+Volume Manager Support Operations
+Menu: VolumeManager/Disk
+
+ 1      Add or initialize one or more disks
+ 2      Encapsulate one or more disks
+ 3      Remove a disk
+ 4      Remove a disk for replacement
+ 5      Replace a failed or removed disk
+ 6      Mirror volumes on a disk
+ 7      Move volumes from a disk
+ 8      Enable access to (import) a disk group
+ 9      Remove access to (deport) a disk group
+ 10     Enable (online) a disk device
+ 11     Disable (offline) a disk device
+ 12     Mark a disk as a spare for a disk group
+ 13     Turn off the spare flag on a disk
+ 14     Unrelocate subdisks back to a disk
+ 15     Exclude a disk from hot-relocation use
+ 16     Make a disk available for hot-relocation use
+ 17     Prevent multipathing/Suppress devices from VxVM's view
+ 18     Allow multipathing/Unsuppress devices from VxVM's view
+ 19     List currently suppressed/non-multipathed devices
+ 20     Change the disk naming scheme
+ 21     Get the newly connected/zoned disks in VxVM view
+ list   List disk information
+
+
+ ?      Display help about menu
+ ??     Display help about the menuing system
+ q      Exit from menus
+
+Select an operation to perform: q
+
+Goodbye.
+bash-2.05# vxdisk list
+DEVICE       TYPE      DISK         GROUP        STATUS
+c0t0d0s2     sliced    rootdisk     rootdg       online
+c0t9d0s2     sliced    appsdg04     appsdg       online
+c0t10d0s2    sliced    appsdg01     appsdg       online
+c0t11d0s2    sliced    appsdg02     appsdg       online
+c0t12d0s2    sliced    appsdg03     appsdg       online
+c1t8d0s2     sliced    c1t8d0       appsdg       online
+c1t9d0s2     sliced    c1t9d0       appsdg       online
+c1t10d0s2    sliced    c1t10d0      appsdg       online
+c1t11d0s2    sliced    c1t11d0      appsdg       online
+c2t0d0s2     sliced    c2t0d0       appsdg       online
+c2t1d0s2     sliced    c2t1d0       appsdg       online
+c2t2d0s2     sliced    c2t2d0       appsdg       online
+c2t3d0s2     sliced    c2t3d0       appsdg       online
+-            -         rootmirror   rootdg       removed was:c0t8d0s2
+
+bash-2.05# cfgadm -al
+Ap_Id                          Type         Receptacle   Occupant     Condition
+c0                             scsi-bus     connected    configured   unknown
+c0::dsk/c0t0d0                 disk         connected    configured   unknown
+c0::dsk/c0t6d0                 CD-ROM       connected    configured   unknown
+c0::dsk/c0t8d0                 disk         connected    configured   unknown
+c0::dsk/c0t9d0                 disk         connected    configured   unknown
+c0::dsk/c0t10d0                disk         connected    configured   unknown
+c0::dsk/c0t11d0                disk         connected    configured   unknown
+c0::dsk/c0t12d0                disk         connected    configured   unknown
+c1                             scsi-bus     connected    configured   unknown
+c1::dsk/c1t8d0                 disk         connected    configured   unknown
+c1::dsk/c1t9d0                 disk         connected    configured   unknown
+c1::dsk/c1t10d0                disk         connected    configured   unknown
+c1::dsk/c1t11d0                disk         connected    configured   unknown
+c1::es/ses0                    processor    connected    configured   unknown
+c2                             scsi-bus     connected    configured   unknown
+c2::dsk/c2t0d0                 disk         connected    configured   unknown
+c2::dsk/c2t1d0                 disk         connected    configured   unknown
+c2::dsk/c2t2d0                 disk         connected    configured   unknown
+c2::dsk/c2t3d0                 disk         connected    configured   unknown
+c2::es/ses1                    processor    connected    configured   unknown
+c3                             scsi-bus     connected    unconfigured unknown
+c4                             scsi-bus     connected    unconfigured unknown
+c5                             scsi-bus     connected    unconfigured unknown
+bash-2.05# cfgadm -c unconfigure c0::dsk/c0t8d0
+bash-2.05# cfgadm -al
+Ap_Id                          Type         Receptacle   Occupant     Condition
+c0                             scsi-bus     connected    configured   unknown
+c0::dsk/c0t0d0                 disk         connected    configured   unknown
+c0::dsk/c0t6d0                 CD-ROM       connected    configured   unknown
+c0::dsk/c0t8d0                 disk         connected    unconfigured unknown
+c0::dsk/c0t9d0                 disk         connected    configured   unknown
+c0::dsk/c0t10d0                disk         connected    configured   unknown
+c0::dsk/c0t11d0                disk         connected    configured   unknown
+c0::dsk/c0t12d0                disk         connected    configured   unknown
+c1                             scsi-bus     connected    configured   unknown
+c1::dsk/c1t8d0                 disk         connected    configured   unknown
+c1::dsk/c1t9d0                 disk         connected    configured   unknown
+c1::dsk/c1t10d0                disk         connected    configured   unknown
+c1::dsk/c1t11d0                disk         connected    configured   unknown
+c1::es/ses0                    processor    connected    configured   unknown
+c2                             scsi-bus     connected    configured   unknown
+c2::dsk/c2t0d0                 disk         connected    configured   unknown
+c2::dsk/c2t1d0                 disk         connected    configured   unknown
+c2::dsk/c2t2d0                 disk         connected    configured   unknown
+c2::dsk/c2t3d0                 disk         connected    configured   unknown
+c2::es/ses1                    processor    connected    configured   unknown
+c3                             scsi-bus     connected    unconfigured unknown
+c4                             scsi-bus     connected    unconfigured unknown
+c5                             scsi-bus     connected    unconfigured unknown
+bash-2.05#
+
+bash-2.05# echo | format | grep c0t8d0
+bash-2.05#
+bash-2.05# tail -f /var/adm/messages
+Jun 20 03:00:01 eqptdev1 sendmail[3004]: [ID 801593 mail.crit] NOQUEUE: SYSERR(root): /etc/mail/submit.cf: line 420: readcf: option RunAsUser: unknown user smmsp
+Jun 20 03:00:01 eqptdev1 sendmail[3004]: [ID 801593 mail.crit] NOQUEUE: SYSERR(root): /etc/mail/submit.cf: line 439: readcf: option TrustedUser: unknown user smmsp
+Jun 20 03:00:02 eqptdev1 syslogd: /var/log/sudo.log: No such file or directory
+Jun 20 03:00:04 eqptdev1 syslogd: /var/log/sudo.log: No such file or directory
+Jun 20 04:06:27 eqptdev1 root: [ID 702911 daemon.notice] HCL - OS_Check_1.7.2 (daemon.notice) Wed Jun 20 04:06:27 EDT 2012
+Jun 20 05:08:55 eqptdev1 root: [ID 702911 daemon.notice] NY_HCL - OS_Check_1.8 (daemon.notice) Wed Jun 20 05:08:55 EDT 2012
+Jun 20 19:17:30 eqptdev1 genunix: [ID 408114 kern.info] /pci@1f,4000/scsi@3/sd@8,0 (sd7) offline
+^C
+bash-2.05#
+bash-2.05# devfsadm -Cvv
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:a
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s0
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:b
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s1
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:c
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s2
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:d
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s3
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:e
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s4
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:f
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s5
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:g
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s6
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:h
+devfsadm[13935]: verbose: removing file: /dev/dsk/c0t8d0s7
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:a,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s0
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:b,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s1
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:c,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s2
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:d,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s3
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:e,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s4
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:f,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s5
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:g,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s6
+devfsadm[13935]: verbose: removing file: /devices/pci@1f,4000/scsi@3/sd@8,0:h,raw
+devfsadm[13935]: verbose: removing file: /dev/rdsk/c0t8d0s7
+bash-2.05#
+bash-2.05# cfgadm -c configure c0::sd7
+bash-2.05# cfgadm -al
+Ap_Id                          Type         Receptacle   Occupant     Condition
+c0                             scsi-bus     connected    configured   unknown
+c0::dsk/c0t0d0                 disk         connected    configured   unknown
+c0::dsk/c0t6d0                 CD-ROM       connected    configured   unknown
+c0::dsk/c0t8d0                 disk         connected    configured   unknown
+c0::dsk/c0t9d0                 disk         connected    configured   unknown
+c0::dsk/c0t10d0                disk         connected    configured   unknown
+c0::dsk/c0t11d0                disk         connected    configured   unknown
+c0::dsk/c0t12d0                disk         connected    configured   unknown
+c1                             scsi-bus     connected    configured   unknown
+c1::dsk/c1t8d0                 disk         connected    configured   unknown
+c1::dsk/c1t9d0                 disk         connected    configured   unknown
+c1::dsk/c1t10d0                disk         connected    configured   unknown
+c1::dsk/c1t11d0                disk         connected    configured   unknown
+c1::es/ses0                    processor    connected    configured   unknown
+c2                             scsi-bus     connected    configured   unknown
+c2::dsk/c2t0d0                 disk         connected    configured   unknown
+c2::dsk/c2t1d0                 disk         connected    configured   unknown
+c2::dsk/c2t2d0                 disk         connected    configured   unknown
+c2::dsk/c2t3d0                 disk         connected    configured   unknown
+c2::es/ses1                    processor    connected    configured   unknown
+c3                             scsi-bus     connected    unconfigured unknown
+c4                             scsi-bus     connected    unconfigured unknown
+c5                             scsi-bus     connected    unconfigured unknown
+bash-2.05#
+bash-2.05# echo | format | grep c0t8d0
+       1. c0t8d0 <SUN18G cyl 7506 alt 2 hd 19 sec 248>
+bash-2.05#
+bash-2.05# vxdisk list
+DEVICE       TYPE      DISK         GROUP        STATUS
+c0t0d0s2     sliced    rootdisk     rootdg       online
+c0t9d0s2     sliced    appsdg04     appsdg       online
+c0t10d0s2    sliced    appsdg01     appsdg       online
+c0t11d0s2    sliced    appsdg02     appsdg       online
+c0t12d0s2    sliced    appsdg03     appsdg       online
+c1t8d0s2     sliced    c1t8d0       appsdg       online
+c1t9d0s2     sliced    c1t9d0       appsdg       online
+c1t10d0s2    sliced    c1t10d0      appsdg       online
+c1t11d0s2    sliced    c1t11d0      appsdg       online
+c2t0d0s2     sliced    c2t0d0       appsdg       online
+c2t1d0s2     sliced    c2t1d0       appsdg       online
+c2t2d0s2     sliced    c2t2d0       appsdg       online
+c2t3d0s2     sliced    c2t3d0       appsdg       online
+-            -         rootmirror   rootdg       removed was:c0t8d0s2
+bash-2.05# vxdctl enable
+bash-2.05# vxdisk list
+DEVICE       TYPE      DISK         GROUP        STATUS
+c0t0d0s2     sliced    rootdisk     rootdg       online
+c0t8d0s2     sliced    -            -            error
+c0t9d0s2     sliced    appsdg04     appsdg       online
+c0t10d0s2    sliced    appsdg01     appsdg       online
+c0t11d0s2    sliced    appsdg02     appsdg       online
+c0t12d0s2    sliced    appsdg03     appsdg       online
+c1t8d0s2     sliced    c1t8d0       appsdg       online
+c1t9d0s2     sliced    c1t9d0       appsdg       online
+c1t10d0s2    sliced    c1t10d0      appsdg       online
+c1t11d0s2    sliced    c1t11d0      appsdg       online
+c2t0d0s2     sliced    c2t0d0       appsdg       online
+c2t1d0s2     sliced    c2t1d0       appsdg       online
+c2t2d0s2     sliced    c2t2d0       appsdg       online
+c2t3d0s2     sliced    c2t3d0       appsdg       online
+-            -         rootmirror   rootdg       removed was:c0t8d0s2
+bash-2.05#
+bash-2.05#
+
+
+bash-2.05# format
+Searching for disks...done
+
+
+AVAILABLE DISK SELECTIONS:
+       0. c0t0d0 <SUN18G cyl 7506 alt 2 hd 19 sec 248>
+          /pci@1f,4000/scsi@3/sd@0,0
+       1. c0t8d0 <SUN18G cyl 7506 alt 2 hd 19 sec 248>
+          /pci@1f,4000/scsi@3/sd@8,0
+       2. c0t9d0 <SUN18G cyl 7506 alt 2 hd 19 sec 248>
+          /pci@1f,4000/scsi@3/sd@9,0
+       3. c0t10d0 <SUN18G cyl 7506 alt 2 hd 19 sec 248>
+          /pci@1f,4000/scsi@3/sd@a,0
+       4. c0t11d0 <SUN18G cyl 7506 alt 2 hd 19 sec 248>
+          /pci@1f,4000/scsi@3/sd@b,0
+       5. c0t12d0 <SUN18G cyl 7506 alt 2 hd 19 sec 248>
+          /pci@1f,4000/scsi@3/sd@c,0
+       6. c1t8d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@4,1/sd@8,0
+       7. c1t9d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@4,1/sd@9,0
+       8. c1t10d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@4,1/sd@a,0
+       9. c1t11d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@4,1/sd@b,0
+      10. c2t0d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@5,1/sd@0,0
+      11. c2t1d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@5,1/sd@1,0
+      12. c2t2d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@5,1/sd@2,0
+      13. c2t3d0 <SUN36G cyl 24620 alt 2 hd 27 sec 107>
+          /pci@1f,4000/scsi@5,1/sd@3,0
+Specify disk (enter its number): 1
+selecting c0t8d0
+[disk formatted]
+
+
+FORMAT MENU:
+        disk       - select a disk
+        type       - select (define) a disk type
+        partition  - select (define) a partition table
+        current    - describe the current disk
+        format     - format and analyze the disk
+        repair     - repair a defective sector
+        label      - write label to the disk
+        analyze    - surface analysis
+        defect     - defect list management
+        backup     - search for backup labels
+        verify     - read and display labels
+        save       - save new disk/partition definitions
+        inquiry    - show vendor, product and revision
+        volname    - set 8-character volume name
+        !<cmd>     - execute <cmd>, then return
+        quit
+format> l
+Ready to label disk, continue? y
+
+format>^D
+bash-2.05#
+bash-2.05# vxdisk list
+DEVICE       TYPE      DISK         GROUP        STATUS
+c0t0d0s2     sliced    rootdisk     rootdg       online
+c0t8d0s2     sliced    -            -            error
+c0t9d0s2     sliced    appsdg04     appsdg       online
+c0t10d0s2    sliced    appsdg01     appsdg       online
+c0t11d0s2    sliced    appsdg02     appsdg       online
+c0t12d0s2    sliced    appsdg03     appsdg       online
+c1t8d0s2     sliced    c1t8d0       appsdg       online
+c1t9d0s2     sliced    c1t9d0       appsdg       online
+c1t10d0s2    sliced    c1t10d0      appsdg       online
+c1t11d0s2    sliced    c1t11d0      appsdg       online
+c2t0d0s2     sliced    c2t0d0       appsdg       online
+c2t1d0s2     sliced    c2t1d0       appsdg       online
+c2t2d0s2     sliced    c2t2d0       appsdg       online
+c2t3d0s2     sliced    c2t3d0       appsdg       online
+-            -         rootmirror   rootdg       removed was:c0t8d0s2
+
+bash-2.05# /etc/vx/bin/vxdisksetup -i c0t8d0
+bash-2.05# vxdisk list
+DEVICE       TYPE      DISK         GROUP        STATUS
+c0t0d0s2     sliced    rootdisk     rootdg       online
+c0t8d0s2     sliced    -            -            online
+c0t9d0s2     sliced    appsdg04     appsdg       online
+c0t10d0s2    sliced    appsdg01     appsdg       online
+c0t11d0s2    sliced    appsdg02     appsdg       online
+c0t12d0s2    sliced    appsdg03     appsdg       online
+c1t8d0s2     sliced    c1t8d0       appsdg       online
+c1t9d0s2     sliced    c1t9d0       appsdg       online
+c1t10d0s2    sliced    c1t10d0      appsdg       online
+c1t11d0s2    sliced    c1t11d0      appsdg       online
+c2t0d0s2     sliced    c2t0d0       appsdg       online
+c2t1d0s2     sliced    c2t1d0       appsdg       online
+c2t2d0s2     sliced    c2t2d0       appsdg       online
+c2t3d0s2     sliced    c2t3d0       appsdg       online
+-            -         rootmirror   rootdg       removed was:c0t8d0s2
+bash-2.05# vxdiskadm
+
+Volume Manager Support Operations
+Menu: VolumeManager/Disk
+
+ 1      Add or initialize one or more disks
+ 2      Encapsulate one or more disks
+ 3      Remove a disk
+ 4      Remove a disk for replacement
+ 5      Replace a failed or removed disk
+ 6      Mirror volumes on a disk
+ 7      Move volumes from a disk
+ 8      Enable access to (import) a disk group
+ 9      Remove access to (deport) a disk group
+ 10     Enable (online) a disk device
+ 11     Disable (offline) a disk device
+ 12     Mark a disk as a spare for a disk group
+ 13     Turn off the spare flag on a disk
+ 14     Unrelocate subdisks back to a disk
+ 15     Exclude a disk from hot-relocation use
+ 16     Make a disk available for hot-relocation use
+ 17     Prevent multipathing/Suppress devices from VxVM's view
+ 18     Allow multipathing/Unsuppress devices from VxVM's view
+ 19     List currently suppressed/non-multipathed devices
+ 20     Change the disk naming scheme
+ 21     Get the newly connected/zoned disks in VxVM view
+ list   List disk information
+
+
+ ?      Display help about menu
+ ??     Display help about the menuing system
+ q      Exit from menus
+
+Select an operation to perform: 5
+
+Replace a failed or removed disk
+Menu: VolumeManager/Disk/ReplaceDisk
+
+  Use this menu operation to specify a replacement disk for a disk
+  that you removed with the "Remove a disk for replacement" menu
+  operation, or that failed during use.  You will be prompted for
+  a disk name to replace and a disk device to use as a replacement.
+  You can choose an uninitialized disk, in which case the disk will
+  be initialized, or you can choose a disk that you have already
+  initialized using the Add or initialize a disk menu operation.
+
+Select a removed or failed disk [<disk>,list,q,?] list
+
+Disk group: rootdg
+
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+
+dm rootmirror   -            -        -        -        REMOVED
+
+Disk group: appsdg
+
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+
+
+
+Select a removed or failed disk [<disk>,list,q,?] rootmirror
+
+  The following devices are available as replacements:
+
+        c0t8d0
+
+  You can choose one of these disks to replace rootmirror.
+  Choose "none" to initialize another disk to replace rootmirror.
+
+Choose a device, or select "none"
+[<device>,none,q,?] (default: c0t8d0)
+
+  The requested operation is to use the initialized device c0t8d0
+  to replace the removed or failed disk rootmirror in disk group rootdg.
+
+Continue with operation? [y,n,q,?] (default: y)
+
+Use fastresync for plex synchronization? [y,n,q,?] (default: n)
+
+  Replacement of disk rootmirror in group rootdg with disk device
+  c0t8d0 completed successfully.
+
+Replace another disk? [y,n,q,?] (default: n)
+
+Volume Manager Support Operations
+Menu: VolumeManager/Disk
+
+ 1      Add or initialize one or more disks
+ 2      Encapsulate one or more disks
+ 3      Remove a disk
+ 4      Remove a disk for replacement
+ 5      Replace a failed or removed disk
+ 6      Mirror volumes on a disk
+ 7      Move volumes from a disk
+ 8      Enable access to (import) a disk group
+ 9      Remove access to (deport) a disk group
+ 10     Enable (online) a disk device
+ 11     Disable (offline) a disk device
+ 12     Mark a disk as a spare for a disk group
+ 13     Turn off the spare flag on a disk
+ 14     Unrelocate subdisks back to a disk
+ 15     Exclude a disk from hot-relocation use
+ 16     Make a disk available for hot-relocation use
+ 17     Prevent multipathing/Suppress devices from VxVM's view
+ 18     Allow multipathing/Unsuppress devices from VxVM's view
+ 19     List currently suppressed/non-multipathed devices
+ 20     Change the disk naming scheme
+ 21     Get the newly connected/zoned disks in VxVM view
+ list   List disk information
+
+
+ ?      Display help about menu
+ ??     Display help about the menuing system
+ q      Exit from menus
+
+Select an operation to perform: q
+
+Goodbye.
+bash-2.05# vxdisk list
+DEVICE       TYPE      DISK         GROUP        STATUS
+c0t0d0s2     sliced    rootdisk     rootdg       online
+c0t8d0s2     sliced    rootmirror   rootdg       online
+c0t9d0s2     sliced    appsdg04     appsdg       online
+c0t10d0s2    sliced    appsdg01     appsdg       online
+c0t11d0s2    sliced    appsdg02     appsdg       online
+c0t12d0s2    sliced    appsdg03     appsdg       online
+c1t8d0s2     sliced    c1t8d0       appsdg       online
+c1t9d0s2     sliced    c1t9d0       appsdg       online
+c1t10d0s2    sliced    c1t10d0      appsdg       online
+c1t11d0s2    sliced    c1t11d0      appsdg       online
+c2t0d0s2     sliced    c2t0d0       appsdg       online
+c2t1d0s2     sliced    c2t1d0       appsdg       online
+c2t2d0s2     sliced    c2t2d0       appsdg       online
+c2t3d0s2     sliced    c2t3d0       appsdg       online
+bash-2.05# vxtask list
+TASKID  PTID TYPE/STATE    PCT   PROGRESS
+  7966           PARENT/R  0.00% 2/0(1) VXRECOVER rootmirror
+  7967  7967     ATCOPY/R 07.27% 0/12585752/915456 PLXATT rootvol rootvol-02
+bash-2.05# vxtask monitor
+TASKID  PTID TYPE/STATE    PCT   PROGRESS
+  7966           PARENT/R  0.00% 2/0(1) VXRECOVER rootmirror
+  7967  7967     ATCOPY/R 10.54% 0/12585752/1327104 PLXATT rootvol rootvol-02
+^C
+bash-2.05#
+
+

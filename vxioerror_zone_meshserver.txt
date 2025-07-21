@@ -1,0 +1,28 @@
+zoneadm -z meshlpv26 halt &
+zoneadm list -cv
+vxdg list
+vxdg deport meshlpv26_dg
+df -h
+umount /zones/filesystems/meshlpv26
+umount -f /zones/filesystems/meshlpv26
+umount -f /zones/hosts/meshlpv26
+umount -f /zones/filesystems/meshlpv26/opt/mesh
+umount -f /zones/filesystems/meshlpv26/usr/local
+umount -f /zones/filesystems/meshlpv26/export/home
+umount -f /zones/filesystems/meshlpv26/opt/mesh/domains
+df -h
+vxdg list
+vxdg deport meshlpv26_dg
+vxdg list
+vxdg import meshlpv26_dg
+vxdg list
+vxprint -htg meshlpv26_dg
+vxvol -g meshlpv26_dg startall
+vxprint -htg meshlpv26_dg
+vxdg list
+mount -a
+df -h
+zoneadm list -cv
+cat /etc/vfstab
+mount /zones/filesystems/meshlpv26
+zoneadm -z meshlpv26 boot &

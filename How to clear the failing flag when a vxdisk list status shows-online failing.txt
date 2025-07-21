@@ -1,0 +1,59 @@
+How to clear the failing flag when a vxdisk list status shows "online failing"
+
+
+Error
+-----
+
+DEVICE TYPE DISK GROUP STATUS
+c0t1d0s2 sliced online failing
+
+
+Solution
+---------
+
+
+During a failure that causes Veritas Volume Manager  to see a disk as failing when indeed the disk is not bad, the failing flag for the disk can be cleared. 
+
+This should not be performed if the status of a disk is unknown. However, if the status does not appear to be failing and there are no failure messages in the system logs (such as /var/adm/messages), the flag can be reset. 
+
+In addition, perform the steps below if  the flag was set due to a different hardware failure (ie; a controller failure). If there actually are disk problems, the failure flag will get set again and once the flag is cleared, try simple disk accesses, followed by reviewing the online status, before modifying anything on this disk.
+
+Note: If the disk is truly failing and this flag is cleared, there is the risk of losing data due to hardware problems.  
+
+1.  List the disks under  Veritas Volume Manager control to determine which disk is marked bad:
+
+ 
+# vxdisk list 
+ 
+
+ 
+DEVICE       TYPE      DISK         GROUP        STATUS
+ 
+c0t1d0s2     sliced    disk01       rootdg       online failing
+ 
+c0t3d0s2     sliced    rootdisk     rootdg       online
+ 
+........(more)
+ 
+
+ 
+2.  Clear the failing flag for the disk that is marked as failing:
+
+# vxedit -g <DISK_GROUP NAME> set failing=off <DISK_NAME>  ( vxedit -g rootdg set failing=off disk01 )
+ 
+
+ 
+3.  Verify that the flag has been cleared:
+
+ 
+# vxdisk list - to verify that the flag has been changed 
+ 
+
+ 
+DEVICE       TYPE      DISK         GROUP        STATUS
+ 
+c0t1d0s2     sliced    disk01       rootdg       online
+ 
+c0t3d0s2     sliced    rootdisk     rootdg       online
+ 
+........(more)

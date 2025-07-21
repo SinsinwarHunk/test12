@@ -1,0 +1,4 @@
+How to check state of all resources in a group
+==============================================
+
+hares -display -group udbphost -sys nygpcscppxp1 -attribute State

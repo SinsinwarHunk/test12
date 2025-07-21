@@ -1,0 +1,5 @@
+If all the cluster interconnect links fail, it is possible for one cluster to separate into two subclusters, each of which does not know about the other subcluster.
+The two subclusters could each carry out recovery actions for the departed systems. This is termed split brain.
+
+In a split brain condition, two systems could try to import the same storage and cause data corruption, have an IP address up in two places, or mistakenly run an
+application in two places at once.

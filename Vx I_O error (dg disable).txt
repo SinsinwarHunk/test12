@@ -1,0 +1,1377 @@
+df -k
+powermt display
+vxdg list
+bash
+vxdg list
+vxdisk -o alldgs list
+vxdctl enable
+vxdisk -o alldgs list
+df -k
+for i in `cat`;do umount -f $i;done
+vxdg list
+vxdg deport arswbu_dg
+vxdg import arswbu_dg
+vxdg deport deamdctm_dg
+vxdg import deamdctm_dg
+vxdg deport gqed_dg
+vxdg import gqed_dg
+vxdg deport hfweb_dg
+vxdg import hfweb_dg
+vxdg deport mfrtd_dg
+vxdg import mfrtd_dg
+vxdg deport nycrfd_dg
+vxdg import nycrfd_dg
+vxdg deport nygdstd_dg
+vxdg import nygdstd_dg
+vxdg deport websvcs_dg
+vxdg import websvcs_dg
+vxdg list
+cat /etc/vfstab | egrep 'gqed_dg|deamdctm_dg|arswbu_dg|mfrtd_dg|hfweb_dg|nycrfd_dg|nygdstd_dg|websvcs_dg'
+mount -a
+df -h
+vinfo -pg websvcs_dg
+vxdg list
+for i in `cat | awk '{print $1}'`;do echo $i;done
+for i in `cat`;do vxvol -g $i startall;done
+vxinfo -pg websvcs_dg
+mountall
+df -k
+
+
+###############################################################################################################
+
+bash-3.00$ hclssh -q nygamwxd2
+
+Hostname       : nygamwxd2.us.db.com
+HCL Access     : Yes - In Scope
+Classification : Active
+Server Purpose : DEV
+Asset Location : /DB LOCATION/AMERICAS/USA/PARSIPPANY/2 GATEHALL DRIVE/3RD FLOOR/DC/CH127/
+Support Group  : NYC_UNIX_ES US UNIX SUPPORT
+Brand          : SUN MICROSYSTEMS
+Model          : E4500
+Serial Number  : 724M9544
+OS             : SOLARIS SPARC 8
+Console        : conserver.us.db.com
+Host Flag      : PHYSICAL
+Business Area  : ASSET MANAGEMENT IT US
+
+bash-3.00$ hclssh -ser nygamwxd2
+Keystroke logging enabled for this session
+
+
+
+Use email address: mohd.ali|HCL.comEnter PASSCODE:
+                                                  Last login: Thu Jul 29 05:26:46 2010 from ny1sapghs1.us.d
+Access to this computer is prohibited unless authorised
+Accessing programs or data unrelated to your job is prohibited
+If you are not authorised, disconnect now.
+You have new mail.
+ROOT@nygamwxd2:/root # TMOUT=0
+ROOT@nygamwxd2:/root #
+ROOT@nygamwxd2:/root # vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    disabled             1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  disabled             1123106656.1695.nygamwxd2
+gqed_dg      disabled             1008604929.1671.hbamwxd1
+hfweb_dg     disabled             1015520948.1778.hbamwxd1
+mfrtd_dg     disabled             1004639634.1276.hbamwxd1
+nycrfd_dg    disabled             1138043359.2029.nygamwxd2
+nygdstd_dg   disabled             1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   disabled             1007996210.1534.hbamwxd1
+ROOT@nygamwxd2:/root # df -k
+Filesystem            kbytes    used   avail capacity  Mounted on
+/dev/vx/dsk/bootdg/rootvol
+                     8258597 3339581 4836431    41%    /
+/proc                      0       0       0     0%    /proc
+fd                         0       0       0     0%    /dev/fd
+mnttab                     0       0       0     0%    /etc/mnttab
+swap                 12742320      32 12742288     1%    /var/run
+dmpfs                12742272       0 12742272     0%    /dev/vx/dmp
+dmpfs                12742256       0 12742256     0%    /dev/vx/rdmp
+swap                  524288    9552  514736     2%    /tmp
+/dev/vx/dsk/bootdg/data_fs
+                      262144    1174  244663     1%    /data
+/dev/vx/dsk/bootdg/clarity
+                      512000    1621  478872     1%    /opt/clarity
+/dev/vx/dsk/bootdg/local_fs
+                     2097152   17190 1950033     1%    /usr/local
+/dev/vx/dsk/bootdg/op_clarity
+                     1536000  452963 1015395    31%    /opt/dbtools
+/dev/vx/dsk/bootdg/home_fs
+                     15360000 14966968  368546    98%    /export/home
+build:/export/DBbuild
+                     459276288 452862564 6012909    99%    /tmp/dbpatch.mnt
+/dev/vx/dsk/database_dg/lv_oracle
+                     10485760 7607549 2702867    74%    /data/oracle
+/dev/vx/dsk/database_dg/lv_foglight
+                      729088  729088       0   100%    /opt/foglight
+/dev/vx/dsk/database_dg/lv_sybase
+                     4194304 1135878 2867314    29%    /data/sybase
+/dev/vx/dsk/database_dg/lv_oracle_sol26
+                     3145728 1641120 1410625    54%    /db/pub/infra/oracle
+df: cannot statvfs /data/tpram: I/O error
+df: cannot statvfs /data/gqe: I/O error
+df: cannot statvfs /data/ormfrtd: I/O error
+df: cannot statvfs /data/crgftp: I/O error
+df: cannot statvfs /data/gqebkp: I/O error
+df: cannot statvfs /data/debatch: I/O error
+df: cannot statvfs /data/crftp: I/O error
+df: cannot statvfs /data/orgqed: I/O error
+df: cannot statvfs /data/orarswbu: I/O error
+df: cannot statvfs /data/crbatch: I/O error
+df: cannot statvfs /data/mfrtbatch: I/O error
+df: cannot statvfs /data/hfweb: I/O error
+df: cannot statvfs /data/deamdctm: I/O error
+df: cannot statvfs /data/orgqed/admin: I/O error
+df: cannot statvfs /data/orarswbu/redo2: I/O error
+df: cannot statvfs /data/orarswbu/admin: I/O error
+df: cannot statvfs /data/ormfrtd/admin: I/O error
+df: cannot statvfs /data/tpram/websvcs: I/O error
+df: cannot statvfs /data/orarswbu/data1: I/O error
+df: cannot statvfs /data/ormfrtd/backup: I/O error
+df: cannot statvfs /data/orarswbu/redo1: I/O error
+df: cannot statvfs /data/orarswbu/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo2: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3: I/O error
+df: cannot statvfs /data/tpram/home: I/O error
+df: cannot statvfs /data/orarswbu/data2: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1: I/O error
+df: cannot statvfs /data/ormfrtd/data1: I/O error
+df: cannot statvfs /data/orgqed/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo1: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo1: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo2: I/O error
+df: cannot statvfs /data/orgqed/oradata/data01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data03: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/data01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/admin: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/data01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/backup: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/admin: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/backup: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/temp01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/data01: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/backup: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/admin: I/O error
+
+ROOT@nygamwxd2:/root # powermt display
+Symmetrix logical device count=42
+CLARiiON logical device count=0
+Hitachi logical device count=0
+Invista logical device count=0
+HP xp logical device count=0
+Ess logical device count=0
+HP HSx logical device count=0
+==============================================================================
+----- Host Bus Adapters ---------  ------ I/O Paths -----  ------ Stats ------
+###  HW Path                       Summary   Total   Dead  IO/Sec Q-IOs Errors
+==============================================================================
+2304 sbus@3,0/lpfs@0,0             optimal      42      0       -     0      0
+2305 sbus@7,0/lpfs@0,0             failed       42     42       -     0     84
+
+
+ROOT@nygamwxd2:/root # vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    disabled             1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  disabled             1123106656.1695.nygamwxd2
+gqed_dg      disabled             1008604929.1671.hbamwxd1
+hfweb_dg     disabled             1015520948.1778.hbamwxd1
+mfrtd_dg     disabled             1004639634.1276.hbamwxd1
+nycrfd_dg    disabled             1138043359.2029.nygamwxd2
+nygdstd_dg   disabled             1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   disabled             1007996210.1534.hbamwxd1
+
+ROOT@nygamwxd2:/root # bash
+bash-2.03# vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    disabled             1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  disabled             1123106656.1695.nygamwxd2
+gqed_dg      disabled             1008604929.1671.hbamwxd1
+hfweb_dg     disabled             1015520948.1778.hbamwxd1
+mfrtd_dg     disabled             1004639634.1276.hbamwxd1
+nycrfd_dg    disabled             1138043359.2029.nygamwxd2
+nygdstd_dg   disabled             1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   disabled             1007996210.1534.hbamwxd1
+bash-2.03# vxdisk -o alldgs list
+DEVICE       TYPE            DISK         GROUP        STATUS
+c0t2d0s2     auto:sliced     rootdisk     rootdg       online
+c0t3d0s2     auto:sliced     database_d01  database_dg  online
+c1t2d0s2     auto:sliced     rootmirror   rootdg       online
+c1t3d0s2     auto:sliced     database_d01M  database_dg  online
+c7t17d1s2    auto:sliced     websvcs04    websvcs_dg   online dgdisabled
+c7t17d2s2    auto:sliced     websvcs05    websvcs_dg   online dgdisabled
+c7t17d3s2    auto:sliced     deamdct01    deamdctm_dg  online dgdisabled
+c7t17d4s2    auto:sliced     deamdct02    deamdctm_dg  online dgdisabled
+c7t17d5s2    auto:sliced     nygdstd01    nygdstd_dg   online dgdisabled
+c7t17d6s2    auto:sliced     nycrfd_01    nycrfd_dg    online dgdisabled
+c7t17d7s2    auto:sliced     mfrtd_d01    mfrtd_dg     online dgdisabled
+c7t17d8s2    auto:sliced     mfrtd_d02    mfrtd_dg     online dgdisabled
+c7t17d9s2    auto:sliced     mfrtd_d03    mfrtd_dg     online dgdisabled
+c7t17d10s2   auto:sliced     mfrtd_d04    mfrtd_dg     online dgdisabled
+c7t17d11s2   auto:sliced     mfrtd_d05    mfrtd_dg     online dgdisabled
+c7t17d12s2   auto:sliced     nycrfd_02    nycrfd_dg    online dgdisabled
+c7t17d13s2   auto:sliced     websvcs01    websvcs_dg   online dgdisabled
+c7t17d14s2   auto:sliced     websvcs02    websvcs_dg   online dgdisabled
+c7t17d15s2   auto:sliced     websvcs03    websvcs_dg   online dgdisabled
+c7t17d16s2   auto:sliced     gqed_dg01    gqed_dg      online dgdisabled
+c7t17d17s2   auto:sliced     gqed_dg02    gqed_dg      online dgdisabled
+c7t17d18s2   auto:sliced     spare_d01    spare_dg     online
+c7t17d19s2   auto:sliced     spare_d03    spare_dg     online
+c7t17d20s2   auto:sliced     spare_d04    spare_dg     online
+c7t17d21s2   auto:sliced     spare_d05    spare_dg     online
+c7t17d22s2   auto:sliced     amweb_d01    amweb_dg     online
+c7t17d23s2   auto:sliced     arswbu01     arswbu_dg    online dgdisabled
+c7t17d24s2   auto:sliced     nycrfd_03    nycrfd_dg    online dgdisabled
+c7t17d25s2   auto:sliced     gqed_dg06    gqed_dg      online dgdisabled
+c7t17d26s2   auto:sliced     gqed_dg07    gqed_dg      online dgdisabled
+c7t17d27s2   auto:sliced     nycrfd_04    nycrfd_dg    online dgdisabled
+c7t17d28s2   auto:sliced     hfweb_d01    hfweb_dg     online dgdisabled
+c7t17d29s2   auto:sliced     spare_d02    spare_dg     online
+c7t17d30s2   auto:sliced     arswbu02     arswbu_dg    online dgdisabled
+c7t17d31s2   auto:sliced     spare_d18    spare_dg     online
+c7t17d32s2   auto:sliced     gqed_dg03    gqed_dg      online dgdisabled
+c7t17d33s2   auto:sliced     gqed_dg04    gqed_dg      online dgdisabled
+c7t17d34s2   auto:sliced     gqed_dg05    gqed_dg      online dgdisabled
+c7t17d35s2   auto:sliced     spare_d11    spare_dg     online
+c7t17d36s2   auto:sliced     spare_d12    spare_dg     online
+c7t17d37s2   auto:sliced     hfweb_d02    hfweb_dg     online dgdisabled
+c7t17d38s2   auto:sliced     arswbu_01    arswbu_dg    online dgdisabled
+c7t17d39s2   auto:sliced     arswbu_02    arswbu_dg    online dgdisabled
+c7t17d40s2   auto:sliced     arswbu_03    arswbu_dg    online dgdisabled
+c7t17d41s2   auto:sliced     arswbu_04    arswbu_dg    online dgdisabled
+c7t17d42s2   auto:sliced     pace_dg01    pace_dg      online
+bash-2.03# vxdctl enable
+bash-2.03# vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    disabled             1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  disabled             1123106656.1695.nygamwxd2
+gqed_dg      disabled             1008604929.1671.hbamwxd1
+hfweb_dg     disabled             1015520948.1778.hbamwxd1
+mfrtd_dg     disabled             1004639634.1276.hbamwxd1
+nycrfd_dg    disabled             1138043359.2029.nygamwxd2
+nygdstd_dg   disabled             1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   disabled             1007996210.1534.hbamwxd1
+
+bash-2.03# vxdg deport arswbu_dg
+VxVM vxdg ERROR V-5-1-584 Disk group arswbu_dg: Some volumes in the disk group are in use
+
+bash-2.03# vxdisk list |grep -i arswbu_dg
+c7t17d23s2   auto:sliced     arswbu01     arswbu_dg    online dgdisabled
+c7t17d30s2   auto:sliced     arswbu02     arswbu_dg    online dgdisabled
+c7t17d38s2   auto:sliced     arswbu_01    arswbu_dg    online dgdisabled
+c7t17d39s2   auto:sliced     arswbu_02    arswbu_dg    online dgdisabled
+c7t17d40s2   auto:sliced     arswbu_03    arswbu_dg    online dgdisabled
+c7t17d41s2   auto:sliced     arswbu_04    arswbu_dg    online dgdisabled
+bash-2.03# df -k | grep arswbu_dg
+df: cannot statvfs /data/tpram: I/O error
+df: cannot statvfs /data/gqe: I/O error
+df: cannot statvfs /data/ormfrtd: I/O error
+df: cannot statvfs /data/crgftp: I/O error
+df: cannot statvfs /data/gqebkp: I/O error
+df: cannot statvfs /data/debatch: I/O error
+df: cannot statvfs /data/crftp: I/O error
+df: cannot statvfs /data/orgqed: I/O error
+df: cannot statvfs /data/orarswbu: I/O error
+df: cannot statvfs /data/crbatch: I/O error
+df: cannot statvfs /data/mfrtbatch: I/O error
+df: cannot statvfs /data/hfweb: I/O error
+df: cannot statvfs /data/deamdctm: I/O error
+df: cannot statvfs /data/orgqed/admin: I/O error
+df: cannot statvfs /data/orarswbu/redo2: I/O error
+df: cannot statvfs /data/orarswbu/admin: I/O error
+df: cannot statvfs /data/ormfrtd/admin: I/O error
+df: cannot statvfs /data/tpram/websvcs: I/O error
+df: cannot statvfs /data/orarswbu/data1: I/O error
+df: cannot statvfs /data/ormfrtd/backup: I/O error
+df: cannot statvfs /data/orarswbu/redo1: I/O error
+df: cannot statvfs /data/orarswbu/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo2: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3: I/O error
+df: cannot statvfs /data/tpram/home: I/O error
+df: cannot statvfs /data/orarswbu/data2: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1: I/O error
+df: cannot statvfs /data/ormfrtd/data1: I/O error
+df: cannot statvfs /data/orgqed/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo1: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo1: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo2: I/O error
+df: cannot statvfs /data/orgqed/oradata/data01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data03: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/data01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/admin: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/data01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/backup: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/admin: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/backup: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/temp01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/data01: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/backup: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/admin: I/O error
+bash-2.03# df -k
+Filesystem            kbytes    used   avail capacity  Mounted on
+/dev/vx/dsk/bootdg/rootvol
+                     8258597 3340931 4835081    41%    /
+/proc                      0       0       0     0%    /proc
+fd                         0       0       0     0%    /dev/fd
+mnttab                     0       0       0     0%    /etc/mnttab
+swap                 12843976      32 12843944     1%    /var/run
+dmpfs                12843928       0 12843928     0%    /dev/vx/dmp
+dmpfs                12843912       0 12843912     0%    /dev/vx/rdmp
+swap                  524288    9552  514736     2%    /tmp
+/dev/vx/dsk/bootdg/data_fs
+                      262144    1174  244663     1%    /data
+/dev/vx/dsk/bootdg/clarity
+                      512000    1621  478872     1%    /opt/clarity
+/dev/vx/dsk/bootdg/local_fs
+                     2097152   17190 1950033     1%    /usr/local
+/dev/vx/dsk/bootdg/op_clarity
+                     1536000  452905 1015449    31%    /opt/dbtools
+/dev/vx/dsk/bootdg/home_fs
+                     15360000 14966968  368546    98%    /export/home
+build:/export/DBbuild
+                     459276288 452862564 6012909    99%    /tmp/dbpatch.mnt
+/dev/vx/dsk/database_dg/lv_oracle
+                     10485760 7607549 2702867    74%    /data/oracle
+/dev/vx/dsk/database_dg/lv_foglight
+                      729088  729088       0   100%    /opt/foglight
+/dev/vx/dsk/database_dg/lv_sybase
+                     4194304 1135878 2867314    29%    /data/sybase
+/dev/vx/dsk/database_dg/lv_oracle_sol26
+                     3145728 1641120 1410625    54%    /db/pub/infra/oracle
+df: cannot statvfs /data/tpram: I/O error
+df: cannot statvfs /data/gqe: I/O error
+df: cannot statvfs /data/ormfrtd: I/O error
+df: cannot statvfs /data/crgftp: I/O error
+df: cannot statvfs /data/gqebkp: I/O error
+df: cannot statvfs /data/debatch: I/O error
+df: cannot statvfs /data/crftp: I/O error
+df: cannot statvfs /data/orgqed: I/O error
+df: cannot statvfs /data/orarswbu: I/O error
+df: cannot statvfs /data/crbatch: I/O error
+df: cannot statvfs /data/mfrtbatch: I/O error
+df: cannot statvfs /data/hfweb: I/O error
+df: cannot statvfs /data/deamdctm: I/O error
+df: cannot statvfs /data/orgqed/admin: I/O error
+df: cannot statvfs /data/orarswbu/redo2: I/O error
+df: cannot statvfs /data/orarswbu/admin: I/O error
+df: cannot statvfs /data/ormfrtd/admin: I/O error
+df: cannot statvfs /data/tpram/websvcs: I/O error
+df: cannot statvfs /data/orarswbu/data1: I/O error
+df: cannot statvfs /data/ormfrtd/backup: I/O error
+df: cannot statvfs /data/orarswbu/redo1: I/O error
+df: cannot statvfs /data/orarswbu/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo2: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3: I/O error
+df: cannot statvfs /data/tpram/home: I/O error
+df: cannot statvfs /data/orarswbu/data2: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1: I/O error
+df: cannot statvfs /data/ormfrtd/data1: I/O error
+df: cannot statvfs /data/orgqed/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo1: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo1: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo2: I/O error
+df: cannot statvfs /data/orgqed/oradata/data01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data03: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/data01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/admin: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/data01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/backup: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/admin: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/backup: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/temp01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/data01: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/backup: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/admin: I/O error
+
+
+bash-2.03# for i in `cat| awk '{print$4}' |sed 's/\://g'`;do echo $i;done
+df: cannot statvfs /data/tpram: I/O error
+df: cannot statvfs /data/gqe: I/O error
+df: cannot statvfs /data/ormfrtd: I/O error
+df: cannot statvfs /data/crgftp: I/O error
+df: cannot statvfs /data/gqebkp: I/O error
+df: cannot statvfs /data/debatch: I/O error
+df: cannot statvfs /data/crftp: I/O error
+df: cannot statvfs /data/orgqed: I/O error
+df: cannot statvfs /data/orarswbu: I/O error
+df: cannot statvfs /data/crbatch: I/O error
+df: cannot statvfs /data/mfrtbatch: I/O error
+df: cannot statvfs /data/hfweb: I/O error
+df: cannot statvfs /data/deamdctm: I/O error
+df: cannot statvfs /data/orgqed/admin: I/O error
+df: cannot statvfs /data/orarswbu/redo2: I/O error
+df: cannot statvfs /data/orarswbu/admin: I/O error
+df: cannot statvfs /data/ormfrtd/admin: I/O error
+df: cannot statvfs /data/tpram/websvcs: I/O error
+df: cannot statvfs /data/orarswbu/data1: I/O error
+df: cannot statvfs /data/ormfrtd/backup: I/O error
+df: cannot statvfs /data/orarswbu/redo1: I/O error
+df: cannot statvfs /data/orarswbu/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo2: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3: I/O error
+df: cannot statvfs /data/tpram/home: I/O error
+df: cannot statvfs /data/orarswbu/data2: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1: I/O error
+df: cannot statvfs /data/ormfrtd/data1: I/O error
+df: cannot statvfs /data/orgqed/backup: I/O error
+df: cannot statvfs /data/ormfrtd/redo1: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo1: I/O error
+df: cannot statvfs /data/orgqed/oradata/redo2: I/O error
+df: cannot statvfs /data/orgqed/oradata/data01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data03: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/data01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/admin: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo01: I/O error
+df: cannot statvfs /data/orgqed/oradata/data02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/data01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/backup: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/redo02: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/admin: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo02: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/backup: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/temp01: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/data01: I/O error
+df: cannot statvfs /data/oracle/NYGDSTD1/temp01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/redo01: I/O error
+df: cannot statvfs /data/oracle/NYARSWU2/backup: I/O error
+df: cannot statvfs /data/oracle/NYCRFFD3/admin: I/O error
+
+
+/data/tpram
+/data/gqe
+/data/ormfrtd
+/data/crgftp
+/data/gqebkp
+/data/debatch
+/data/crftp
+/data/orgqed
+/data/orarswbu
+/data/crbatch
+/data/mfrtbatch
+/data/hfweb
+/data/deamdctm
+/data/orgqed/admin
+/data/orarswbu/redo2
+/data/orarswbu/admin
+/data/ormfrtd/admin
+/data/tpram/websvcs
+/data/orarswbu/data1
+/data/ormfrtd/backup
+/data/orarswbu/redo1
+/data/orarswbu/backup
+/data/ormfrtd/redo2
+/data/oracle/NYCRFFD3
+/data/tpram/home
+/data/orarswbu/data2
+/data/oracle/NYGDSTD1
+/data/ormfrtd/data1
+/data/orgqed/backup
+/data/ormfrtd/redo1
+/data/oracle/NYARSWU2
+/data/orgqed/oradata/redo1
+/data/orgqed/oradata/redo2
+/data/orgqed/oradata/data01
+/data/orgqed/oradata/data03
+/data/oracle/NYGDSTD1/data01
+/data/oracle/NYARSWU2/admin
+/data/oracle/NYGDSTD1/redo01
+/data/orgqed/oradata/data02
+/data/oracle/NYCRFFD3/data01
+/data/oracle/NYCRFFD3/backup
+/data/oracle/NYGDSTD1/redo02
+/data/oracle/NYCRFFD3/redo01
+/data/oracle/NYCRFFD3/redo02
+/data/oracle/NYGDSTD1/admin
+/data/oracle/NYARSWU2/redo02
+/data/oracle/NYGDSTD1/backup
+/data/oracle/NYARSWU2/temp01
+/data/oracle/NYCRFFD3/temp01
+/data/oracle/NYARSWU2/data01
+/data/oracle/NYGDSTD1/temp01
+/data/oracle/NYARSWU2/redo01
+/data/oracle/NYARSWU2/backup
+/data/oracle/NYCRFFD3/admin
+
+bash-2.03# for i in `cat`;do umount -f $i;done
+/data/tpram
+/data/gqe
+/data/ormfrtd
+/data/crgftp
+/data/gqebkp
+/data/debatch
+/data/crftp
+/data/orgqed
+/data/orarswbu
+/data/crbatch
+/data/mfrtbatch
+/data/hfweb
+/data/deamdctm
+/data/orgqed/admin
+/data/orarswbu/redo2
+/data/orarswbu/admin
+/data/ormfrtd/admin
+/data/tpram/websvcs
+/data/orarswbu/data1
+/data/ormfrtd/backup
+/data/orarswbu/redo1
+/data/orarswbu/backup
+/data/ormfrtd/redo2
+/data/oracle/NYCRFFD3
+/data/tpram/home
+/data/orarswbu/data2
+/data/oracle/NYGDSTD1
+/data/ormfrtd/data1
+/data/orgqed/backup
+/data/ormfrtd/redo1
+/data/oracle/NYARSWU2
+/data/orgqed/oradata/redo1
+/data/orgqed/oradata/redo2
+/data/orgqed/oradata/data01
+/data/orgqed/oradata/data03
+/data/oracle/NYGDSTD1/data01
+/data/oracle/NYARSWU2/admin
+/data/oracle/NYGDSTD1/redo01
+/data/orgqed/oradata/data02
+/data/oracle/NYCRFFD3/data01
+/data/oracle/NYCRFFD3/backup
+/data/oracle/NYGDSTD1/redo02
+/data/oracle/NYCRFFD3/redo01
+/data/oracle/NYCRFFD3/redo02
+/data/oracle/NYGDSTD1/admin
+/data/oracle/NYARSWU2/redo02
+/data/oracle/NYGDSTD1/backup
+/data/oracle/NYARSWU2/temp01
+/data/oracle/NYCRFFD3/temp01
+/data/oracle/NYARSWU2/data01
+/data/oracle/NYGDSTD1/temp01
+/data/oracle/NYARSWU2/redo01
+/data/oracle/NYARSWU2/backup
+/data/oracle/NYCRFFD3/admin
+
+
+
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orgqed/admin: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orarswbu/redo2: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orarswbu/admin: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/ormfrtd/admin: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/tpram/websvcs: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orarswbu/data1: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/ormfrtd/backup: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orarswbu/redo1: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orarswbu/backup: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/ormfrtd/redo2: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/tpram/home: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orarswbu/data2: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/ormfrtd/data1: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orgqed/backup: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/ormfrtd/redo1: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orgqed/oradata/redo1: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orgqed/oradata/redo2: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orgqed/oradata/data01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orgqed/oradata/data03: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYGDSTD1/data01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYARSWU2/admin: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYGDSTD1/redo01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/orgqed/oradata/data02: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYCRFFD3/data01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYCRFFD3/backup: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYGDSTD1/redo02: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYCRFFD3/redo01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYCRFFD3/redo02: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYGDSTD1/admin: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYARSWU2/redo02: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYGDSTD1/backup: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYARSWU2/temp01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYCRFFD3/temp01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYARSWU2/data01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYGDSTD1/temp01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYARSWU2/redo01: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYARSWU2/backup: No such file or directory
+UX:vxfs umount: WARNING: V-3-21704: cannot set force unmount for /data/oracle/NYCRFFD3/admin: No such file or directory
+
+ROOT@nygamwxd2:/root # bash
+bash-2.03# df -k
+Filesystem            kbytes    used   avail capacity  Mounted on
+/dev/vx/dsk/bootdg/rootvol
+                     8258597 3341640 4834372    41%    /
+/proc                      0       0       0     0%    /proc
+fd                         0       0       0     0%    /dev/fd
+mnttab                     0       0       0     0%    /etc/mnttab
+swap                 12833776      32 12833744     1%    /var/run
+dmpfs                12833728       0 12833728     0%    /dev/vx/dmp
+dmpfs                12833712       0 12833712     0%    /dev/vx/rdmp
+swap                  524288    9568  514720     2%    /tmp
+/dev/vx/dsk/bootdg/data_fs
+                      262144    1174  244663     1%    /data
+/dev/vx/dsk/bootdg/clarity
+                      512000    1621  478872     1%    /opt/clarity
+/dev/vx/dsk/bootdg/local_fs
+                     2097152   17190 1950033     1%    /usr/local
+/dev/vx/dsk/bootdg/op_clarity
+                     1536000  453825 1014587    31%    /opt/dbtools
+/dev/vx/dsk/bootdg/home_fs
+                     15360000 14966968  368546    98%    /export/home
+build:/export/DBbuild
+                     459276288 452862564 6012909    99%    /tmp/dbpatch.mnt
+/dev/vx/dsk/database_dg/lv_oracle
+                     10485760 7607549 2702867    74%    /data/oracle
+/dev/vx/dsk/database_dg/lv_foglight
+                      729088  729088       0   100%    /opt/foglight
+/dev/vx/dsk/database_dg/lv_sybase
+                     4194304 1135878 2867314    29%    /data/sybase
+/dev/vx/dsk/database_dg/lv_oracle_sol26
+                     3145728 1641120 1410625    54%    /db/pub/infra/oracle
+bash-2.03# vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    disabled             1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  disabled             1123106656.1695.nygamwxd2
+gqed_dg      disabled             1008604929.1671.hbamwxd1
+hfweb_dg     disabled             1015520948.1778.hbamwxd1
+mfrtd_dg     disabled             1004639634.1276.hbamwxd1
+nycrfd_dg    disabled             1138043359.2029.nygamwxd2
+nygdstd_dg   disabled             1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   disabled             1007996210.1534.hbamwxd1
+bash-2.03# vxdisk -o alldgs list
+DEVICE       TYPE            DISK         GROUP        STATUS
+c0t2d0s2     auto:sliced     rootdisk     rootdg       online
+c0t3d0s2     auto:sliced     database_d01  database_dg  online
+c1t2d0s2     auto:sliced     rootmirror   rootdg       online
+c1t3d0s2     auto:sliced     database_d01M  database_dg  online
+c7t17d1s2    auto:sliced     websvcs04    websvcs_dg   online dgdisabled
+c7t17d2s2    auto:sliced     websvcs05    websvcs_dg   online dgdisabled
+c7t17d3s2    auto:sliced     deamdct01    deamdctm_dg  online dgdisabled
+c7t17d4s2    auto:sliced     deamdct02    deamdctm_dg  online dgdisabled
+c7t17d5s2    auto:sliced     nygdstd01    nygdstd_dg   online dgdisabled
+c7t17d6s2    auto:sliced     nycrfd_01    nycrfd_dg    online dgdisabled
+c7t17d7s2    auto:sliced     mfrtd_d01    mfrtd_dg     online dgdisabled
+c7t17d8s2    auto:sliced     mfrtd_d02    mfrtd_dg     online dgdisabled
+c7t17d9s2    auto:sliced     mfrtd_d03    mfrtd_dg     online dgdisabled
+c7t17d10s2   auto:sliced     mfrtd_d04    mfrtd_dg     online dgdisabled
+c7t17d11s2   auto:sliced     mfrtd_d05    mfrtd_dg     online dgdisabled
+c7t17d12s2   auto:sliced     nycrfd_02    nycrfd_dg    online dgdisabled
+c7t17d13s2   auto:sliced     websvcs01    websvcs_dg   online dgdisabled
+c7t17d14s2   auto:sliced     websvcs02    websvcs_dg   online dgdisabled
+c7t17d15s2   auto:sliced     websvcs03    websvcs_dg   online dgdisabled
+c7t17d16s2   auto:sliced     gqed_dg01    gqed_dg      online dgdisabled
+c7t17d17s2   auto:sliced     gqed_dg02    gqed_dg      online dgdisabled
+c7t17d18s2   auto:sliced     spare_d01    spare_dg     online
+c7t17d19s2   auto:sliced     spare_d03    spare_dg     online
+c7t17d20s2   auto:sliced     spare_d04    spare_dg     online
+c7t17d21s2   auto:sliced     spare_d05    spare_dg     online
+c7t17d22s2   auto:sliced     amweb_d01    amweb_dg     online
+c7t17d23s2   auto:sliced     arswbu01     arswbu_dg    online dgdisabled
+c7t17d24s2   auto:sliced     nycrfd_03    nycrfd_dg    online dgdisabled
+c7t17d25s2   auto:sliced     gqed_dg06    gqed_dg      online dgdisabled
+c7t17d26s2   auto:sliced     gqed_dg07    gqed_dg      online dgdisabled
+c7t17d27s2   auto:sliced     nycrfd_04    nycrfd_dg    online dgdisabled
+c7t17d28s2   auto:sliced     hfweb_d01    hfweb_dg     online dgdisabled
+c7t17d29s2   auto:sliced     spare_d02    spare_dg     online
+c7t17d30s2   auto:sliced     arswbu02     arswbu_dg    online dgdisabled
+c7t17d31s2   auto:sliced     spare_d18    spare_dg     online
+c7t17d32s2   auto:sliced     gqed_dg03    gqed_dg      online dgdisabled
+c7t17d33s2   auto:sliced     gqed_dg04    gqed_dg      online dgdisabled
+c7t17d34s2   auto:sliced     gqed_dg05    gqed_dg      online dgdisabled
+c7t17d35s2   auto:sliced     spare_d11    spare_dg     online
+c7t17d36s2   auto:sliced     spare_d12    spare_dg     online
+c7t17d37s2   auto:sliced     hfweb_d02    hfweb_dg     online dgdisabled
+c7t17d38s2   auto:sliced     arswbu_01    arswbu_dg    online dgdisabled
+c7t17d39s2   auto:sliced     arswbu_02    arswbu_dg    online dgdisabled
+c7t17d40s2   auto:sliced     arswbu_03    arswbu_dg    online dgdisabled
+c7t17d41s2   auto:sliced     arswbu_04    arswbu_dg    online dgdisabled
+c7t17d42s2   auto:sliced     pace_dg01    pace_dg      online
+bash-2.03# vxdctl enable
+bash-2.03# vxdisk -o alldgs list
+DEVICE       TYPE            DISK         GROUP        STATUS
+c0t2d0s2     auto:sliced     rootdisk     rootdg       online
+c0t3d0s2     auto:sliced     database_d01  database_dg  online
+c1t2d0s2     auto:sliced     rootmirror   rootdg       online
+c1t3d0s2     auto:sliced     database_d01M  database_dg  online
+c7t17d1s2    auto:sliced     websvcs04    websvcs_dg   online dgdisabled
+c7t17d2s2    auto:sliced     websvcs05    websvcs_dg   online dgdisabled
+c7t17d3s2    auto:sliced     deamdct01    deamdctm_dg  online dgdisabled
+c7t17d4s2    auto:sliced     deamdct02    deamdctm_dg  online dgdisabled
+c7t17d5s2    auto:sliced     nygdstd01    nygdstd_dg   online dgdisabled
+c7t17d6s2    auto:sliced     nycrfd_01    nycrfd_dg    online dgdisabled
+c7t17d7s2    auto:sliced     mfrtd_d01    mfrtd_dg     online dgdisabled
+c7t17d8s2    auto:sliced     mfrtd_d02    mfrtd_dg     online dgdisabled
+c7t17d9s2    auto:sliced     mfrtd_d03    mfrtd_dg     online dgdisabled
+c7t17d10s2   auto:sliced     mfrtd_d04    mfrtd_dg     online dgdisabled
+c7t17d11s2   auto:sliced     mfrtd_d05    mfrtd_dg     online dgdisabled
+c7t17d12s2   auto:sliced     nycrfd_02    nycrfd_dg    online dgdisabled
+c7t17d13s2   auto:sliced     websvcs01    websvcs_dg   online dgdisabled
+c7t17d14s2   auto:sliced     websvcs02    websvcs_dg   online dgdisabled
+c7t17d15s2   auto:sliced     websvcs03    websvcs_dg   online dgdisabled
+c7t17d16s2   auto:sliced     gqed_dg01    gqed_dg      online dgdisabled
+c7t17d17s2   auto:sliced     gqed_dg02    gqed_dg      online dgdisabled
+c7t17d18s2   auto:sliced     spare_d01    spare_dg     online
+c7t17d19s2   auto:sliced     spare_d03    spare_dg     online
+c7t17d20s2   auto:sliced     spare_d04    spare_dg     online
+c7t17d21s2   auto:sliced     spare_d05    spare_dg     online
+c7t17d22s2   auto:sliced     amweb_d01    amweb_dg     online
+c7t17d23s2   auto:sliced     arswbu01     arswbu_dg    online dgdisabled
+c7t17d24s2   auto:sliced     nycrfd_03    nycrfd_dg    online dgdisabled
+c7t17d25s2   auto:sliced     gqed_dg06    gqed_dg      online dgdisabled
+c7t17d26s2   auto:sliced     gqed_dg07    gqed_dg      online dgdisabled
+c7t17d27s2   auto:sliced     nycrfd_04    nycrfd_dg    online dgdisabled
+c7t17d28s2   auto:sliced     hfweb_d01    hfweb_dg     online dgdisabled
+c7t17d29s2   auto:sliced     spare_d02    spare_dg     online
+c7t17d30s2   auto:sliced     arswbu02     arswbu_dg    online dgdisabled
+c7t17d31s2   auto:sliced     spare_d18    spare_dg     online
+c7t17d32s2   auto:sliced     gqed_dg03    gqed_dg      online dgdisabled
+c7t17d33s2   auto:sliced     gqed_dg04    gqed_dg      online dgdisabled
+c7t17d34s2   auto:sliced     gqed_dg05    gqed_dg      online dgdisabled
+c7t17d35s2   auto:sliced     spare_d11    spare_dg     online
+c7t17d36s2   auto:sliced     spare_d12    spare_dg     online
+c7t17d37s2   auto:sliced     hfweb_d02    hfweb_dg     online dgdisabled
+c7t17d38s2   auto:sliced     arswbu_01    arswbu_dg    online dgdisabled
+c7t17d39s2   auto:sliced     arswbu_02    arswbu_dg    online dgdisabled
+c7t17d40s2   auto:sliced     arswbu_03    arswbu_dg    online dgdisabled
+c7t17d41s2   auto:sliced     arswbu_04    arswbu_dg    online dgdisabled
+c7t17d42s2   auto:sliced     pace_dg01    pace_dg      online
+bash-2.03# vxdg deport arswbu_dg
+bash-2.03# vxdg import arswbu_dg
+bash-2.03# vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    enabled              1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  disabled             1123106656.1695.nygamwxd2
+gqed_dg      disabled             1008604929.1671.hbamwxd1
+hfweb_dg     disabled             1015520948.1778.hbamwxd1
+mfrtd_dg     disabled             1004639634.1276.hbamwxd1
+nycrfd_dg    disabled             1138043359.2029.nygamwxd2
+nygdstd_dg   disabled             1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   disabled             1007996210.1534.hbamwxd1
+bash-2.03# vxdg deport deamdctm_dg
+bash-2.03# vxdg import deamdctm_dg
+bash-2.03# vxdg deport gqed_dg
+bash-2.03# vxdg import gqed_dg
+bash-2.03# vxdg deport hfweb_dg
+bash-2.03# vxdg import hfweb_dg
+bash-2.03# vxdg deport mfrtd_dg
+bash-2.03# vxdg import mfrtd_dg
+bash-2.03# vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    enabled              1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  enabled              1123106656.1695.nygamwxd2
+gqed_dg      enabled              1008604929.1671.hbamwxd1
+hfweb_dg     enabled              1015520948.1778.hbamwxd1
+mfrtd_dg     enabled              1004639634.1276.hbamwxd1
+nycrfd_dg    disabled             1138043359.2029.nygamwxd2
+nygdstd_dg   disabled             1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   disabled             1007996210.1534.hbamwxd1
+bash-2.03# vxdg deport nycrfd_dg
+bash-2.03# vxdg import nycrfd_dg
+bash-2.03# vxdg deport nygdstd_dg
+bash-2.03# vxdg import nygdstd_dg
+bash-2.03# vxdg deport websvcs_dg
+bash-2.03# vxdg import websvcs_dg
+bash-2.03# vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    enabled              1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  enabled              1123106656.1695.nygamwxd2
+gqed_dg      enabled              1008604929.1671.hbamwxd1
+hfweb_dg     enabled              1015520948.1778.hbamwxd1
+mfrtd_dg     enabled              1004639634.1276.hbamwxd1
+nycrfd_dg    enabled              1138043359.2029.nygamwxd2
+nygdstd_dg   enabled              1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   enabled              1007996210.1534.hbamwxd1
+
+bash-2.03# cat /etc/vfstab | egrep 'gqed_dg|deamdctm_dg|arswbu_dg|mfrtd_dg|hfweb_dg|nycrfd_dg|nygdstd_dg|websvcs_dg'
+/dev/vx/dsk/websvcs_dg/lv_tpram         /dev/vx/rdsk/websvcs_dg/lv_tpram        /data/tpram             vxfs 4 yes -
+/dev/vx/dsk/websvcs_dg/lv_home          /dev/vx/rdsk/websvcs_dg/lv_home         /data/tpram/home        vxfs 4 yes -
+/dev/vx/dsk/websvcs_dg/lv_websvcs       /dev/vx/rdsk/websvcs_dg/lv_websvcs      /data/tpram/websvcs     vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_gqed /dev/vx/rdsk/gqed_dg/lv_gqed /data/gqe vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_gqedbkp /dev/vx/rdsk/gqed_dg/lv_gqedbkp /data/gqebkp vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed /dev/vx/rdsk/gqed_dg/lv_orgqed /data/orgqed vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed_data01 /dev/vx/rdsk/gqed_dg/lv_orgqed_data01 /data/orgqed/oradata/data01 vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed_data02 /dev/vx/rdsk/gqed_dg/lv_orgqed_data02 /data/orgqed/oradata/data02 vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed_data03 /dev/vx/rdsk/gqed_dg/lv_orgqed_data03 /data/orgqed/oradata/data03 vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed_redo1 /dev/vx/rdsk/gqed_dg/lv_orgqed_redo1 /data/orgqed/oradata/redo1 vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed_redo2 /dev/vx/rdsk/gqed_dg/lv_orgqed_redo2 /data/orgqed/oradata/redo2 vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed_admin /dev/vx/rdsk/gqed_dg/lv_orgqed_admin /data/orgqed/admin vxfs 4 yes -
+/dev/vx/dsk/gqed_dg/lv_orgqed_backup /dev/vx/rdsk/gqed_dg/lv_orgqed_backup /data/orgqed/backup vxfs 4 yes -
+/dev/vx/dsk/hfweb_dg/lv_hfweb /dev/vx/rdsk/hfweb_dg/lv_hfweb /data/hfweb vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_arswbu /dev/vx/rdsk/arswbu_dg/lv_arswbu /data/orarswbu vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_arswbu_admin /dev/vx/rdsk/arswbu_dg/lv_arswbu_admin    /data/orarswbu/admin vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_arswbu_redo1 /dev/vx/rdsk/arswbu_dg/lv_arswbu_redo1    /data/orarswbu/redo1 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_arswbu_redo2 /dev/vx/rdsk/arswbu_dg/lv_arswbu_redo2    /data/orarswbu/redo2 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_arswbu_data1 /dev/vx/rdsk/arswbu_dg/lv_arswbu_data1    /data/orarswbu/data1 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_arswbu_data2 /dev/vx/rdsk/arswbu_dg/lv_arswbu_data2    /data/orarswbu/data2 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_arswbu_backup /dev/vx/rdsk/arswbu_dg/lv_arswbu_backup  /data/orarswbu/backup vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2 /dev/vx/rdsk/arswbu_dg/lv_NYARSWU2 /data/oracle/NYARSWU2 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_admin /dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_admin /data/oracle/NYARSWU2/admin vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_redo01 /dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_redo01 /data/oracle/NYARSWU2/redo01 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_redo02 /dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_redo02 /data/oracle/NYARSWU2/redo02 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_data01 /dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_data01 /data/oracle/NYARSWU2/data01 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_temp01 /dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_temp01 /data/oracle/NYARSWU2/temp01 vxfs 4 yes -
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_backup /dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_backup /data/oracle/NYARSWU2/backup vxfs 4 yes -
+/dev/vx/dsk/mfrtd_dg/lv_mfrtbatch /dev/vx/rdsk/mfrtd_dg/lv_mfrtbatch /data/mfrtbatch  vxfs 4 yes -
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd /dev/vx/rdsk/mfrtd_dg/lv_ormfrtd /data/ormfrtd  vxfs 4 yes -
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_admin /dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_admin    /data/ormfrtd/admin  vxfs 4 yes -
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_redo1 /dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_redo1    /data/ormfrtd/redo1  vxfs 4 yes -
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_redo2 /dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_redo2    /data/ormfrtd/redo2  vxfs 4 yes -
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_data1 /dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_data1    /data/ormfrtd/data1  vxfs 4 yes -
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_backup /dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_backup /data/ormfrtd/backup  vxfs 4 yes -
+#  deamdctm_dg - Asset Mgmt Documentum
+/dev/vx/dsk/deamdctm_dg/lv_deamdctm     /dev/vx/rdsk/deamdctm_dg/lv_deamdctm    /data/deamdctm  vxfs 4 yes -
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1      /dev/vx/rdsk/nygdstd_dg/lv_nygdstd1     /data/oracle/NYGDSTD1   vxfs 4 yes -
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_admin        /dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_admin       /data/oracle/NYGDSTD1/admin     vxfs 4 yes -
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_data01       /dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_data01      /data/oracle/NYGDSTD1/data01    vxfs 4 yes -
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_backup       /dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_backup      /data/oracle/NYGDSTD1/backup    vxfs 4 yes -
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_redo01       /dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_redo01      /data/oracle/NYGDSTD1/redo01    vxfs 4 yes -
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_redo02       /dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_redo02      /data/oracle/NYGDSTD1/redo02    vxfs 4 yes -
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_temp01       /dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_temp01      /data/oracle/NYGDSTD1/temp01    vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3       /dev/vx/rdsk/nycrfd_dg/lv_nycrffd3      /data/oracle/NYCRFFD3   vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_admin /dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_admin        /data/oracle/NYCRFFD3/admin     vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_data01        /dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_data01       /data/oracle/NYCRFFD3/data01    vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_backup        /dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_backup       /data/oracle/NYCRFFD3/backup    vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_redo01        /dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_redo01       /data/oracle/NYCRFFD3/redo01    vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_redo02        /dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_redo02       /data/oracle/NYCRFFD3/redo02    vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_temp01        /dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_temp01       /data/oracle/NYCRFFD3/temp01    vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_debatch        /dev/vx/rdsk/nycrfd_dg/lv_debatch       /data/debatch   vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_crbatch        /dev/vx/rdsk/nycrfd_dg/lv_crbatch       /data/crbatch   vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_crgftp /dev/vx/rdsk/nycrfd_dg/lv_crgftp        /data/crgftp    vxfs 4 yes -
+/dev/vx/dsk/nycrfd_dg/lv_crftp  /dev/vx/rdsk/nycrfd_dg/lv_crftp /data/crftp     vxfs 4 yes -
+bash-2.03# cat vfstab | egrep 'gqed_dg|deamdctm_dg|arswbu_dg|mfrtd_dg|hfweb_dg|nycrfd_dg|nygdstd_dg|websvcs_dg'
+bash-2.03# mount -a
+mount: /tmp already mounted
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/data_fs is already mounted, /data is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/gqed_dg/lv_gqed: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/gqed_dg/lv_gqedbkp: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/arswbu_dg/lv_arswbu: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/websvcs_dg/lv_tpram: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/gqed_dg/lv_orgqed: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/deamdctm_dg/lv_deamdctm: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/nycrfd_dg/lv_crbatch: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_oracle is already mounted, /data/oracle is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/nycrfd_dg/lv_crftp: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/hfweb_dg/lv_hfweb: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_foglight is already mounted, /opt/foglight is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/mfrtd_dg/lv_ormfrtd: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/nycrfd_dg/lv_debatch: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/nycrfd_dg/lv_crgftp: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/mfrtd_dg/lv_mfrtbatch: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_sybase is already mounted, /data/sybase is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/local_fs is already mounted, /usr/local is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/clarity is already mounted, /opt/clarity is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/home_fs is already mounted, /export/home is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/op_clarity is already mounted, /opt/dbtools is busy,
+                allowable number of mount points exceeded
+mount: nonexistent mount point: /data/tpram/home
+mount: nonexistent mount point: /data/tpram/websvcs
+mount: nonexistent mount point: /data/orgqed/admin
+mount: nonexistent mount point: /data/orgqed/backup
+mount: nonexistent mount point: /data/orarswbu/admin
+mount: nonexistent mount point: /data/orarswbu/redo1
+mount: nonexistent mount point: /data/orarswbu/redo2
+mount: nonexistent mount point: /data/orarswbu/data1
+mount: nonexistent mount point: /data/orarswbu/data2
+mount: nonexistent mount point: /data/orarswbu/backup
+mount: nonexistent mount point: /data/ormfrtd/admin
+mount: nonexistent mount point: /data/ormfrtd/redo1
+mount: nonexistent mount point: /data/ormfrtd/redo2
+mount: nonexistent mount point: /data/ormfrtd/data1
+mount: nonexistent mount point: /data/ormfrtd/backup
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/arswbu_dg/lv_NYARSWU2: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/nygdstd_dg/lv_nygdstd1: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+UX:vxfs mount: ERROR: V-3-20003: Cannot open /dev/vx/dsk/nycrfd_dg/lv_nycrffd3: No such device or address
+UX:vxfs mount: ERROR: V-3-24996: Unable to get disk layout version
+mount: nonexistent mount point: /data/orgqed/oradata/data01
+mount: nonexistent mount point: /data/orgqed/oradata/data02
+mount: nonexistent mount point: /data/orgqed/oradata/data03
+mount: nonexistent mount point: /data/orgqed/oradata/redo1
+mount: nonexistent mount point: /data/orgqed/oradata/redo2
+mount: nonexistent mount point: /data/oracle/NYARSWU2/admin
+mount: nonexistent mount point: /data/oracle/NYARSWU2/redo01
+mount: nonexistent mount point: /data/oracle/NYARSWU2/redo02
+mount: nonexistent mount point: /data/oracle/NYARSWU2/data01
+mount: nonexistent mount point: /data/oracle/NYARSWU2/temp01
+mount: nonexistent mount point: /data/oracle/NYARSWU2/backup
+mount: nonexistent mount point: /data/oracle/NYGDSTD1/admin
+mount: nonexistent mount point: /data/oracle/NYGDSTD1/data01
+mount: nonexistent mount point: /data/oracle/NYGDSTD1/backup
+mount: nonexistent mount point: /data/oracle/NYGDSTD1/redo01
+mount: nonexistent mount point: /data/oracle/NYGDSTD1/redo02
+mount: nonexistent mount point: /data/oracle/NYGDSTD1/temp01
+mount: nonexistent mount point: /data/oracle/NYCRFFD3/admin
+mount: nonexistent mount point: /data/oracle/NYCRFFD3/data01
+mount: nonexistent mount point: /data/oracle/NYCRFFD3/backup
+mount: nonexistent mount point: /data/oracle/NYCRFFD3/redo01
+mount: nonexistent mount point: /data/oracle/NYCRFFD3/redo02
+mount: nonexistent mount point: /data/oracle/NYCRFFD3/temp01
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_oracle_sol26 is already mounted, /db/pub/infra/oracle is busy,
+                allowable number of mount points exceeded
+bash-2.03# df -h
+df: unknown option: h
+Usage: df [-F FSType] [-abegklntVv] [-o FSType-specific_options] [directory | block_device | resource]
+bash-2.03# df -k
+Filesystem            kbytes    used   avail capacity  Mounted on
+/dev/vx/dsk/bootdg/rootvol
+                     8258597 3340527 4835485    41%    /
+/proc                      0       0       0     0%    /proc
+fd                         0       0       0     0%    /dev/fd
+mnttab                     0       0       0     0%    /etc/mnttab
+swap                 12725824      32 12725792     1%    /var/run
+dmpfs                12725792       0 12725792     0%    /dev/vx/dmp
+dmpfs                12725776       0 12725776     0%    /dev/vx/rdmp
+swap                  524288    9552  514736     2%    /tmp
+/dev/vx/dsk/bootdg/data_fs
+                      262144    1174  244663     1%    /data
+/dev/vx/dsk/bootdg/clarity
+                      512000    1621  478872     1%    /opt/clarity
+/dev/vx/dsk/bootdg/local_fs
+                     2097152   17190 1950033     1%    /usr/local
+/dev/vx/dsk/bootdg/op_clarity
+                     1536000  453767 1014641    31%    /opt/dbtools
+/dev/vx/dsk/bootdg/home_fs
+                     15360000 14966968  368546    98%    /export/home
+build:/export/DBbuild
+                     459276288 452862564 6012909    99%    /tmp/dbpatch.mnt
+/dev/vx/dsk/database_dg/lv_oracle
+                     10485760 7607549 2702867    74%    /data/oracle
+/dev/vx/dsk/database_dg/lv_foglight
+                      729088  729088       0   100%    /opt/foglight
+/dev/vx/dsk/database_dg/lv_sybase
+                     4194304 1135878 2867314    29%    /data/sybase
+/dev/vx/dsk/database_dg/lv_oracle_sol26
+                     3145728 1641120 1410625    54%    /db/pub/infra/oracle
+
+bash-2.03# vxinfo -pg websvcs_dg
+vol  lv_websvcs     fsgen    Startable
+plex lv_websvcs-01  ACTIVE
+vol  lv_tpram       fsgen    Startable
+plex lv_tpram-01    ACTIVE
+vol  lv_home        fsgen    Startable
+plex lv_home-01     ACTIVE
+bash-2.03# vxdg list
+NAME         STATE           ID
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    enabled              1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  enabled              1123106656.1695.nygamwxd2
+gqed_dg      enabled              1008604929.1671.hbamwxd1
+hfweb_dg     enabled              1015520948.1778.hbamwxd1
+mfrtd_dg     enabled              1004639634.1276.hbamwxd1
+nycrfd_dg    enabled              1138043359.2029.nygamwxd2
+nygdstd_dg   enabled              1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   enabled              1007996210.1534.hbamwxd1
+
+bash-2.03# for i in `cat | awk '{print $1}'`;do echo $i;done
+rootdg       enabled              1110846752.1025.nygamwxd2
+amweb_dg     enabled              1056476528.3975.hbamwxd1
+arswbu_dg    enabled              1022182165.1890.hbamwxd1
+database_dg  enabled              1112205179.1172.nygamwxd2
+deamdctm_dg  enabled              1123106656.1695.nygamwxd2
+gqed_dg      enabled              1008604929.1671.hbamwxd1
+hfweb_dg     enabled              1015520948.1778.hbamwxd1
+mfrtd_dg     enabled              1004639634.1276.hbamwxd1
+nycrfd_dg    enabled              1138043359.2029.nygamwxd2
+nygdstd_dg   enabled              1135199384.2022.nygamwxd2
+pace_dg      enabled              1124199672.1807.nygamwxd2
+spare_dg     enabled              1116883186.1344.nygamwxd2
+websvcs_dg   enabled              1007996210.1534.hbamwxd1
+rootdg
+amweb_dg
+arswbu_dg
+database_dg
+deamdctm_dg
+gqed_dg
+hfweb_dg
+mfrtd_dg
+nycrfd_dg
+nygdstd_dg
+pace_dg
+spare_dg
+websvcs_dg
+
+bash-2.03# for i in `cat`;do vxvol -g $i startall;done
+amweb_dg
+arswbu_dg
+database_dg
+deamdctm_dg
+gqed_dg
+hfweb_dg
+mfrtd_dg
+nycrfd_dg
+nygdstd_dg
+pace_dg
+spare_dg
+websvcs_dg
+bash-2.03#
+bash-2.03#
+bash-2.03#
+bash-2.03# vxinfo -pg websvcs_dg
+vol  lv_websvcs     fsgen    Started
+plex lv_websvcs-01  ACTIVE
+vol  lv_tpram       fsgen    Started
+plex lv_tpram-01    ACTIVE
+vol  lv_home        fsgen    Started
+plex lv_home-01     ACTIVE
+bash-2.03# mountall
+checking vxfs filesystems
+Running parallel replay fsck ...
+/dev/vx/rdsk/websvcs_dg/lv_tpram:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_data01:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_data02:log replay in progress
+/dev/vx/rdsk/websvcs_dg/lv_home:log replay in progress
+/dev/vx/rdsk/websvcs_dg/lv_tpram:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/gqed_dg/lv_orgqed:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_backup:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_data03:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_redo1:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_redo01:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_redo1:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_gqedbkp:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_redo02:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_gqed:log replay in progress
+/dev/vx/rdsk/mfrtd_dg/lv_mfrtbatch:log replay in progress
+/dev/vx/rdsk/websvcs_dg/lv_home:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_data01:log replay in progress
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_data02:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/gqed_dg/lv_orgqed_redo2:log replay in progress
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_backup:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/gqed_dg/lv_orgqed_admin:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_data01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_admin:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_redo1:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_admin:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_backup:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_gqedbkp:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_admin:log replay in progress
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_backup:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_redo2:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_redo02:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_gqed:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/gqed_dg/lv_orgqed_data03:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/gqed_dg/lv_orgqed_redo2:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1:log replay in progress
+/dev/vx/rdsk/deamdctm_dg/lv_deamdctm:log replay in progress
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_redo01:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_data1:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_temp01:log replay in progress
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_redo02:log replay in progress
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_data1:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2:log replay in progress
+/dev/vx/rdsk/gqed_dg/lv_orgqed_backup:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_backup:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_data2:log replay in progress
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_admin:log replay in progress
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_data01:log replay in progress
+/dev/vx/rdsk/nycrfd_dg/lv_crbatch:log replay in progress
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_temp01:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_redo01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_backup:log replay in progress
+/dev/vx/rdsk/mfrtd_dg/lv_mfrtbatch:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_redo1:log replay in progress
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_redo2:log replay in progress
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_admin:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_redo1:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_crgftp:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_redo2:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/deamdctm_dg/lv_deamdctm:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_admin:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_backup:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_redo02:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/gqed_dg/lv_orgqed_admin:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_redo01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_temp01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_temp01:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_data1:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_data01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_data2:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_crftp:log replay in progress
+/dev/vx/rdsk/nycrfd_dg/lv_debatch:log replay in progress
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_backup:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_data01:log replay in progress
+/dev/vx/rdsk/arswbu_dg/lv_arswbu_backup:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_redo01:log replay in progress
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3:log replay in progress
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_backup:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_admin:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_redo02:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_crbatch:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_redo02:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_data1:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_admin:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_data01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_redo1:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/mfrtd_dg/lv_ormfrtd_redo2:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_admin:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nygdstd_dg/lv_nygdstd1_admin:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_crgftp:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_temp01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_crftp:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_debatch:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/arswbu_dg/lv_NYARSWU2_backup:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_temp01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_data01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3_redo01:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/nycrfd_dg/lv_nycrffd3:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/hfweb_dg/lv_hfweb:log replay in progress
+/dev/vx/rdsk/hfweb_dg/lv_hfweb:replay complete - marking super-block as CLEAN
+/dev/vx/rdsk/websvcs_dg/lv_websvcs:log replay in progress
+/dev/vx/rdsk/websvcs_dg/lv_websvcs:replay complete - marking super-block as CLEAN
+mount: /tmp already mounted
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/data_fs is already mounted, /data is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/home_fs is already mounted, /export/home is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/local_fs is already mounted, /usr/local is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_sybase is already mounted, /data/sybase is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/clarity is already mounted, /opt/clarity is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_foglight is already mounted, /opt/foglight is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_oracle is already mounted, /data/oracle is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/bootdg/op_clarity is already mounted, /opt/dbtools is busy,
+                allowable number of mount points exceeded
+UX:vxfs mount: ERROR: V-3-21264: /dev/vx/dsk/database_dg/lv_oracle_sol26 is already mounted, /db/pub/infra/oracle is busy,
+                allowable number of mount points exceeded
+bash-2.03# df -k
+Filesystem            kbytes    used   avail capacity  Mounted on
+/dev/vx/dsk/bootdg/rootvol
+                     8258597 3340785 4835227    41%    /
+/proc                      0       0       0     0%    /proc
+fd                         0       0       0     0%    /dev/fd
+mnttab                     0       0       0     0%    /etc/mnttab
+swap                 12655568      32 12655536     1%    /var/run
+dmpfs                12655520       0 12655520     0%    /dev/vx/dmp
+dmpfs                12655520       0 12655520     0%    /dev/vx/rdmp
+swap                  524288    9552  514736     2%    /tmp
+/dev/vx/dsk/bootdg/data_fs
+                      262144    1174  244663     1%    /data
+/dev/vx/dsk/bootdg/clarity
+                      512000    1621  478872     1%    /opt/clarity
+/dev/vx/dsk/bootdg/local_fs
+                     2097152   17190 1950033     1%    /usr/local
+/dev/vx/dsk/bootdg/op_clarity
+                     1536000  453767 1014641    31%    /opt/dbtools
+/dev/vx/dsk/bootdg/home_fs
+                     15360000 14966968  368546    98%    /export/home
+build:/export/DBbuild
+                     459276288 452862564 6012909    99%    /tmp/dbpatch.mnt
+/dev/vx/dsk/database_dg/lv_oracle
+                     10485760 7607549 2702867    74%    /data/oracle
+/dev/vx/dsk/database_dg/lv_foglight
+                      729088  729088       0   100%    /opt/foglight
+/dev/vx/dsk/database_dg/lv_sybase
+                     4194304 1135878 2867314    29%    /data/sybase
+/dev/vx/dsk/database_dg/lv_oracle_sol26
+                     3145728 1641120 1410625    54%    /db/pub/infra/oracle
+/dev/vx/dsk/nycrfd_dg/lv_crftp
+                     2097152   16982 1950167     1%    /data/crftp
+/dev/vx/dsk/deamdctm_dg/lv_deamdctm
+                     17301504 5907432 10681992    36%    /data/deamdctm
+/dev/vx/dsk/nycrfd_dg/lv_crbatch
+                     5242880   17754 4898563     1%    /data/crbatch
+/dev/vx/dsk/websvcs_dg/lv_tpram
+                      102400    1141   94937     2%    /data/tpram
+/dev/vx/dsk/gqed_dg/lv_gqed
+                     5242880 4619760  585163    89%    /data/gqe
+/dev/vx/dsk/gqed_dg/lv_orgqed
+                      102400    2238   93951     3%    /data/orgqed
+/dev/vx/dsk/nycrfd_dg/lv_debatch
+                     5242880   17754 4898563     1%    /data/debatch
+/dev/vx/dsk/arswbu_dg/lv_arswbu
+                      102400    1142   94935     2%    /data/orarswbu
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd
+                      102400    1134   94943     2%    /data/ormfrtd
+/dev/vx/dsk/nycrfd_dg/lv_crgftp
+                     2097152   16982 1950167     1%    /data/crgftp
+/dev/vx/dsk/gqed_dg/lv_gqedbkp
+                     5242880 3616436 1524835    71%    /data/gqebkp
+/dev/vx/dsk/mfrtd_dg/lv_mfrtbatch
+                      102400    1138   94940     2%    /data/mfrtbatch
+/dev/vx/dsk/hfweb_dg/lv_hfweb
+                     12058624 7421544 4637080    62%    /data/hfweb
+/dev/vx/dsk/websvcs_dg/lv_home
+                     1024000  487890  502608    50%    /data/tpram/home
+/dev/vx/dsk/arswbu_dg/lv_arswbu_redo2
+                      409600  312761   90793    78%    /data/orarswbu/redo2
+/dev/vx/dsk/websvcs_dg/lv_websvcs
+                     41984000 17227156 24756844    42%    /data/tpram/websvcs
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_redo1
+                      204800   81849  115273    42%    /data/ormfrtd/redo1
+/dev/vx/dsk/gqed_dg/lv_orgqed_admin
+                     1048576    5047  979590     1%    /data/orgqed/admin
+/dev/vx/dsk/arswbu_dg/lv_arswbu_data1
+                     2560000 2541400   17443   100%    /data/orarswbu/data1
+/dev/vx/dsk/arswbu_dg/lv_arswbu_data2
+                     6860800 6761300   93287    99%    /data/orarswbu/data2
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_admin
+                      204800   23326  170343    13%    /data/ormfrtd/admin
+/dev/vx/dsk/gqed_dg/lv_orgqed_backup
+                     8388608  440635 7451318     6%    /data/orgqed/backup
+/dev/vx/dsk/arswbu_dg/lv_arswbu_redo1
+                      409600  312769   90786    78%    /data/orarswbu/redo1
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_backup
+                     6803456 3477760 3117966    53%    /data/ormfrtd/backup
+/dev/vx/dsk/arswbu_dg/lv_arswbu_backup
+                     3072000 1635593 1346694    55%    /data/orarswbu/backup
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2
+                      102400    1243   94840     2%    /data/oracle/NYARSWU2
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_data1
+                     11534336 9057504 2322033    80%    /data/ormfrtd/data1
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1
+                      102400    1743   94372     2%    /data/oracle/NYGDSTD1
+/dev/vx/dsk/arswbu_dg/lv_arswbu_admin
+                      307200  233722   73478    77%    /data/orarswbu/admin
+/dev/vx/dsk/mfrtd_dg/lv_ormfrtd_redo2
+                      204800   81849  115273    42%    /data/ormfrtd/redo2
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3
+                      262144    1174  244665     1%    /data/oracle/NYCRFFD3
+/dev/vx/dsk/gqed_dg/lv_orgqed_data02
+                     20636896 16065604 4428444    79%    /data/orgqed/oradata/data02
+/dev/vx/dsk/gqed_dg/lv_orgqed_redo1
+                      614400  326257  270141    55%    /data/orgqed/oradata/redo1
+/dev/vx/dsk/gqed_dg/lv_orgqed_data03
+                     15482880 13061324 2270213    86%    /data/orgqed/oradata/data03
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_redo02
+                      512000  161057  329016    33%    /data/oracle/NYARSWU2/redo02
+/dev/vx/dsk/gqed_dg/lv_orgqed_redo2
+                      614400  326265  270133    55%    /data/orgqed/oradata/redo2
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_temp01
+                     2097152  845518 1173414    42%    /data/oracle/NYARSWU2/temp01
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_admin
+                      512000   90234  395473    19%    /data/oracle/NYARSWU2/admin
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_admin
+                     2097152   93479 1878473     5%    /data/oracle/NYGDSTD1/admin
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_temp01
+                     1024000  973221   47612    96%    /data/oracle/NYGDSTD1/temp01
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_redo01
+                      512000  161049  329023    33%    /data/oracle/NYARSWU2/redo01
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_temp01
+                     2097152   16982 1950167     1%    /data/oracle/NYCRFFD3/temp01
+/dev/vx/dsk/gqed_dg/lv_orgqed_data01
+                     4194304 2464057 1622113    61%    /data/orgqed/oradata/data01
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_redo02
+                     1048576   16726  967367     2%    /data/oracle/NYCRFFD3/redo02
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_data01
+                     8388608   18525 7846960     1%    /data/oracle/NYCRFFD3/data01
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_redo02
+                      102400   35465   62758    37%    /data/oracle/NYGDSTD1/redo02
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_data01
+                     4194304 4016417  166774    97%    /data/oracle/NYGDSTD1/data01
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_backup
+                     1048576  762043  268628    74%    /data/oracle/NYGDSTD1/backup
+/dev/vx/dsk/nygdstd_dg/lv_nygdstd1_redo01
+                      102400   42577   56090    44%    /data/oracle/NYGDSTD1/redo01
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_backup
+                     5242880 5162880   75056    99%    /data/oracle/NYARSWU2/backup
+/dev/vx/dsk/arswbu_dg/lv_NYARSWU2_data01
+                     15728640 13844756 1766145    89%    /data/oracle/NYARSWU2/data01
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_backup
+                     2097152  987539 1040331    49%    /data/oracle/NYCRFFD3/backup
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_redo01
+                     1048576   16726  967367     2%    /data/oracle/NYCRFFD3/redo01
+/dev/vx/dsk/nycrfd_dg/lv_nycrffd3_admin
+                     2097152  125000 1848953     7%    /data/oracle/NYCRFFD3/admin

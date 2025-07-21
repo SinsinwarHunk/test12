@@ -1,0 +1,134 @@
+#### hastatus -sum output shows :
+
+-- AGENTS FAILED
+-- Type            System
+
+J  DiskGroup       lonshspltp90b
+
+
+Current Status of DISKGROUP AGENT :
+###################################
+
+ROOT@lonshspltp90b [DR Active] /# haagent -display DiskGroup
+#Agent       Attribute      Value
+DiskGroup    AgentDirectory
+DiskGroup    AgentFile
+DiskGroup    Faults         0
+DiskGroup    Running        No -------------------------------------- >>>>
+DiskGroup    Started        No -------------------------------------- >>>> 
+ROOT@lonshspltp90b [DR Active] /#
+
+
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log# haagent -start DiskGroup -sys lonshspltp90b
+VCS NOTICE V-16-1-10001 Please look for messages in the log file
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log# 
+
+
+Engine log shows :
+###################
+2012/08/11 11:33:37 VCS INFO V-16-1-50135 User root fired command: haagent -start DiskGroup  lonshspltp90b  from localhost
+2012/08/11 11:33:37 VCS ERROR V-16-2-13051 (lonshspltp90b) Agent(DiskGroup) is exiting because another agent with process-id(19634) is already running for this type
+
+
+
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log# ps -ef | grep 19634
+    root 19634     1   0   Aug 10 ?           5:22 /opt/VRTSvcs/bin/DiskGroup/DiskGroupAgent -type DiskGroup
+    root 11951  5825   0 11:34:28 pts/1       0:00 grep 19634
+    root 10562 19634   0        - ?           0:00 <defunct>
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log#
+
+
+Can't kill this defunct process , coz it's hooked up to the main process 19634
+##############################################################################
+
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log# ptree 10562
+19634 /opt/VRTSvcs/bin/DiskGroup/DiskGroupAgent -type DiskGroup
+  10562 <defunct>
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log#
+
+
+
+
+Since DiskGroup Agent is not running , killed the hung parent process. Which cleared the child defunct process.
+###############################################################################################################
+
+ROOT@lonshspltp90b [DR Active] /# ps -ef | grep 19634
+    root 19634     1   0   Aug 10 ?           5:22 /opt/VRTSvcs/bin/DiskGroup/DiskGroupAgent -type DiskGroup
+    root 10562 19634   0        - ?           0:00 <defunct>
+    root 19503  5825   0 12:17:14 pts/1       0:00 grep 19634
+ROOT@lonshspltp90b [DR Active] /#
+ROOT@lonshspltp90b [DR Active] /# kill -9 19634
+ROOT@lonshspltp90b [DR Active] /# ps -ef | grep 19634
+    root 19783  5825   0 12:17:27 pts/1       0:00 grep 19634
+ROOT@lonshspltp90b [DR Active] /#
+
+or
+
+# preap 10562 
+
+
+Start the DiskGroup Agent:
+##########################
+
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log# haagent -start DiskGroup -sys lonshspltp90b
+VCS NOTICE V-16-1-10001 Please look for messages in the log file
+ROOT@lonshspltp90b [DR Active] /var/VRTSvcs/log#
+
+
+
+Current Status of DISKGROUP AGENT :
+###################################
+
+ROOT@lonshspltp90b [DR Active] /# haagent -display DiskGroup
+#Agent       Attribute      Value
+DiskGroup    AgentDirectory
+DiskGroup    AgentFile
+DiskGroup    Faults         0
+DiskGroup    Running        Yes -------------------------------------- >>>>
+DiskGroup    Started        Yes -------------------------------------- >>>>
+ROOT@lonshspltp90b [DR Active] /#
+
+
+ROOT@lonshspltp90b [DR Active] /# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  lonshspltp90a        RUNNING              0
+A  lonshspltp90b        RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  aspenp01        lonshspltp90a        Y          N               ONLINE
+B  aspenp01        lonshspltp90b        Y          N               OFFLINE
+B  aspenp02        lonshspltp90a        Y          N               ONLINE
+B  aspenp02        lonshspltp90b        Y          N               OFFLINE
+B  aspenp03        lonshspltp90a        Y          N               ONLINE
+B  aspenp03        lonshspltp90b        Y          N               OFFLINE
+B  aspenu01        lonshspltp90b        Y          N               ONLINE
+B  aspenu02        lonshspltp90b        Y          N               ONLINE
+B  aspenu03        lonshspltp90b        Y          N               ONLINE
+B  em7p2           lonshspltp90a        Y          N               ONLINE
+B  em7p2           lonshspltp90b        Y          N               OFFLINE
+B  gctrmp01        lonshspltp90a        Y          N               ONLINE
+B  gctrmp01        lonshspltp90b        Y          N               OFFLINE
+B  gctrmu01        lonshspltp90b        Y          N               ONLINE
+B  mnicb           lonshspltp90a        Y          N               ONLINE
+B  mnicb           lonshspltp90b        Y          N               ONLINE
+B  tpmtp1          lonshspltp90a        Y          N               ONLINE
+B  tpmtp1          lonshspltp90b        Y          N               OFFLINE
+B  tpmtu2          lonshspltp90b        Y          N               ONLINE
+
+ROOT@lonshspltp90b [DR Active] /#
+
+
+
+
+
+
+
+
+
+
+

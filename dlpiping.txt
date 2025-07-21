@@ -1,0 +1,61 @@
+we have a builtin ping tool in VCS to test physical connectivity of Cluster heartbeat connections  i.e.  dlpiping. But this tool works in client-server mode, that means you have to start the dlpiping in server mode on one node, and start the client on other node. Below Steps explains the usage of dlpiping
+
+ 
+
+step1 :  Get the MAC address of the for gurkulvcs1’s e3 ( i.e. e1000g2) interface , and then start the dlpiping in server mode 
+
+
+
+root@gurkulvcs1#/opt/VRTSllt/getmac /dev/e1000g:2
+ /dev/e1000g:2   08:00:27:2F:2B:00
+
+
+
+root@gurkulvcs1#/opt/VRTSllt/dlpiping -vs /dev/e1000g:2
+ dlpiping: opening network device: /dev/e1000g (unit 2)
+ dlpiping: binding ping SAP 0xf00e
+
+
+ 
+
+step2 : start the dlpiping in client from the gurkulvcs2’s e3  ( i.e. e1000g2) interface using the MAC address of the interface where the server started ( i.e.  , as below gurkulvcs1 : e1000g2 –> 08:00:27:2F:2B:00 )
+
+ 
+
+if those two interfaces connected properly with each other you will see below output
+
+
+root@gurkulvcs2#/opt/VRTSllt/dlpiping -vc /dev/e1000g:2 08:00:27:2F:2B:00
+ dlpiping: opening network device: /dev/e1000g (unit 3)
+ dlpiping: binding ping SAP 0xf00e
+ dlpiping: sent a request to 08:00:27:2F:2B:00:0E:FFFFFFF0
+ dlpiping: received a packet from 08:00:27:2F:2B:00:0E:FFFFFFF0
+ 08:00:27:2F:2B:00 is alive
+ root@gurkulvcs2#
+
+ 
+Incase if they are not connected to each other you will see below output
+
+
+
+root@gurkulvcs2#/opt/VRTSllt/dlpiping -vc /dev/e1000g:2 08:00:27:2F:2B:00
+ dlpiping: opening network device: /dev/e1000g (unit 3)
+ dlpiping: binding ping SAP 0xf00e
+ dlpiping: sent a request to 08:00:27:2F:2B:00:0E:FFFFFFF0
+ dlpiping: sent a request to 08:00:27:2F:2B:00:0E:FFFFFFF0
+ dlpiping: sent a request to 08:00:27:2F:2B:00:0E:FFFFFFF0
+ dlpiping: sent a request to 08:00:27:2F:2B:00:0E:FFFFFFF0
+ dlpiping: sent a request to 08:00:27:2F:2B:00:0E:FFFFFFF0
+
+ 
+
+And if you suspect cross connection use the other heartbeat interface to ping the dlpiping server interface. And if the outputt shows sent / received success as below, then you know that the heartbeat cables connected wrongly.
+
+
+root@gurkulvcs2#/opt/VRTSllt/dlpiping -vc /dev/e1000g:3 08:00:27:2F:2B:00
+ dlpiping: opening network device: /dev/e1000g (unit 3)
+ dlpiping: binding ping SAP 0xf00e
+ dlpiping: sent a request to 08:00:27:2F:2B:00:0E:FFFFFFF0
+ dlpiping: received a packet from 08:00:27:2F:2B:00:0E:FFFFFFF0
+ 08:00:27:2F:2B:00 is alive
+ root@gurkulvcs2#

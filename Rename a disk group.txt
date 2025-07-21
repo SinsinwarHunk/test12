@@ -1,0 +1,16 @@
+rename a disk group 
+===================
+
+
+umount all FS's
+
+deport the DG, vxdg deport <DG>
+
+import the DG with a new name, vxdg -n <newDG> import <DG>
+
+edit vfstab
+
+start all volumes, vxvol -g <newDG> startall
+
+mountall
+

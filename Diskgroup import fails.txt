@@ -1,0 +1,111 @@
+Diskgroup import fails with "Disk group has no valid configuration copies" error
+--------------------------------------------------------------------------------
+
+Error
+
+
+#vxdg -Cf import sapdg 
+VxVM vxdg ERROR V-5-1-10978 Disk group sapdg: import failed:
+Disk group has no valid configuration copies 
+
+
+Environment
+
+
+
+Solaris 10
+
+VXVM 5.1SP1
+
+
+Cause
+
+
+
+From VXVM 5.0 and later release, VERITAS Volume manager checks the unique disk identifier (UDID) value that is known to the Device Discovery Layer (DDL) against the UDID value that is set in the disk's private region .
+
+The udid_mismatch flag is set on the disk if the values differ.
+
+Example: Following disk do not have udid_mismatch flag set
+
+#vxdisk -v list c3t50060E80004372C0d0s2
+Device:    c3t50060E80004372C0d0s2
+devicetag: c3t50060E80004372C0d0....
+udid:      HITACHI%5FDF600F%5FD600101C%5F00EF
+.....Annotations:
+ tag      udid_asl=HITACHI%5FDF600F%5FD600101C%5F00EF
+Multipathing information:
+numpaths:   1
+c3t50060E80004372C0d0s2 state=enabled   type=primary 
+ 
+
+Example: Following disk has udid_mismatch flag set
+
+#vxdisk list c2t50060E800543CB21d0s2
+Device:    c2t50060E800543CB21d0s2
+devicetag: c2t50060E800543CB21d0
+....
+udid:      
+HITACHI%5FOPEN-V%20%20%20%20%20%20-SUN%5F043CB%5F1300 .....       
+
+ 
+
+Annotations:
+tag      udid_asl=HITACHI%5FOPEN-V%20%20%20%20%20%20-SUN%5F04458%5F3800 
+Both udid and udid_asl are mismatch. It could happen before the upgrade or due to storage upgrade 
+
+
+Solution
+
+
+
+To check all the disks in the system for UDID,  run the follow command
+
+#vxdisk -q list | awk '{print $1}' | xargs -i vxdisk -v list {} | egrep '^Device|^disk:|^udid:|udid_asl' | sed 's/^udid: *//' | sed 's/.*udid_asl=//' | uniq -c   
+Example:  
+
+#vxdisk -q list |awk '{print $1}'| xargs -i vxdisk -v list {} | egrep '^Device|^disk:|^udid:|udid_asl' | sed 's/^udid: *//' | sed 's/.*udid_asl=//' | uniq -c
+
+   1 Device:    c3t50060E80004372C0d0s2
+   1 disk:      name= id=1170304512.108.srini-v240
+   2 HITACHI%5FDF600F%5FD600101C%5F00EF        ==== All UDID are match
+
+
+   1 Device:    c2t50060E800543CB21d0s2
+   1 disk:      name= id=1254413623.47.ut81223
+   1 HITACHI%5FOPEN-V%20%20%20%20%20%20-SUN%5F043CB%5F1300  ==== All UDID does not match
+   1 HITACHI%5FOPEN-V%20%20%20%20%20%20-SUN%5F04458%5F3800  ==== All UDID does not match
+ 
+
+To correct the above issue , make sure:
+
+1.The disks are not clone disks which mean you will have two set of disks for the same diskgroup
+2.Diskgroup is not imported anywhere else in any other standalone or cluster system in customer environment - the problem diskgroup could be already imported on the other nodes in cluster.- need to validate
+3.Diskgroup had been backup , i.e run VRTSexplorer or data collection to collect the information just in case we have to rebuild the diskgroup
+To update the unique disk identifier (UDID) for one or more disks - vxvm version have to be 5.0MP3 or above  
+
+#vxdisk -f -g <diskgroup> updateudid disk ....
+
+It use the current value of UDID which store in Device Discovery Layer(DDL) database to correct the value in private region. The -f option may be specified if VXVM has not raised the udid_mismatch flag for a disk. The clone flag may be turn on after run the updateudid command .
+
+To turn cloning setting off :
+
+#vxdisk set <dmpnode name> clone=off
+
+For diskgroup with larger number of disks, use following commands to updateudid quicker .
+
+Collect all the disks belong the problem diskgroup into a temporary file.
+
+#vxdisk -o alldgs list | grep <diskgroup name> | awk '{print $1}' > /tmp/list
+
+Check the content of this file to make sure it only has all the disks belong the problem diskgroup.
+
+Correct the udid using updateudid and after udid getting update, VxVM will set the disk as clone but they are not - turn of clone setting for these disks
+
+#for i in `cat /tmp/list`; do vxdisk updateudid $i; vxdisk set $i clone=off ; done
+
+Import the diskgroup
+
+#vxdg -C import <diskgroup name >
+
+

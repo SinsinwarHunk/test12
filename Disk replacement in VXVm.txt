@@ -1,0 +1,138 @@
+1. iostate -en
+2. vxdisk list
+3. echo |format
+4. cfgadm -al
+5. Remove disk from veritas control
+		vxdiskadm   - option 4 then y to continue. and the quit finally.
+		OR
+		vxdisk rm c0t0d0s2
+6. unconfigure disk 	
+		cfgadm -al 
+		cfgadm -c unconfigure c0:/dev/dsk/c0t0d0 (This will blink the LED of hard disk)
+7.ask vendor to replace disk and issue ( tail -f /var/adm/messages ) in os side to check if physical drive is getting replaced. 
+
+8. Following commands should be run in sol 8 
+
+/usr/sbin/drvconfig
+/usr/sbin/devlinks
+/usr/sbin/disks
+/usr/ucb/ucblinks
+
+devfsadm ( sufficient alone in sol 10 )
+
+9.check output ( echo|format ) if output shows new disk 
+10.To verify is disk is available 
+		vxdisk list
+11. vxdiskadm
+
+Select an operation to perform: 5
+
+Replace a failed or removed disk
+Menu: VolumeManager/Disk/ReplaceDisk
+  Use this menu operation to specify a replacement disk for a disk
+  that you removed with the "Remove a disk for replacement" menu
+  operation, or that failed during use.  You will be prompted for
+  a disk name to replace and a disk device to use as a replacement.
+  You can choose an uninitialized disk, in which case the disk will
+  be initialized, or you can choose a disk that you have already
+  initialized using the Add or initialize a disk menu operation.
+
+Select a removed or failed disk [<disk>,list,q,?] list
+
+Disk group: rootdg
+
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+
+dm rootmirror   -            -        -        -        NODEVICE
+
+
+Select a removed or failed disk [<disk>,list,q,?] rootmirror
+  The following devices are available as possible replacements after being
+  initialized (or reinitiliazed):
+
+        c1t1d0
+
+  You can choose one of these devices to replace rootmirror.
+  Choose "none" to abort the replacement of rootmirror.
+
+Choose a device, or select "none"
+[<device>,none,q,?] (default: c1t1d0)
+  The following disk device has a valid VTOC, but does not appear to have
+  been initialized for the Volume Manager.  If there is data on the disk
+  that should NOT be destroyed you should encapsulate the existing disk
+  partitions as volumes instead of adding the disk as a new disk.
+  Output format: [Device_Name]
+
+  c1t1d0
+
+Encapsulate this device? [y,n,q,?] (default: y) n
+
+  c1t1d0
+
+Instead of encapsulating, initialize? [y,n,q,?] (default: n) y
+  VxVM  INFO V-5-2-378
+The requested operation is to initialize disk device c1t1d0 and
+  to then use that device to replace the removed or failed disk
+  rootmirror in disk group rootdg.
+
+Continue with operation? [y,n,q,?] (default: y) y
+
+Use FMR for plex resync? [y,n,q,?] (default: n) n
+  VxVM  INFO V-5-2-282
+Replacement of disk rootmirror in group rootdg with disk device
+  c1t1d0 completed successfully.
+
+Replace another disk? [y,n,q,?] (default: n) n
+
+Volume Manager Support Operations
+Menu: VolumeManager/Disk
+
+ 1      Add or initialize one or more disks
+ 2      Encapsulate one or more disks
+ 3      Remove a disk
+ 4      Remove a disk for replacement
+ 5      Replace a failed or removed disk
+ 6      Mirror volumes on a disk
+ 7      Move volumes from a disk
+ 8      Enable access to (import) a disk group
+ 9      Remove access to (deport) a disk group
+ 10     Enable (online) a disk device
+ 11     Disable (offline) a disk device
+ 12     Mark a disk as a spare for a disk group
+ 13     Turn off the spare flag on a disk
+ 14     Unrelocate subdisks back to a disk
+ 15     Exclude a disk from hot-relocation use
+ 16     Make a disk available for hot-relocation use
+ 17     Prevent multipathing/Suppress devices from VxVM's view
+ 18     Allow multipathing/Unsuppress devices from VxVM's view
+ 19     List currently suppressed/non-multipathed devices
+ 20     Change the disk naming scheme
+ 21     Get the newly connected/zoned disks in VxVM view
+ 22     Change/Display the default disk layouts
+ 23     Mark a disk as allocator-reserved for a disk group
+ 24     Turn off the allocator-reserved flag on a disk
+ list   List disk information
+
+
+ ?      Display help about menu
+ ??     Display help about the menuing system
+ q      Exit from menus
+
+Select an operation to perform: q
+
+Goodbye.
+
+OR
+
+The -k option retains and reuses the disk media record for the disk that is being replaced. 
+The following example shows a Solaris disk device c1t0d1 being reassigned to disk disk1. 
+
+# vxdg -k rmdisk disk1 
+
+# vxdg -k adddisk disk1=c1t0d1 
+
+
+vxdg -g rootdg -k adddisk rootmirror=c0t0d0s2
+
+>>>>>> vxtask list ( to verify if sync is in progress or completed )
+

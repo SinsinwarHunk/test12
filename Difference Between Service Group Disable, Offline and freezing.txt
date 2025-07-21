@@ -1,0 +1,32 @@
+Difference Between Service Group Disable, Offline and freezing
+=================================================================
+
+Offlining a Service group will offline all resources, but VCS will still monitor them If, for example someone brings a resource online from OS (e.g import diskgroup and mount filesystem) VCS will report those resources as online at the next monitor cycle.
+
+Disabling the SG stops monitoring the resources in the SG and the SG cannot be brought online. Only when SG is enabled can the resources in the SG be brought online.
+
+If you want to prevent SG from coming online after reboot, best to do persistent freeze of the SG..
+
+Bascially disabling a service group means VCS ignores its there so you might use this if you created SG before installing application.  Freezing SG, stops VCS taking any action - it does nothing to the resources so leaves them in the same state (ONLINE or OFFLINE) but it still monitors the resources.
+
+
+How disabled resources affect group states 
+============================================
+When a service group is brought online containing non-persistent, disabled resources whose AutoStart attributes are set to 1, the group state is partial, even though enabled resources with Autostart=1 are online. This is because the disabled resource is considered for the group state. 
+
+To have the group in the online state when enabled resources with AutoStart set to 1 are in online state, set the AutoStart attribute to 0 for the disabled, non-persistent resources.
+
+When VCS is running, there are certain prerequisites to be met before the resource is disabled successfully:
+---------------------------------------------------------------------------------------------------------------- 
+
+•An online non-persistent resource cannot be disabled. It must be in a clean offline state. (The state must be offline and IState must be not waiting.) 
+•If it is a persistent resource and the state is online on some of the systems, all dependent resources (parents) must be in clean offline state. (The state must be offline and IState must be not waiting) 
+
+To disable the resource when VCS is running: 
+==============================================
+hares -modify resource_name Enabled 0 
+
+
+ 
+
+

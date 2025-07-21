@@ -1,0 +1,309 @@
+Error "VxVM vxdg V-5-1-16063" is returned from 'vxdg rmdisk' when attempting to perform storage reclamation on Hitachi AMS 2500 array. 
+
+
+
+Article:TECH162709 
+
+ | 
+
+Created: 2011-06-20 
+
+ | 
+
+Updated: 2011-06-22 
+
+ | 
+
+Article URL http://www.symantec.com/docs/TECH162709 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Article Type
+ Technical Solution 
+
+
+Product(s)
+
+ Show all 
+
+
+
+
+
+
+
+
+
+
+Environment
+
+ Show all 
+
+
+
+
+
+
+
+
+
+
+Languages
+
+ Show all 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Problem
+
+
+
+
+ 
+
+Error "VxVM vxdg V-5-1-16063" is returned from 'vxdg rmdisk' when attempting to perform storage reclamation on Hitachi AMS 2500 array.
+ 
+
+
+
+Error
+
+
+
+
+ 
+
+An attempt was made to remove a disk from the following diskgroup:
+ 
+# vxdg -g test2dg rmdisk d1
+ 
+VxVM vxdg ERROR V-5-1-16063 Disk d1 is used by one or more subdisks which
+ 
+are pending to be reclaimed.
+ 
+        Use "vxdisk reclaim d1" to reclaim space used by these subdisks,
+ 
+        and retry "vxdg rmdisk" command.
+ 
+        Note: reclamation is irreversible.
+ 
+
+
+
+Environment
+
+
+
+
+ 
+
+- AMS 2500, firmware 08A0/J-H
+ 
+- Solaris 10
+ 
+- Storage Foundation 5.1SP1
+ 
+
+
+
+Solution
+
+
+
+
+ 
+
+The procedure below was used to reproduce the issue, and a workaround to deal with storage reclamation not working correctly was implemented:
+ 
+a) Checking disk status:
+ 
+# vxdisk list
+ 
+DEVICE       TYPE            DISK         GROUP        STATUS
+ 
+ams_25000_139 auto:none       -            -            online invalid
+ 
+ams_25000_140 auto:none       -            -            online invalid
+ 
+b) Initialising disks:
+ 
+# /etc/vx/bin/vxdisksetup -i ams_25000_140
+ 
+# /etc/vx/bin/vxdisksetup -i ams_25000_139
+ 
+c) Create diskgroup with 2 such devices:
+ 
+# vxdg init test2dg d1=ams_25000_139 d2=ams_25000_140
+ 
+# vxdisk list
+ 
+DEVICE       TYPE            DISK         GROUP        STATUS
+ 
+ams_25000_139 auto:cdsdisk    d1           test2dg      online thinrclm
+ 
+ams_25000_140 auto:cdsdisk    d2           test2dg      online thinrclm
+ 
+d) Create volume and filesystem, and copy data:
+ 
+# vxassist -g test2dg make vol1 100m d1
+ 
+# mkfs -Fvxfs /dev/vx/rdsk/test2dg/vol1
+ 
+# mount -Fvxfs /dev/vx/dsk/test2dg/vol1 /mnt
+ 
+# cp /etc/hosts /mnt
+ 
+e) Now to remove volume:
+ 
+# umount /mnt
+ 
+# vxedit -g test2dg -rf rm vol1
+ 
+f) Check on reclaim status:
+ 
+# vxprint -zg test2dg
+ 
+TY NAME         ASSOC        KSTATE   LENGTH   PLOFFS   STATE    TUTIL0  PUTIL0
+ 
+dg test2dg      test2dg      -        -        -        -        -       -
+ 
+dm d1           ams_25000_139 -       1931008  -        -        -       -
+ 
+dm d2           ams_25000_140 -       1931008  -        -        -       -
+ 
+sd d1-01        -            ENABLED  204800   -        RECLAIM  -       - <<<
+ 
+g) Attempting to remove disk from diskgroup:
+ 
+# vxdg -g test2dg rmdisk d1
+ 
+VxVM vxdg ERROR V-5-1-16063 Disk d1 is used by one or more subdisks which
+ 
+are pending to be reclaimed.
+ 
+        Use "vxdisk reclaim d1" to reclaim space used by these subdisks,
+ 
+        and retry "vxdg rmdisk" command.
+ 
+        Note: reclamation is irreversible.
+ 
+so, removal fails as expected because of the output in f)
+ 
+h) Attempt to reclaim device now:
+ 
+# vxdisk -g test2dg reclaim d1
+ 
+VxVM vxdisk ERROR V-5-1-16067  'd1' does not exist.
+ 
+# vxdisk -g test2dg reclaim ams_25000_139
+ 
+Disk ams_25000_139 : Reclaimed freed subdisks.
+ 
+i) Attempt to remove disk from diskgroup:
+ 
+# vxdg -g test2dg rmdisk d1
+ 
+VxVM vxdg ERROR V-5-1-16063 Disk d1 is used by one or more subdisks which
+ 
+are pending to be reclaimed.
+ 
+        Use "vxdisk reclaim d1" to reclaim space used by these subdisks,
+ 
+        and retry "vxdg rmdisk" command.
+ 
+        Note: reclamation is irreversible.
+ 
+So, this time the command fails, even though a manual reclaim operation has been run.
+ 
+Note that "vxprint -zg" still reports the subdisk
+ 
+# vxprint -zg test2dg
+ 
+TY NAME         ASSOC        KSTATE   LENGTH   PLOFFS   STATE    TUTIL0  PUTIL0
+ 
+dg test2dg      test2dg      -        -        -        -        -       -
+ 
+dm d1           ams_25000_139 -       1931008  -        -        -       -
+ 
+dm d2           ams_25000_140 -       1931008  -        -        -       -
+ 
+sd d1-01        -            ENABLED  204800   -        RECLAIM  -       - <<<<<
+ 
+.
+ 
+.
+ 
+.
+ 
+.
+ 
+If the disk removal fails, despite the manual reclaim operation having been performed, the following needs to be done:
+ 
+# vxedit –g <dgname> set reclaim_done=on <subdisk-name>
+ 
+Now delete the subdisk (the subdisk should now immediately remove).
+ 
+# vxedit –g <dgname> -rf rm <subdisk_name>
+ 
+and the disk should now be able to removed from the diskgroup:
+ 
+#vxdg -g <diskgroup> rmdisk <dm_name>
+ 
+j) workaround to remove device:
+ 
+# vxedit -g test2dg set reclaim_done=on d1-01
+ 
+# vxedit -g test2dg -rf rm d1-01
+ 
+# vxdg -g test2dg rmdisk d1
+ 
+# vxprint -zg test2dg
+ 
+TY NAME         ASSOC        KSTATE   LENGTH   PLOFFS   STATE    TUTIL0  PUTIL0
+ 
+dg test2dg      test2dg      -        -        -        -        -       -
+ 
+dm d2           ams_25000_140 -       1931008  -        -        -       -
+ 
+so, workaround succeeded
+ 
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,5 @@
+hazonesetup orasg reszone orazone password node1 node1 node2
+V-16-34-1103 Group arenasg is already present
+
+hazonesetup arenasg reszone zarena password node1 node1 node2
+V-16-34-1103 Group arenasg is already present

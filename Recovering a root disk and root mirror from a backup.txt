@@ -1,0 +1,110 @@
+Recovering a root disk and root mirror from a backup 
+======================================================
+
+
+This procedure assumes that you have the following resources available: 
+
+•A listing of the partition table for the original root disk before you encapsulated it. 
+•A current full backup of all the file systems on the original root disk that was under Veritas Volume Manager control. If the root file system is of type ufs, you can back it up using the ufsdump command. 
+See the ufsdump(1M) manual page.
+
+•A new boot disk installed to replace the original failed boot disk if the original boot disk was physically damaged. 
+This procedure requires the reinstallation of the root disk. To prevent the loss of data on disks not involved in the reinstallation, only involve the root disk in the reinstallation procedure. 
+
+Several of the automatic options for installation access disks other than the root disk without requiring confirmation from the administrator. Therefore, disconnect all other disks containing volumes from the system prior to starting this procedure. This will ensure that these disks are unaffected by the reinstallation. Reconnect the disks after completing the procedure. 
+
+The procedure assumes the device name of the new root disk to be c0t0d0s2, and that you need to recover both the root (/) file system on partition s0, and the /usr file system on partition s6. 
+
+ To recover a root disk and root mirror from a backup 
+
+1.Boot the operating system into single-user mode from its installation CD-ROM using the following command at the boot prompt: 
+ok boot cdrom -s 
+
+2.Use the format command to create partitions on the new root disk (c0t0d0s2). These should be identical in size to those on the original root disk before encapsulation unless you are using this procedure to change their sizes. If you change the size of the partitions, ensure that they are large enough to store the data that is restored to them. 
+See the format(1M) manual page.
+
+A maximum of five partitions may be created for file systems or swap areas as encapsulation reserves two partitions for Veritas Volume Manager private and public regions.
+
+3.Use the mkfs command to make new file systems on the root and usr partitions. For example, to make a ufs file system on the root partition, enter: 
+# mkfs -F ufs /dev/rdsk/c0t0d0s0 
+
+See the mkfs(1M) manual page.
+
+See the mkfs_ufs(1M) manual page.
+
+4.Mount/dev/dsk/c0t0d0s0 on a suitable mount point such as /a or /mnt: 
+# mount /dev/dsk/c0t0d0s0 /a 
+
+5.Restore the root file system from tape into the /a directory hierarchy. For example, if you used ufsdump to back up the file system, use the ufsrestore command to restore it. 
+See the ufsrestore(1M) manual page.
+
+6.Use the installboot command to install a bootblock device on /a. 
+7.If the /usr file system is separate from the root file system, use the mkdir command to create a suitable mount point, such as /a/usr/, and mount /dev/dsk/c0t0d0s6 on it: 
+# mkdir -p /a/usr 
+
+# mount /dev/dsk/c0t0d0s6 /a/usr 
+
+8.If the /usr file system is separate from the root file system, restore the /usr file system from tape into the /a/usr directory hierarchy. 
+9.Disable startup of VxVM by modifying files in the restored root file system. 
+10.Create the file /a/etc/vx/reconfig.d/state.d/install-db to prevent the configuration daemon, vxconfigd, from starting: 
+# touch /a/etc/vx/reconfig.d/state.d/install-db 
+
+11.Copy /a/etc/system to a backup file such as /a/etc/system.old. 
+12.Comment out the following lines from /a/etc/system by putting a * character in front of them: 
+set vxio:vol_rootdev_is_volume=1 
+
+rootdev:/pseudo/vxio@0:0 
+
+These lines should then read:
+
+* set vxio:vol_rootdev_is_volume=1 
+
+* rootdev:/pseudo/vxio@0:0 
+
+13.Copy /a/etc/vfstab to a backup file such as /a/etc/vfstab.old. 
+14.Edit /a/etc/vfstab, and replace the volume device names (beginning with /dev/vx/dsk) for the / and /usr file system entries with their standard disk devices, /dev/dsk/c0t0d0s0 and /dev/dsk/c0t0d0s6. For example, replace the following lines: 
+/dev/vx/dsk/rootvol /dev/vx/rdsk/rootvol / ufs 1 no - 
+
+/dev/vx/dsk/usrvol /dev/vx/rdsk/usrvol /usr ufs 1 yes - 
+
+with this line:
+
+/dev/dsk/c0t0d0s0 /dev/rdsk/c0t0d0s0 / ufs 1 no - 
+
+/dev/dsk/c0t0d0s6 /dev/rdsk/c0t0d0s6 /usr ufs 1 yes - 
+
+15.Remove /a/dev/vx/dsk/bootdg and /a/dev/vx/rdsk/bootdg: 
+# rm /a/dev/vx/dsk/bootdg 
+
+# rm /a/dev/vx/rdsk/bootdg 
+
+16.Shut down the system cleanly using the init 0 command, and reboot from the new root disk. The system comes up thinking that VxVM is not installed. 
+17.If there are only root disk mirrors in the old boot disk group, remove any volumes that were associated with the encapsulated root disk (for example, rootvol, swapvol and usrvol) from the /dev/vx/dsk/bootdg and /dev/vx/rdsk/bootdg directories. 
+18.If there are other disks in the old boot disk group that are not used as root disk mirrors, remove files involved with the installation that are no longer needed: 
+# rm -r /etc/vx/reconfig.d/state.d/install-db 
+
+Start the Veritas Volume Manager I/O daemons:
+
+# vxiod set 10 
+
+Start the Veritas Volume Manager configuration daemon in disabled mode:
+
+# vxconfigd -m disable 
+
+Initialize the volboot file:
+
+# vxdctl init 
+
+Enable the old boot disk group excluding the root disk that VxVM interprets as failed::
+
+# vxdctl enable 
+
+Use the vxedit command (or the Veritas Enterprise Administrator (VEA)) to remove the old root disk volumes and the root disk itself from Veritas Volume Manager control.
+
+19.Use the vxdiskadm command to encapsulate the new root disk and initialize any disks that are to serve as root disk mirrors. After the required reboot, mirror the root disk onto the root disk mirrors. 
+
+ 
+ ^ Return to Top 
+ < Previous  | TOC | Index | Next  >   
+ 
+ 

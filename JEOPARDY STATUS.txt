@@ -1,0 +1,21 @@
+JEOPARDY STATUS:
+
+VCS protects against network failure by requiring that all systems be connected via two or more communications channels.  When a system is down to a single heartbeat connection, VCS can no longer discriminate between the loss of a system and the loss of a network connection.  This situation is referred to as jeopardy.
+
+When LLT on a system no longer receives heartbeat messages from another system on any of the configured LLT interfaces, GAB reports a change in membership.  When a system is down to only one interconnect link, GAB can no longer reliably discriminate between loss of a system and loss of the network.  The reliability of the system’s membership is considered at risk.  In this situation jeopardy membership takes effect.  This provides the best possible split-brain protection without membership arbitration and SCSI-3 devices.
+
+Two actions take effect when a system goes into jeopardy status:
+
+•If the system loses the last interconnect link, VCS places the service groups running on the system in autodisabled state.  A service group in autodisabled state may failover on a resource or group fault, but can not failover on a system fault until the autodisabled flag is manually cleared using :
+
+hagrp -autoenable service_group -sys system_name command
+
+Caution: To bring a group online manually after VCS has autodisabled it, make sure that the group is not fully or partially active on any system that has the AutoDisabled attribute set to 1 by VCS. Specifically, verify that all resources that may be corrupted by being active on multiple systems are brought down on the designated systems.
+
+•VCS operates the system as a single system cluster.  Other systems in the cluster are partitioned off in a separate cluster membership.
+ 
+
+Resolution:
+
+Fix the link for node nxge4. This put cluster membership back into normal membership status
+

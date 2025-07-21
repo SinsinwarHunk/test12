@@ -1,0 +1,110 @@
+
+
+
+------------------------------------------------------------------------
+Activity scheduled for cluster node nyggmcshdbp1-n1:
+
+
+B  MultiNic01Grp   hbrgmcshdbp1-n2      Y          N               ONLINE
+B  MultiNic01Grp   nyggmcshdbp1-n1      Y          N               ONLINE
+B  nycshdbp1       hbrgmcshdbp1-n2      Y          N               OFFLINE
+B  nycshdbp1       nyggmcshdbp1-n1      Y          N               ONLINE
+B  rpbdbp1         hbrgmcshdbp1-n2      Y          N               OFFLINE
+B  rpbdbp1         nyggmcshdbp1-n1      Y          N               ONLINE
+
+
+
+ROOT@lonxshspltp61b [DR Active] /root# haclus -display | grep -i Read
+ReadOnly            1
+ROOT@lonxshspltp61b [DR Active] /root# haconf -makerw
+
+
+
+------------------------------------------------------------------------------
+
+hagrp -offline nycshdbp1 -sys nyggmcshdbp1-n1
+
+hagrp -offline rpbdbp1 -sys nyggmcshdbp1-n1
+
+
+---------------------------------------------------------------------
+
+No Need to do this step :
+
+hagrp -freeze esdocsu1 -persistent
+
+hagrp -freeze irtdbu1 -persistent
+
+hagrp -freeze longcixu1 -persistent
+
+hagrp -freeze oecnfu1 -persistent
+
+-------------------------------------------
+
+
+haconf -dump -makero    <<<---- IMPORTANT
+
+hastop -local 
+
+cd /etc/rc3.d
+
+mv S99vcs _S99vcs
+
+init 6
+--------------------------------------------------------------------
+
+Perform the activity
+
+--------------------------------------------------------------------
+
+
+When server is accessible:
+
+Move the VCS start up script ( mv _S99vcs S99vcs)
+
+hastart
+
+haconf -makerw
+
+---------------------------------------
+No need to do this
+
+hagrp -unfreeze esdocsu1 -persistent
+
+hagrp -unfreeze irtdbu1 -persistent
+
+hagrp -unfreeze longcixu1 -persistent
+
+hagrp -unfreeze oecnfu1 -persistent
+
+
+
+--------------------------------------------------------------------
+
+
+hagrp -online nycshdbp1 -sys nyggmcshdbp1-n1
+
+hagrp -online rpbdbp1 -sys nyggmcshdbp1-n1
+
+
+--------------------------------------------------------------------
+
+haconf -dump -makero
+
+haclus -display | grep -i READ
+
+----------------------------------------------------------------------
+
+
+ sh out.sh > `hostname`.output.doc 2>&1
+ ls -l
+ date
+ cat nyggmcshdbp1-n1.output.doc
+ cat nyggmcshdbp1-n1.output.doc
+ hastatus -summ
+ haclus -display | grep -i Read
+ cat nyggmcshdbp1-n1.output.doc
+ cat nyggmcshdbp1-n1.output.doc
+ cat nyggmcshdbp1-n1.output.doc
+ cat out.sh
+ uuencode `hostname`.output.doc `hostname`.output.doc | mailx -s "  `hostname` Outputs " hclunix@db.com

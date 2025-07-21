@@ -1,0 +1,57 @@
+How to check number of disks in dg with size
+============================================
+
+ROOT@lonshspltd32 [DEV Active] /root# vxdg list
+NAME         STATE           ID
+ctronu2_dg   enabled,cds          1256112652.965.lonshspltd32
+RFS_55494_DG enabled,cds          1331218276.826.lonshspltd32
+dbdatad4_dg  enabled,cds          1257405542.247.lonshspltd32
+dbdatad5_dg  enabled,cds          1257483966.249.lonshspltd32
+dbdatad6_dg  enabled,cds          1257485380.251.lonshspltd32
+dbdatad7_dg  enabled,cds          1257698533.281.lonshspltd32
+gemfired1_dg enabled,cds          1245895673.117.lonshspltd32
+pcrsu1_dg    enabled,cds          1331400325.910.lonshspltd32
+ROOT@lonshspltd32 [DEV Active] /root# for i in `cat`
+        do
+        echo $i
+        for j in `vxprint -htg $i | grep ^dm | awk '{print $6}' | sort -u`
+        do
+        echo $j,`vxprint -htg $i | grep ^dm | grep $j | wc -l`
+        done
+        done
+#         do
+#         echo $i
+#         for j in `vxprint -htg $i | grep ^dm | awk '{print $6}' | sort -u`
+#         do
+#         echo $j,`vxprint -htg $i | grep ^dm | grep $j | wc -l`
+#         done
+#         done
+ctronu2_dg
+RFS_55494_DG
+dbdatad4_dg
+dbdatad5_dg
+dbdatad6_dg
+dbdatad7_dg
+gemfired1_dg
+pcrsu1_dg
+
+ctronu2_dg
+47596288, 28
+47611648, 28
+RFS_55494_DG
+47596288, 11
+dbdatad4_dg
+47596288, 140
+dbdatad5_dg
+190459648, 77
+47596288, 53
+dbdatad6_dg
+47596288, 116
+dbdatad7_dg
+190459648, 113
+47596288, 54
+gemfired1_dg
+47596288, 2
+pcrsu1_dg
+47596288, 20
+47611648, 20

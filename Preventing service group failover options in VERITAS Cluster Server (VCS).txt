@@ -1,0 +1,54 @@
+Preventing service group failover options in VERITAS Cluster Server (VCS)
+=========================================================================
+
+
+Solutions
+=============
+
+It is likely that service group failover will want to be avoided while performing testing or maintenance. If so, there are a variety of options available:
+
+
+
+1. Restart failed resources
+
+
+
+You can set the RestartLimit attribute to greater than 1 for a resource type which allows a resource to be restarted instead of faulting and failing over.
+
+
+
+2. Freeze the relevant service group
+
+
+
+A group can be frozen to prevent it from failing over if a critical resource fails. This can be done persistently so that this effect remains in place, even after a reboot.
+
+
+
+3. Set resources to non-critical
+
+
+If non-critical resources fault and do not cause critical resources to come offline, then no failover occurs. 
+To make a resource non-critical, e.g.:
+
+
+
+# haconf -makerw
+
+# hares -modify <resource_name> Critical 0
+
+# haconf -dump -makero
+
+
+
+4. Turn off autofailover
+
+
+Service groups have an attribute called AutoFailOver that can be turned off to prevent automatic failovers of the service group. To turn off AutoFailOver, e.g.:
+
+
+# haconf -makerw
+
+# hagrp -modify <service_group> AutoFailOver 0
+
+# haconf -dump -makero

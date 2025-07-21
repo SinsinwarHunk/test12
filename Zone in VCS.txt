@@ -1,0 +1,309 @@
+hasys -add lonmqhpltp1
+hasys -add lonmqhpltp2
+
+hagrp -add lndbmqp5
+hagrp -modify lndbmqp5 SystemList  lonmqhpltp1 0 lonmqhpltp2 1
+hagrp -modify lndbmqp5 AutoStartList  lonmqhpltp1
+
+hares -add SRDF_lndbmqp5_dg DBsrdf lndbmqp5
+hares -modify SRDF_lndbmqp5_dg Critical 0
+hares -modify SRDF_lndbmqp5_dg DiskGroup lndbmqp5_dg
+hares -modify SRDF_lndbmqp5_dg Enabled 1
+
+hares -add ZONE_lndbmqp5 DBvcszone lndbmqp5
+hares -modify ZONE_lndbmqp5 Critical 0
+hares -modify ZONE_lndbmqp5 Zone "lndbmqp5::whole"
+hares -modify ZONE_lndbmqp5 IPAddress "10.128.120.211"
+hares -modify ZONE_lndbmqp5 Device e1000g2
+hares -modify ZONE_lndbmqp5 PsetName pset_default
+hares -modify ZONE_lndbmqp5 LofsMounts  "/opt/mqm" "/var/mqm" "/export/data" "/export/log" "/opt/mqsi" "/var/mqsi" "/usr/local" "/export/home"
+hares -modify ZONE_lndbmqp5 Shares 100
+hares -modify ZONE_lndbmqp5 ShutdownTimer 300
+hares -modify ZONE_lndbmqp5 Swap 0
+hares -modify ZONE_lndbmqp5 Physical 0
+hares -modify ZONE_lndbmqp5 Locked 0
+hares -modify ZONE_lndbmqp5 ExclusiveIP 0
+hares -modify ZONE_lndbmqp5 Enabled 1
+
+hares -add DG_lndbmqp5_dg DiskGroup lndbmqp5
+hares -modify DG_lndbmqp5_dg Critical 0
+hares -modify DG_lndbmqp5_dg DiskGroup lndbmqp5_dg
+hares -modify DG_lndbmqp5_dg Enabled 1
+
+hares -add TSM_lndbmqp5 IP lndbmqp5
+hares -modify TSM_lndbmqp5 Critical 0
+hares -local TSM_lndbmqp5 Device
+hares -modify TSM_lndbmqp5 Device e1000g7 -sys lonmqhpltp1
+hares -modify TSM_lndbmqp5 Device e1000g1 -sys lonmqhpltp2
+hares -local TSM_lndbmqp5 Address
+hares -modify TSM_lndbmqp5 Address "10.232.69.75" -sys lonmqhpltp1
+hares -modify TSM_lndbmqp5 Address "10.235.69.67" -sys lonmqhpltp2
+hares -local TSM_lndbmqp5 NetMask
+hares -modify TSM_lndbmqp5 NetMask "255.255.255.0" -sys lonmqhpltp1
+hares -modify TSM_lndbmqp5 NetMask "255.255.255.0" -sys lonmqhpltp2
+hares -modify TSM_lndbmqp5 ContainerName lndbmqp5
+hares -modify TSM_lndbmqp5 ArpDelay 1
+hares -modify TSM_lndbmqp5 Enabled 1
+
+hares -add FS_lndbmqp5_dataoracleproduct Mount lndbmqp5
+hares -modify FS_lndbmqp5_dataoracleproduct Critical 0
+hares -modify FS_lndbmqp5_dataoracleproduct MountPoint "/zones/filesystems/lndbmqp5/data/oracle/product"
+hares -modify FS_lndbmqp5_dataoracleproduct BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_dataoracleproduct"
+hares -modify FS_lndbmqp5_dataoracleproduct FSType vxfs
+hares -modify FS_lndbmqp5_dataoracleproduct FsckOpt "%-y"
+hares -modify FS_lndbmqp5_dataoracleproduct Enabled 1
+
+hares -add FS_lndbmqp5_export_data Mount lndbmqp5
+hares -modify FS_lndbmqp5_export_data Critical 0
+hares -modify FS_lndbmqp5_export_data MountPoint "/zones/filesystems/lndbmqp5/export/data"
+hares -modify FS_lndbmqp5_export_data BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_export_data"
+hares -modify FS_lndbmqp5_export_data FSType vxfs
+hares -modify FS_lndbmqp5_export_data FsckOpt "%-y"
+hares -modify FS_lndbmqp5_export_data Enabled 1
+
+hares -add FS_lndbmqp5_export_home Mount lndbmqp5
+hares -modify FS_lndbmqp5_export_home Critical 0
+hares -modify FS_lndbmqp5_export_home MountPoint "/zones/filesystems/lndbmqp5/export/home"
+hares -modify FS_lndbmqp5_export_home BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_export_home"
+hares -modify FS_lndbmqp5_export_home FSType vxfs
+hares -modify FS_lndbmqp5_export_home FsckOpt "%-y"
+hares -modify FS_lndbmqp5_export_home Enabled 1
+
+hares -add FS_lndbmqp5_export_log Mount lndbmqp5
+hares -modify FS_lndbmqp5_export_log Critical 0
+hares -modify FS_lndbmqp5_export_log MountPoint "/zones/filesystems/lndbmqp5/export/log"
+hares -modify FS_lndbmqp5_export_log BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_export_log"
+hares -modify FS_lndbmqp5_export_log FSType vxfs
+hares -modify FS_lndbmqp5_export_log FsckOpt "%-y"
+hares -modify FS_lndbmqp5_export_log Enabled 1
+
+hares -add FS_lndbmqp5_opt_IBM_ITM Mount lndbmqp5
+hares -modify FS_lndbmqp5_opt_IBM_ITM Critical 0
+hares -modify FS_lndbmqp5_opt_IBM_ITM MountPoint "/zones/filesystems/lndbmqp5/opt/IBM/ITM"
+hares -modify FS_lndbmqp5_opt_IBM_ITM BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_opt_IBM_ITM"
+hares -modify FS_lndbmqp5_opt_IBM_ITM FSType vxfs
+hares -modify FS_lndbmqp5_opt_IBM_ITM FsckOpt "%-y"
+hares -modify FS_lndbmqp5_opt_IBM_ITM Enabled 1
+
+hares -add FS_lndbmqp5_opt_mqm Mount lndbmqp5
+hares -modify FS_lndbmqp5_opt_mqm Critical 0
+hares -modify FS_lndbmqp5_opt_mqm MountPoint "/zones/filesystems/lndbmqp5/opt/mqm"
+hares -modify FS_lndbmqp5_opt_mqm BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_opt_mqm"
+hares -modify FS_lndbmqp5_opt_mqm FSType vxfs
+hares -modify FS_lndbmqp5_opt_mqm FsckOpt "%-y"
+hares -modify FS_lndbmqp5_opt_mqm Enabled 1
+
+hares -add FS_lndbmqp5_opt_mqsi Mount lndbmqp5
+hares -modify FS_lndbmqp5_opt_mqsi Critical 0
+hares -modify FS_lndbmqp5_opt_mqsi MountPoint "/zones/filesystems/lndbmqp5/opt/mqsi"
+hares -modify FS_lndbmqp5_opt_mqsi BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_opt_mqsi"
+hares -modify FS_lndbmqp5_opt_mqsi FSType vxfs
+hares -modify FS_lndbmqp5_opt_mqsi FsckOpt "%-y"
+hares -modify FS_lndbmqp5_opt_mqsi Enabled 1
+
+hares -add FS_lndbmqp5_usr_local Mount lndbmqp5
+hares -modify FS_lndbmqp5_usr_local Critical 0
+hares -modify FS_lndbmqp5_usr_local MountPoint "/zones/filesystems/lndbmqp5/usr/local"
+hares -modify FS_lndbmqp5_usr_local BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_usr_local"
+hares -modify FS_lndbmqp5_usr_local FSType vxfs
+hares -modify FS_lndbmqp5_usr_local FsckOpt "%-y"
+hares -modify FS_lndbmqp5_usr_local Enabled 1
+
+hares -add FS_lndbmqp5_var_mqm Mount lndbmqp5
+hares -modify FS_lndbmqp5_var_mqm Critical 0
+hares -modify FS_lndbmqp5_var_mqm MountPoint "/zones/filesystems/lndbmqp5/var/mqm"
+hares -modify FS_lndbmqp5_var_mqm BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_var_mqm"
+hares -modify FS_lndbmqp5_var_mqm FSType vxfs
+hares -modify FS_lndbmqp5_var_mqm FsckOpt "%-y"
+hares -modify FS_lndbmqp5_var_mqm Enabled 1
+
+hares -add FS_lndbmqp5_var_mqsi Mount lndbmqp5
+hares -modify FS_lndbmqp5_var_mqsi Critical 0
+hares -modify FS_lndbmqp5_var_mqsi MountPoint "/zones/filesystems/lndbmqp5/var/mqsi"
+hares -modify FS_lndbmqp5_var_mqsi BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_var_mqsi"
+hares -modify FS_lndbmqp5_var_mqsi FSType vxfs
+hares -modify FS_lndbmqp5_var_mqsi FsckOpt "%-y"
+hares -modify FS_lndbmqp5_var_mqsi Enabled 1
+
+hares -add FS_lndbmqp5_zone_filesystems Mount lndbmqp5
+hares -modify FS_lndbmqp5_zone_filesystems Critical 0
+hares -modify FS_lndbmqp5_zone_filesystems MountPoint "/zones/filesystems/lndbmqp5"
+hares -modify FS_lndbmqp5_zone_filesystems BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_zone_filesystems"
+hares -modify FS_lndbmqp5_zone_filesystems FSType vxfs
+hares -modify FS_lndbmqp5_zone_filesystems FsckOpt "%-y"
+hares -modify FS_lndbmqp5_zone_filesystems Enabled 1
+
+hares -add FS_lndbmqp5_zone_hosts Mount lndbmqp5
+hares -modify FS_lndbmqp5_zone_hosts Critical 0
+hares -modify FS_lndbmqp5_zone_hosts MountPoint "/zones/hosts/lndbmqp5"
+hares -modify FS_lndbmqp5_zone_hosts BlockDevice "/dev/vx/dsk/lndbmqp5_dg/lndbmqp5_zone_hosts"
+hares -modify FS_lndbmqp5_zone_hosts FSType vxfs
+hares -modify FS_lndbmqp5_zone_hosts FsckOpt "%-y"
+hares -modify FS_lndbmqp5_zone_hosts Enabled 1
+
+hares -add PXY_lndbmqp5 Proxy lndbmqp5
+hares -modify PXY_lndbmqp5 TargetResName mnicres
+hares -modify PXY_lndbmqp5 Enabled 1
+
+hares -add VOL_lndbmqp5_dataoracleproduct Volume lndbmqp5
+hares -modify VOL_lndbmqp5_dataoracleproduct Critical 0
+hares -modify VOL_lndbmqp5_dataoracleproduct Volume lndbmqp5_dataoracleproduct
+hares -modify VOL_lndbmqp5_dataoracleproduct DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_dataoracleproduct Enabled 1
+
+hares -add VOL_lndbmqp5_export_data Volume lndbmqp5
+hares -modify VOL_lndbmqp5_export_data Critical 0
+hares -modify VOL_lndbmqp5_export_data Volume lndbmqp5_export_data
+hares -modify VOL_lndbmqp5_export_data DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_export_data Enabled 1
+
+hares -add VOL_lndbmqp5_export_home Volume lndbmqp5
+hares -modify VOL_lndbmqp5_export_home Critical 0
+hares -modify VOL_lndbmqp5_export_home Volume lndbmqp5_export_home
+hares -modify VOL_lndbmqp5_export_home DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_export_home Enabled 1
+
+hares -add VOL_lndbmqp5_export_log Volume lndbmqp5
+hares -modify VOL_lndbmqp5_export_log Critical 0
+hares -modify VOL_lndbmqp5_export_log Volume lndbmqp5_export_log
+hares -modify VOL_lndbmqp5_export_log DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_export_log Enabled 1
+
+hares -add VOL_lndbmqp5_opt_IBM_ITM Volume lndbmqp5
+hares -modify VOL_lndbmqp5_opt_IBM_ITM Critical 0
+hares -modify VOL_lndbmqp5_opt_IBM_ITM Volume lndbmqp5_opt_IBM_ITM
+hares -modify VOL_lndbmqp5_opt_IBM_ITM DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_opt_IBM_ITM Enabled 1
+
+hares -add VOL_lndbmqp5_opt_mqm Volume lndbmqp5
+hares -modify VOL_lndbmqp5_opt_mqm Critical 0
+hares -modify VOL_lndbmqp5_opt_mqm Volume lndbmqp5_opt_mqm
+hares -modify VOL_lndbmqp5_opt_mqm DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_opt_mqm Enabled 1
+
+hares -add VOL_lndbmqp5_opt_mqsi Volume lndbmqp5
+hares -modify VOL_lndbmqp5_opt_mqsi Critical 0
+hares -modify VOL_lndbmqp5_opt_mqsi Volume lndbmqp5_opt_mqsi
+hares -modify VOL_lndbmqp5_opt_mqsi DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_opt_mqsi Enabled 1
+
+hares -add VOL_lndbmqp5_usr_local Volume lndbmqp5
+hares -modify VOL_lndbmqp5_usr_local Critical 0
+hares -modify VOL_lndbmqp5_usr_local Volume lndbmqp5_usr_local
+hares -modify VOL_lndbmqp5_usr_local DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_usr_local Enabled 1
+
+hares -add VOL_lndbmqp5_var_mqm Volume lndbmqp5
+hares -modify VOL_lndbmqp5_var_mqm Critical 0
+hares -modify VOL_lndbmqp5_var_mqm Volume lndbmqp5_var_mqm
+hares -modify VOL_lndbmqp5_var_mqm DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_var_mqm Enabled 1
+
+hares -add VOL_lndbmqp5_var_mqsi Volume lndbmqp5
+hares -modify VOL_lndbmqp5_var_mqsi Critical 0
+hares -modify VOL_lndbmqp5_var_mqsi Volume lndbmqp5_var_mqsi
+hares -modify VOL_lndbmqp5_var_mqsi DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_var_mqsi Enabled 1
+
+hares -add VOL_lndbmqp5_zone_filesystems Volume lndbmqp5
+hares -modify VOL_lndbmqp5_zone_filesystems Critical 0
+hares -modify VOL_lndbmqp5_zone_filesystems Volume lndbmqp5_zone_filesystems
+hares -modify VOL_lndbmqp5_zone_filesystems DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_zone_filesystems Enabled 1
+
+hares -add VOL_lndbmqp5_zone_hosts Volume lndbmqp5
+hares -modify VOL_lndbmqp5_zone_hosts Critical 0
+hares -modify VOL_lndbmqp5_zone_hosts Volume lndbmqp5_zone_hosts
+hares -modify VOL_lndbmqp5_zone_hosts DiskGroup lndbmqp5_dg
+hares -modify VOL_lndbmqp5_zone_hosts Enabled 1
+
+hagrp -add mnicb
+hagrp -modify mnicb SystemList  lonmqhpltp1 0 lonmqhpltp2 1
+hagrp -modify mnicb Parallel 1
+hagrp -modify mnicb SourceFile "./main.cf"
+
+hares -add mnicres MultiNICB mnicb
+hares -modify mnicres UseMpathd 1
+hares -modify mnicres MpathdCommand "/usr/lib/inet/in.mpathd -a"
+hares -local mnicres Device
+hares -modify mnicres Device  e1000g2 0 e1000g5 1 -sys lonmqhpltp1
+hares -modify mnicres Device  e1000g2 0 nxge2 1 -sys lonmqhpltp2
+hares -modify mnicres Failback 1
+hares -local mnicres GroupName
+hares -modify mnicres GroupName mqhpltp1_group -sys lonmqhpltp1
+hares -modify mnicres GroupName mqhpltp2_group -sys lonmqhpltp2
+hares -modify mnicres ConfigCheck 1
+hares -modify mnicres MpathdRestart 1
+hares -modify mnicres LinkTestRatio 1
+hares -modify mnicres IgnoreLinkStatus 1
+hares -modify mnicres NetworkTimeout 100
+hares -modify mnicres OnlineTestRepeatCount 3
+hares -modify mnicres OfflineTestRepeatCount 3
+hares -modify mnicres DefaultRouter "0.0.0.0"
+hares -modify mnicres Enabled 1
+
+hares -add mnicphres Phantom mnicb
+hares -modify mnicphres Enabled 1
+
+hares -link DG_lndbmqp5_dg SRDF_lndbmqp5_dg
+
+hares -link FS_lndbmqp5_dataoracleproduct FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_dataoracleproduct VOL_lndbmqp5_dataoracleproduct
+
+hares -link FS_lndbmqp5_export_data FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_export_data VOL_lndbmqp5_export_data
+
+hares -link FS_lndbmqp5_export_home FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_export_home VOL_lndbmqp5_export_home
+
+hares -link FS_lndbmqp5_export_log FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_export_log VOL_lndbmqp5_export_log
+
+hares -link FS_lndbmqp5_opt_IBM_ITM FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_opt_IBM_ITM VOL_lndbmqp5_opt_IBM_ITM
+
+hares -link FS_lndbmqp5_opt_mqm FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_opt_mqm VOL_lndbmqp5_opt_mqm
+
+hares -link FS_lndbmqp5_opt_mqsi FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_opt_mqsi VOL_lndbmqp5_opt_mqsi
+
+hares -link FS_lndbmqp5_usr_local FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_usr_local VOL_lndbmqp5_usr_local
+
+hares -link FS_lndbmqp5_var_mqm FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_var_mqm VOL_lndbmqp5_var_mqm
+
+hares -link FS_lndbmqp5_var_mqsi FS_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_var_mqsi VOL_lndbmqp5_var_mqsi
+
+hares -link FS_lndbmqp5_zone_filesystems VOL_lndbmqp5_zone_filesystems
+hares -link FS_lndbmqp5_zone_hosts VOL_lndbmqp5_zone_hosts
+hares -link TSM_lndbmqp5 ZONE_lndbmqp5
+
+hares -link VOL_lndbmqp5_dataoracleproduct DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_export_data DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_export_home DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_export_log DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_opt_IBM_ITM DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_opt_mqm DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_opt_mqsi DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_usr_local DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_var_mqm DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_var_mqsi DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_zone_filesystems DG_lndbmqp5_dg
+hares -link VOL_lndbmqp5_zone_hosts DG_lndbmqp5_dg
+
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_dataoracleproduct
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_export_data
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_export_home
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_export_log
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_opt_IBM_ITM
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_opt_mqm
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_opt_mqsi
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_usr_local
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_var_mqm
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_var_mqsi
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_zone_filesystems
+hares -link ZONE_lndbmqp5 FS_lndbmqp5_zone_hosts
+hares -link ZONE_lndbmqp5 PXY_lndbmqp5

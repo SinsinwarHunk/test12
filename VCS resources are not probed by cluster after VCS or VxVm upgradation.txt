@@ -1,0 +1,39 @@
+VCS resources are not probed by cluster after VCS or VxVm upgradation
+=====================================================================
+
+
+Solution
+
+
+
+Sometime, when we start the cluster after the VCS upgradation, it fails to probe the resources ( e.g. Disk, Volume, mount,MultiNICB, Application, Phantom etc) and because of it, the service group doesn't come online and also gets AutoDisabled in the cluster. This happens due to old types.cf files in /etc/VRTSvcs/conf/config/ folder. Durning VCS upgradation a new types.cf file gets copied into the /etc/VRTSvcs/conf/ folder and often this new file is not copied into the /etc/VRTSvcs/conf/config/ folder which is VCS working folder.
+
+When we check the types.cf file size in both folders in such cases, we could see a difference in the file size -
+# ls -l /etc/VRTSvcs/conf/types.cf
+-r--r--r--   1 root     sys         9842 Jul  1  2008 /etc/VRTSvcs/conf/types.cf
+
+# ls -l /etc/VRTSvcs/conf/config/types.cf
+-rw-------   2 root     sys         7762 Mar  7 19:52 /etc/VRTSvcs/conf/config/types.cf
+ 
+Some difference in size is expected as VCS will remove comments and alter whitespace in the file, however when sections are missing, or parameter lists are different in the type definitions, then the file will need to be updated.
+
+These issues are resolved by copying the types.cf file from the /etc/VRTSvcs/conf/ folder to /etc/VRTSvcs/conf/config/ by using below procedure -
+1. Stop the cluster on ALL nodes (applications will continue to run, but not failover) using -
+# hastop -all -force
+
+2. Backup the original types.cf file using -
+# mv /etc/VRTSvcs/conf/config/types.cf /etc/VRTSvcs/conf/config/types.cf.<date>
+
+3. Copy the types.cf file -
+# cp /etc/VRTSvcs/conf/types.cf /etc/VRTSvcs/conf/config/types.cf
+
+4. Verify the size both types.cf file again, they should be identical -
+# ls -l /etc/VRTSvcs/conf/types.cf
+# ls -l /etc/VRTSvcs/conf/config/types.cf
+
+5. Start the cluster on the node using -
+# hastart
+
+NOTES: 
+* The cp and hastart commands need to executed on all nodes in the cluster. 
+* Verify the types.cf file did not revert back to the original version.  If so, then the procedure will need to be repeated and LLT and GAB will also need to be shut down after the hastop command is executed

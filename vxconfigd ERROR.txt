@@ -1,0 +1,100 @@
+Restarting the Volume Manager configuration daemon (vxconfigd) returns error "VxVM vxconfigd ERROR V-5-1-8726 /dev/vx/info: No such file or directory"
+
+Solution
+
+
+
+Description:
+
+Under certain circumstances Volume Manager commands may report that the Volume Manager configuration daemon (vxconfigd) is not accessible, for example:
+
+# vxdisk list
+VxVM vxdisk ERROR V-5-1-684 IPC failure: Configuration daemon is not accessible
+
+vxconfigd is a user land process so should be seen in the output of 'ps -ef' or similar. If the daemon is not running (as in this case), it can usually be restarted by running 'vxconfigd -k'. If Volume Manager kernel modules are not loaded, however, this can fail with an error indicating that '/dev/vx/info' does not exist. For example:
+
+# vxconfigd -k
+VxVM vxconfigd ERROR V-5-1-8726 /dev/vx/info: No such file or directory
+# vxconfigd -r reset
+VxVM vxconfigd ERROR V-5-1-7840 cannot open /dev/vx/config: No such file or directory
+
+Solution:
+
+This situation normally arises due to one or more of the Volume Manager kernel modules (vxio, vxspec, vxdmp), not being loaded on the machine. To confirm whether modules are loaded the modinfo command should be used as follows:
+
+# modinfo | grep vx
+161 fffffffff009b540    ca0 219   1  vxportal (VxFS 5.0_REV-5.0MP3A25_sol port)
+162 fffffffff06e1000 1f49f0  21   1  vxfs (VxFS 5.0_REV-5.0MP3A25_sol SunO)
+
+vxdmp, vxio and vxspec are missing in the above output and as such are not loaded.
+
+If the modules are not loaded, the machine should be inspected to check that it is configured correctly to allow modules to be loaded manually, and at boot time on subsequent reboots.
+
+1. Check for required entries in /etc/system to allow modules to load at boot time:
+
+Volume Manager kernel modules are loaded from /etc/system at boot time, and as such the /etc/system file should contain the following entries:
+
+...
+forceload: drv/vxdmp
+forceload: drv/vxio
+forceload: drv/vxspec
+...
+
+If the above entries are missing from /etc/system, or the modules are 'excluded' by use of the 'exclude' keyword, they should be manually added or modified to match the above.
+
+2. Check for valid driver to major number bindings in /etc/name_to_major:
+
+The Solaris operating system uses entries in /etc/name_to_major to bind device drivers such as Volume Manager kernel modules to major numbers. As such if entries for Volume Manager kernel modules are missing from /etc/name_to_major, Volume Manager kernel modules may be unable to load. As such /etc/name_to_major should contain a valid entry for each Volume Manager kernel module. For example:
+
+# cat /etc/name_to_major | egrep "vxdmp|vxio|vxspec"
+vxdmp 282
+vxio 283
+vxspec 284
+
+If these entries are missing they should be replaced by using the add_drv command which can be used to add an undefined device driver to the system:
+
+# add_drv vxdmp
+# add_drv vxio
+# add_drv vxspec
+
+Note that the add_drv command will also attempt to load corresponding kernel modules for device drivers being added to the system.
+
+3. Load modules and restart vxconfigd:
+
+After checking the above points, if Volume Manager kernel modules are still not loaded, they should be manually loaded either by rebooting the machine and allowing normal startup, or via the modload command. For example:
+
+# modload drv/sparcv9/vxio             
+# modload drv/sparcv9/vxdmp
+# modload drv/sparcv9/vxspec
+
+Once complete, modules should be loaded as shown below:
+
+# modinfo | egrep "vxdmp|vxio|vxspec"
+46 fffffffff02be000  44518 221   1  vxdmp (VxVM 5.0MP3: DMP Driver)
+48 fffffffff0ba8000 2427b8 222   1  vxio (VxVM 5.0MP3 I/O driver)
+50 fffffffff0188348    e50 223   1  vxspec (VxVM 5.0MP3 control/status driv)
+
+At this point, vxconfigd can be restarted sucessfully, after which Volume Manager commands should continue to function as normal:
+
+# vxconfigd -k
+# vxdisk list
+DEVICE       TYPE            DISK         GROUP        STATUS
+ams_wms0_0072 auto:cdsdisk    disk01       datadg       online
+ams_wms0_0073 auto:cdsdisk    disk02       datadg       online
+ams_wms0_0074 auto:cdsdisk    disk03       datadg       online
+ams_wms0_0075 auto:cdsdisk    -            -            online
+ams_wms0_0076 auto:none       -            -            online invalid
+ams_wms0_0080 auto:cdsdisk    -            -            online
+ams_wms0_0081 auto:cdsdisk    -            -            online
+ams_wms0_0082 auto:cdsdisk    01           testdg       online
+ams_wms0_0083 auto:cdsdisk    02           testdg       online
+ams_wms0_0084 auto:cdsdisk    03           testdg       online
+ams_wms0_0085 auto:cdsdisk    04           testdg       online
+ams_wms0_0086 auto:cdsdisk    05           testdg       online
+ams_wms0_0087 auto:none       -            -            online invalid
+c1t0d0s2     auto:none       -            -            online invalid
+c1t1d0s2     auto:none       -            -            online invalid
+#
+
+
+

@@ -1,0 +1,18 @@
+vxdctl enable throwing errors:
+=============================
+
+[prodgzdb05:~] root# vxdctl enable
+
+VxVM vxdctl ERROR V-5-1-0  Data Corruption Protection Activated - User Corrective Action Needed
+VxVM vxdctl INFO V-5-1-0  To recover, first ensure that the OS device tree is up to date (requires OS specific commands).
+VxVM vxdctl INFO V-5-1-0  Then, execute 'vxdisk rm' on the following devices before reinitiating device discovery: c0t1d0
+
+This was a production system, so rebooting is not an option (though several people insisted it was the only option). 
+Turns out the solution was to "exclude" the internal drives from VxVM and rescan. That was enough of a kick to the head that VxVM started behaving properly.
+
+# vxdmpadm exclude vxvm ctlr=c0
+
+Of course, this only works if you do not have your internal drives configured to use VxVM (I use Solaris Volume Manager instead).
+Then I could do vxdctl enable and not see any errors. 
+
+Then you remove the /etc/vx/vxvm.exclude file, re-run vxdctl enable, and all seems well

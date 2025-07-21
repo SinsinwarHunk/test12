@@ -1,0 +1,71 @@
+bash-3.00# vxdg init appl-dg appl01=c1t2d0
+VxVM vxdg ERROR V-5-1-6478 Device c1t2d0 cannot be added to a CDS disk group
+
+vxdisk list shows:
+
+bash-3.00# vxdisk list
+DEVICE TYPE DISK GROUP STATUS
+c1t0d0s2 auto:none – – online invalid
+c1t1d0s2 auto:sliced – – online
+c1t2d0s2 auto:sliced – – online
+c1t3d0 auto:sliced LOG-DG02 LOG-DG online
+c1t4d0 auto:sliced LOG-DG01 LOG-DG online
+c1t5d0 auto:sliced disk0 LOG-DG online
+
+When a new dg is created the default type is CDS , but in this case the disk c1t2d0 is sliced.
+So , turning off the CDS type for a diskgroup , the creation is done without errors:
+
+bash-3.00# vxdg init appl-dg appl01=c1t2d0 cds=off
+
+###########################################################################################################
+
+Problem
+
+
+
+vxdisksetup -i initialized the device as sliced even though "format=sliced" was not used to initialize the disk.
+
+
+Error
+
+
+
+VxVM vxdg ERROR V-5-1-6478 Device sun35100_0 cannot be added to a CDS disk group
+
+ 
+
+
+Environment
+
+
+
+The file /etc/default/vxdisk contains the line:
+
+format=sliced
+
+
+Solution
+
+
+
+Run vxdiskunsetup on the disk.
+
+Temporarily comment out:
+
+#format=sliced
+
+in /etc/default/vxdisk
+
+Rerun vxdisksetup -i <disk>
+
+Verify vxdisk list shows the new disk as auto:cds
+
+Add the new disk to the disk group
+
+Uncomment:
+
+format=sliced
+
+in /etc/default/vxdisk
+
+

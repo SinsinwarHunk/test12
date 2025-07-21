@@ -1,0 +1,102 @@
+Disk Group Agent Failed and unable to start on one of node
+===========================================================
+
+Error
+
+
+# hastatus -sum
+
+
+AGENTS FAILED
+
+-- Type            System
+ 
+ DiskGroup       Node B
+ 
+
+# tail -f /var/*vcs/log/engine*
+
+2012/08/22 20:06:23 VCS WARNING V-16-1-10023 Agent DiskGroup not sending alive messages since August 22, 2012 08:04:08 PM CDT
+2012/08/22 20:06:23 VCS NOTICE V-16-1-53026 Agent DiskGroup ipm connection still valid
+2012/08/22 20:06:23 VCS NOTICE V-16-1-53027 Waiting one more try for ipm connection for agent DiskGroup to go away
+2012/08/22 20:06:34 VCS WARNING V-16-1-10023 Agent DiskGroup not sending alive messages since August 22, 2012 08:04:08 PM CDT
+2012/08/22 20:06:34 VCS NOTICE V-16-1-53026 Agent DiskGroup ipm connection still valid
+2012/08/22 20:06:34 VCS NOTICE V-16-1-53030 Termination request sent to DiskGroup agent process with pid 23682
+2012/08/22 20:06:34 VCS NOTICE V-16-1-10016 Agent /opt/VRTSvcs/bin/DiskGroup/DiskGroupAgent for resource type DiskGroup successfully startedat August 22, 2012 08:06:34 PM CDT
+2012/08/22 20:06:34 VCS ERROR V-16-2-13051 (Node B) Agent(DiskGroup) is exiting because another agent with process-id(23682) is already running for this type
+2012/08/22 20:08:48 VCS WARNING V-16-1-10023 Agent DiskGroup not sending alive messages since August 22, 2012 08:06:34 PM CDT
+2012/08/22 20:08:48 VCS WARNING V-16-1-53025 Agent DiskGroup has faulted; ipm connection was lost; restarting the agent
+ 
+2012/08/22 20:17:52 VCS ERROR V-16-1-10008 Agent DiskGroup has faulted 6 times since August 22, 2012 08:06:34 PM CDT
+2012/08/22 20:17:52 VCS ERROR V-16-1-10009 Agent DiskGroup has faulted 6 times in less than 950 seconds -- Will not attempt to restart. Correct the problem and use haagent -start to start the agent
+
+
+
+# haagent -display DiskGroup
+
+#Agent       Attribute      Value
+DiskGroup    AgentDirectory
+DiskGroup    AgentFile
+DiskGroup    Faults         0
+DiskGroup    Running        NO
+DiskGroup    Started        NO
+
+ 
+
+
+Solution:
+========
+
+
+
+Refer below steps to fix Agent Failed issue:
+
+ 
+1.     Try to Stop/Start failed VCS agent with following command
+
+#haagent -stop <Agentname> -sys <Node name>
+#haagent -start <Agentname> -sys <Node name>
+ 
+2.     Verify types.cf file in /etc/VRTSvcs/conf/config/types.cf and /etc/VRTSvcs/conf/types.cf. If there is difference found between both the files then replace the types.cf file
+ 
+3.     Verify VRTSvcsag package binary with below command and if binary size shows zero, Reinstall the Agent binary
+ 
+ 
+PKGINST: VRTSvcsag
+      NAME: Veritas Cluster Server Bundled Agents by Symantec
+ CATEGORY: system
+      ARCH: sparc
+   VERSION: 5.1
+   BASEDIR: /
+    VENDOR: Symantec Corporation
+      DESC: Veritas Cluster Server Bundled Agents by Symantec
+    PSTAMP: 5.1.002.000-5.1RP2-2010-08-26_19.00.00
+ INSTDATE: Mar 22 2011 21:10
+    STATUS: completely installed
+     FILES:      343 installed pathnames
+                   4 shared pathnames
+                  59 directories
+                 211 executables
+                6205 blocks used (approx)
+ 
+4.     Verify if Process table having any defunct processes. If found then kill those processes and try to start Agent again on affected node.
+ 
+# ps -elf | grep -i 23682
+ 0 S     root 23682     1   0 41 20        ?   1555        ?   Jul 19 ?         652:55 /opt/VRTSvcs/bin/DiskGroup/DiskGroup
+ 0 Z     root 17061 23682   0   0 -        -      0        -        - ?           0:00 <defunct>
+ 0 Z     root 17054 23682   0   0 -        -      0        -        - ?           0:00 <defunct>
+ 0 Z     root 17053 23682   0   0 -        -      0        -        - ?           0:00 <defunct>
+ 0 Z     root 17050 23682   0   0 -        -      0        -        - ?           0:00 <defunct>
+ 
+#kill -9 23682
+ 
+#haagent -start DiskGroup -sys node B
+
+# haagent -display DiskGroup
+#Agent       Attribute      Value
+DiskGroup    AgentDirectory
+DiskGroup    AgentFile
+DiskGroup    Faults         0
+DiskGroup    Running        Yes
+DiskGroup    Started        Yes
+

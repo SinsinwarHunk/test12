@@ -1,0 +1,56 @@
+
+bash-3.00$ hq eqctdev2
+
+Hostname       : eqctdev2.us.db.com
+HCL Access     : Yes - In Scope
+Classification : Active
+Server Purpose : DEV
+Asset Location : /DB LOCATION/AMERICAS/USA/PARSIPPANY/2 GATEHALL DRIVE/3RD FLOOR/DC/CA036/
+Support Group  : GLOBAL_HCL_UNIX
+Brand          : SUN MICROSYSTEMS
+Model          : M4000
+Serial Number  :
+OS             : SOLARIS SPARC 10
+Console        :
+Host Flag      : VIRTUAL
+Parent         : nygeqctdev2.us.db.com
+Business Area  : GT CM AS MARGIN & COLLATERAL
+
+ROOT@eqctdev2:/root # df -kh .
+Filesystem             size   used  avail capacity  Mounted on
+/                      4.0G   4.0G     0K   100%    /
+
+
+bash-3.00$ hs nygshspltd23
+Keystroke logging enabled for this session
+
+Use email address: romil.singal|HCL.comEnter PASSCODE:
+                                                      Last login: Sat Jun  9 23:23:22 2012 from ny1sapghs1.us.d
+Access to this computer is prohibited unless authorised
+Accessing programs or data unrelated to your job is prohibited
+If you are not authorised, disconnect now.
+You have mail.
+
+ROOT@nygshspltd23:/root # ROOT@nygshspltd23:/root # bash
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+  13 eqctdev2         running    /zones/hosts/eqctdev2          native   shared
+  34 nygtssdbdev1     running    /zones/hosts/nygtssdbdev1      native   shared
+   - gpwmusd1         installed  /zones/hosts/gpwmusd1          native   shared
+
+bash-3.2# df -h /zones/hosts/eqctdev2
+Filesystem             size   used  avail capacity  Mounted on
+/dev/vx/dsk/infod1dg/zones_hosts_eqctdev2
+                       4.0G   4.0G   0K    100%    /zones/hosts/eqctdev2
+bash-3.2# vxassist -g infod1dg maxsize
+Maximum volume size: 78702592 (38429Mb)
+
+bash-3.2# vxresize -g infod1dg zones_hosts_eqctdev2 +2g
+bash-3.2# zlogin eqctdev2
+[Connected to zone 'eqctdev2' pts/2]
+dSun Microsystems Inc.  SunOS 5.10      Generic January 2005
+ROOT@eqctdev2:/root # df -kh .
+Filesystem             size   used  avail capacity  Mounted on
+/                      6.0G   4.0G   1.9G    69%    /
+

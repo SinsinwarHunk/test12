@@ -1,0 +1,36 @@
+Starting VCS 
+=============
+
+The command to start VCS is invoked from the file /etc/rc3.d/S99vcs or /sbin/rc3.d/S99vcs. When VCS is started, it checks the state of its local configuration file and registers with GAB for cluster membership. If the local configuration is valid, and if no other system is running VCS, it builds its state from the local configuration file and enters the RUNNING state. 
+
+
+To start VCS 
+-------------
+
+# hastart [-stale|-force] 
+
+The option -stale instructs the engine to treat the local configuration as stale even if it is valid to prevent the node from using the old types.cf or main.cf. 
+The option -force instructs the engine to treat a stale, but otherwise valid, local configuration as valid. 
+
+
+To start VCS when all systems are in ADMIN_WAIT 
+-----------------------------------------------
+
+First validate the configuration file (/etc/VRTSvcs/conf/config/main.cf) on all systems in the cluster by running the  'hacf -verify' command for syntax error check. Run the following command from any system in the cluster to force VCS to use the configuration file from the system specified by the variable system: 
+
+
+# hasys -force system 
+
+When VCS is started on a system, and when that system is the only one running, VCS retrieves the configuration from the local configuration directory $VCS_CONF/conf/config. If the configuration is valid, VCS performs a LOCAL_BUILD, and the system transitions to the state of RUNNING, its normal operational state. 
+
+If the local configuration is missing, invalid, or designated "stale," the system transitions to the STALE_ADMIN_WAIT state, and the VCS engine waits for manual intervention, or for VCS to be started on a system that has a valid configuration. 
+
+If VCS is started on a system when other systems are already running VCS, the engine processes exchange their operational states according to the following conventions: 
+
+If a system running VCS is in the state of RUNNING, the system joining the cluster performs a REMOTE_BUILD from that system and transitions to the state of RUNNING. 
+If a system running VCS is in the state of LOCAL_BUILD, the system joining the cluster waits for that system to transition to RUNNING. It then performs a REMOTE_BUILD from that system and transitions to the state of RUNNING. 
+If all systems running VCS are in the state of STALE_ADMIN_WAIT, and if the local configuration file of the system joining the cluster is valid, the joining system performs a LOCAL_BUILD and transitions to RUNNING. The other systems then perform REMOTE_BUILDs from the new system and transition to RUNNING. 
+If all systems running VCS are in the state of STALE_ADMIN_WAIT, and if the local configuration file of the system joining the cluster is invalid, then the joining system also transitions to STALE_ADMIN_WAIT. 
+
+
+One of the most common causes of a node being in one of these states is the existence of /etc/VRTSvcs/conf/config/.stale. This file is typically left behind if Cluster Server is stopped while the configuration is still open, i.e. someone has forgotten to save changes made to a running main.cf configuration. The .stale file is deleted automatically if changes are correctly saved and will therefore not force the relevant node into an ADMIN state when it next has to restart Cluster Server. To prevent this from happening run "haconf -dump -makero" before stopping the cluster

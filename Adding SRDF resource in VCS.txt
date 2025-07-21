@@ -1,0 +1,43 @@
+Symdg must be created before adding SRDF Resource in VCS
+--------------------------------------------------------
+symdg list
+
+
+Check and delete TrueCopy Resource of HITACHI
+----------------------------------------------
+ 
+hastatus -summ
+hagrp -resources meshlpv5
+hares -display TrueCopy_meshlpv5_dg | grep -i type
+hares -dep TrueCopy_meshlpv5_dg
+
+haconf -makerw
+hares -delete TrueCopy_meshlpv5_dg
+hares -display TrueCopy_meshlpv5_dg
+
+
+Create SRDF Resource and modify its attributes 
+----------------------------------------------
+
+hares -add SRDF_meshlpv5 DBsrdf meshlpv5
+hares -display SRDF_meshlpv5
+hares -modify SRDF_meshlpv5 Critical 0
+hares -modify SRDF_meshlpv5 DiskGroup meshlpv5_dg
+hares -modify SRDF_meshlpv5 Dynamic 1
+hares -modify SRDF_meshlpv5 Enabled 1
+hastatus -summ
+
+
+Make SRDF resource online and set its dependency with corresponding DG
+-----------------------------------------------------------------------
+
+hares -online SRDF_meshlpv5 -sys lonmeshpltp5a
+hares -state SRDF_meshlpv5
+hastatus -summ
+
+hagrp -resources meshlpv5
+hares -link DG_meshlpv5_dg SRDF_meshlpv5
+hares -dep SRDF_meshlpv5
+hastatus -summ
+
+haconf -dump -makero

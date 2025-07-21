@@ -1,0 +1,173 @@
+Stage I - Creating the Volume Manager Disk Groups and Volumes.  Then add into VCS.
+ 
+sunsrv1: vxdisk -o alldgs list
+DEVICE       TYPE            DISK         GROUP        STATUS
+c1t1d0         auto:none       -            -            online invalid
+ 
+sunsrv1: /usr/lib/vxvm/bin/vxdisksetup -i c1t1d0
+sunsrv1: vxdisk scandisks 
+sunsrv1: vxdisk -o alldgs list
+DEVICE       TYPE            DISK         GROUP        STATUS
+c1t1d0         auto:sliced       -            -                    online
+ 
+sunsrv1:  vxdg init myzone c1t1d0
+ 
+sunsrv1: vxassist -g myzone make zroot_myzone 10g
+sunsrv1: vxassist -g myzone make application_myzone 10g
+ 
+sunsrv1: mkfs -F vxfs /dev/vx/rdsk/myzone/zroot_myzone     version 6 layout
+    20971520 sectors, 10485760 blocks of size 1024, log size 16384 blocks
+    largefiles supported
+ 
+sunsrv1: mkfs -F vxfs /dev/vx/rdsk/myzone/application_myzone     version 6 layout
+    20971520 sectors, 10485760 blocks of size 1024, log size 16384 blocks
+    largefiles supported
+ 
+Clear auto import of disk group
+sunsrv1: vxdg deport myzone
+sunsrv1: vxdg -t import myzone
+sunsrv1: vxvol -g myzone startall 
+
+Configure VCS to Import the Disk Group and mount the filesystems in a service group called myzone.
+ 
+sunsrv1: haconf -makerw
+sunsrv1: hagrp -add myzone
+VCS NOTICE V-16-1-10136 Group added; populating SystemList and setting the Parallel attribute recommended before adding resources
+sunsrv1: hagrp -modify myzone SystemList sunsrv1 0 sunsrv2 1
+ 
+sunsrv1: hares -add myzonedg DiskGroup myzone
+VCS NOTICE V-16-1-10242 Resource added. Enabled attribute must be set before agent monitors
+sunsrv1: hares -modify myzonedg DiskGroup myzone
+sunsrv1: hares -modify myzonedg Enabled 1
+ 
+sunsrv1: hares -add zroot_myzone Mount myzone
+VCS NOTICE V-16-1-10242 Resource added. Enabled attribute must be set before agent monitors
+sunsrv1: hares -modify zroot_myzone MountPoint /zones/myzone
+sunsrv1: hares -modify zroot_myzone BlockDevice /dev/vx/dsk/myzone/zroot_myzone 
+sunsrv1: hares -modify zroot_myzone FSType vxfs                      
+sunsrv1: hares -modify zroot_myzone FsckOpt &percnt;-y
+sunsrv1: mkdir -p /zones/myzone
+sunsrv1: ssh sunsrv2 mkdir -p /zones/myzone
+sunsrv1: chmod go-rwx /zones/myzone
+sunsrv1: ssh sunsrv2 chmod go-rwx /zones/myzone
+sunsrv1: hares -modify zroot_myzone Enabled 1
+sunsrv1: hares -online zroot_myzone -sys sunsrv1
+sunsrv1: df -h /zones/myzoneFilesystem                                                        
+ size   used  avail capacity  Mounted on
+/dev/vx/dsk/myzone/zroot_myzone           10G    19M   9.4G     1&percnt;    /zones/myzone
+ 
+sunsrv1: chmod go-rwx /zones/myzone
+sunsrv1: hares -link zroot_myzone myzonedg
+ 
+sunsrv1: mkdir /zones/myzone/root/myzone
+sunsrv1: hares -add application_myzone Mount myzone
+sunsrv1: hares -modify application_myzone MountPoint /zones/applications/myzone
+sunsrv1: hares -modify application_myzone BlockDevice /dev/vx/dsk/myzone/application_myzone sunsrv1: hares -modify application_myzone FSType vxfs
+sunsrv1: hares -modify application_myzone FsckOpt &percnt;-ysunsrv1: hares -modify application_myzone Enabled 1  
+sunsrv1: hares -link application_myzone zroot_myzone   
+sunsrv1: hares -online application_myzone -sys sunsrv1
+ 
+sunsrv1: hares -dep |grep myzone
+
+myzone      application_myzone zroot_myzone
+myzone      zroot_myzone       myzonedg 
+
+sunsrv1: hastatus -sum 
+-- SYSTEM STATE
+-- System               State                Frozen              
+ 
+A  sunsrv1                 RUNNING              0                    
+A  sunsrv2                 RUNNING              0                    
+ 
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State          
+ 
+B  myzone         sunsrv1                 Y          N               ONLINE         
+B  myzone         sunsrv2                 Y          N               OFFLINE  
+
+
+sunsrv1: haconf -dump -makero 
+
+Create the Local Zone - 
+Note: no network configured in the zonecfg.
+ 
+sunsrv1: zonecfg -z myzone
+myzone: No such zone configured
+Use 'create' to begin configuring a new zone.
+zonecfg:myzone> createzonecfg:myzone> set zonepath=/zones/myzone
+zonecfg:myzone> add fs
+zonecfg:myzone:fs> set special=/zones/applications/myzone
+zonecfg:myzone:fs> set dir=/myzone
+zonecfg:myzone:fs> set type=lofs
+zonecfg:myzone:fs> end
+zonecfg:myzone> exit
+
+sunsrv1: zoneadm -z myzone install
+Preparing to install zone <myzone>.
+Creating list of files to copy from the global zone.
+Copying <2789> files to the zone.
+Initializing zone product registry.
+Determining zone package initialization order.
+Preparing to initialize <1019> packages on the zone.
+Initialized <1019> packages on zone.                                 
+Zone <myzone> is initialized.
+Installation of these packages generated errors: <SUNWj5rt SUNWj5man SUNWj5dmo SUNWpostgr-server-data SUNWpostgr-server SUNWpostgr-tcl VRTSvcsmg VRTSvcsag>
+Installation of <9> packages was skipped.
+The file </zones/myzone/root/var/sadm/system/logs/install_log> contains a log of the zone installation.
+sunsrv1:  zoneadm -z myzone boot
+sunsrv1: zlogin -e @. -C myzone 
+[Connected to zone 'myzone' console]                                     46/116
+ 
+Configure the local zone with the host name of myzone.  IP will be controlled later in the process.
+ 
+myzone: init 0# svc.startd: The system is coming down.  Please wait.
+svc.startd: 73 system services are now being stopped.
+ 
+ 
+Feb 25 18:08:35 myzone sendmail[8554]: My unqualified host name (localhost) unknown; sleeping for retry
+Feb 25 18:09:35 myzone sendmail[8554]: unable to qualify my own domain name (localhost) -- using short name
+Feb 25 18:09:36 myzone sendmail[8579]: My unqualified host name (localhost) unknown; sleeping for retry
+Feb 25 18:09:36 myzone sendmail[8580]: My unqualified host name (localhost) unknown; sleeping for retry
+svc.startd: The system is down.
+ 
+[NOTICE: Zone halted] 
+myzone: @.
+ 
+ 
+I strongly recommend that you move over the service group to the second system and run the following:
+ 
+sunsrv1: zoneadm -z myzone detach
+
+sunsrv1: hagrp -switch myzone -to sunsrv2
+sunsrv2: zonecfg -z myzone create -a /zones/myzone
+sunsrv2: zoneadm -z myzone attach
+sunsrv2: zoneadm -z myzone boot
+sunsrv2: zlogin myzone
+ 
+Make sure all is fine, then init 0.
+ 
+sunsrv2: zoneadm -z myzone detach
+ 
+Move all back to primary and online the service group.  Not doing this process will result in the monitor script not being able to tell state on the second node.  As it will not be in /etc/zones/index.
+ 
+Now comes the fun part.  Creating the specialized start/stop/monitor scripts for the local zone.
+ 
+sunsrv1: hares -link myzone_zone zroot_myzone
+sunsrv1: hares -link myzone_zone application_myzone
+sunsrv1: hares -modify myzone_zone Enabled 1
+sunsrv1: hares -online myzone_zone -sys sunsrv1 
+Adding the IP and NIC connections for the zone.  This is a little bizzar.  The NIC agent is configured in the Global Zone, and the IP is set to the attribute ContainerName.  Once this is done, you do not need to specify the NIC device in the zone.xml file.  It will just appear. They you can update the zones name space.
+ 
+sunsrv1: hares -add myzone_nic NIC myzone
+sunsrv1: hares -modify myzone_nic Device hme0
+sunsrv1: hares -modify myzone_nic Enabled 1
+ 
+sunsrv1: hares -add myzone_ip IP myzone
+sunsrv1: hares -modify myzone_ip Address 10.1.1.5
+sunsrv1: hares -modify myzone_ip Network 255.255.255.0
+sunsrv1: hares -modify myzone_ip ContainerName myzone
+sunsrv1: hares -link myzone_ip myzone_nic
+sunsrv1: hares -link myzone_ip myzone_zone
+ 
+sunsrv1: hares -modify myzone_ip Enabled 1
+sunsrv1: haconf -dump -makero

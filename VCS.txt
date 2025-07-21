@@ -1,0 +1,401 @@
+VERITAS Cluster Server FAQ
+
+
+1. Do I have to run "hastart" on each node to manually
+startup VCS?
+
+Yes. If you need to manually startup the cluster, you have to run "hastart" on
+each node. There is no command to startup VCS on every node. If you only
+execute "hastart" on one node, VCS will come up, but it probably won't startup
+your Service Groups. VCS has to probe each machine the Service Group can
+online on, and it can't do that if VCS isn't running on one of the nodes.
+
+
+2. How do I start VCS when one node is down? 
+
+Normally, VCS has to seed all the nodes in your cluster before becoming
+fully operational. VCS may actually startup, but none of the commands will work.
+If one of your nodes is down, and you need to start VCS on the other nodes,
+then you must manually seed the other node(s). Run this command on each node
+that is up:
+
+     /sbin/gabconfig -cx
+
+VCS should then be starting up. You may have to online some Service Groups
+manually:
+
+     hagrp -online {Service Group} -sys {hostname}
+
+If the gabconfig command doesn't work, reconfigure GAB and LLT and try again.
+Do the following on *both* nodes:
+
+     1) Make sure had and hashadow are not in the process table. Check
+        "ps -ef" and kill them if you have to.
+     2) /sbin/gabconfig -U
+     3) /sbin/lltconfig -U  (answer yes)
+     4) /sbin/lltconfig -c
+     5) /sbin/gabconfig -cx
+     6) hastart
+
+VCS should then startup on each node that is up.
+
+
+3. How can I shutdown VCS without shutting down my
+applications?
+Use the "hastop -force" option.
+
+   (1) hastop -all -force  (shuts down VCS on all nodes)
+   (2) hastop -local -force  (shuts down VCS on the local node only)
+
+WARNING: Always make the cluster read-only before doing a force shutdown.
+
+     haconf -dump -makero
+
+If you force stop a cluster while it is in read-write mode, you will get a
+stale configuration error upon VCS restart.
+
+To see if your cluster is in read-only mode, run "haclus -display". The
+"ReadOnly" attribute should have a value of 1. If not, then run
+"haconf -dump -makero" to make it read-only.
+
+If you start VCS and get a stale configuration error, you have mainly 2
+choices.
+
+   (1) Run "hastop -all -force", check main.cf on your nodes for any
+       inconsistencies, remove any .stale files in /etc/VRTSvcs/conf/config/,
+       and restart VCS.
+
+If you see no .stale files, then your main.cf's might have a syntax error.
+Execute this command to see where the syntax errors are:
+
+         cd /etc/VRTSvcs/conf/config/
+         hacf -verify .
+
+
+   (2) Continue to start VCS by running "hasys -force {hostname}". Pick the
+       hostname of the machine you want VCS to load the main.cf from.
+
+Usually you would choose the 2nd option if the cluster is not in production
+or if you're confident the main.cf on the specified machine is good enough.
+
+  
+4. How do I failover a Service Group?
+You can manually failover a Service Group two ways:
+
+   (1) hagrp -switch {Service Group} -to {target node}
+
+   (2) hagrp -offline {Service Group} -sys {current node}
+       hagrp -online {Service Group} -sys {target node}
+
+The second way simply gives you more control. After you offline the Group,
+you can online it anywhere when you want to. The first way is for an
+immediate "handsoff" failover.
+
+   VCS can automatically failover Groups if you do the following:
+
+   (1) Execute "init 6" or "shutdown -ry 0"
+   (2) Execute "reboot"
+   (3) Switch off the machine's power
+   (4) Pull out all heartbeat cables simultaneously
+   (5) Cause a "fault", i.e. manually shutdown some service or resource in
+       your Service Group.
+   (6) Panic the machine.
+
+
+5. Is offlining a Service Group the same thing as failing
+it over? What does offline mean?
+No, when you offline a Group you are shutting down all the services in the
+group, but you are not onlining it anywhere else. You can online the Group
+at any time if you want.
+
+Offline for a Group means the services in that group are unavailable to any
+node in the cluster.
+
+A failover is when a Group offlines from one node and onlines on another.
+
+
+6. What's the difference between Agents and Resources?
+
+Agents are VCS processes that control and monitor the Resources. Resources
+are all those objects in your Service Group, and they all require Agents.
+
+For example, all your filesystems are resources, and they all use the Mount
+Agent. Your virtual IP address is a resource, and it uses the IP or
+IPMultiNIC Agent. The Veritas Volume Manager Disk Group is a resource, and
+it uses the DiskGroup Agent. Some Agents, such as the Oracle Enterprise
+Agent, have to be purchased separately.
+
+
+7. Does each Service Group have its own IP and DiskGroup?
+
+Usually, Service Groups have their own IP and DiskGroup resources, but
+this is not technically required; it all depends on your applications.
+All a Service Group really needs is some resource.
+
+Most resources, however, cannot be shared across Service Groups. That is why
+Service Groups usually do have their own IP's, DiskGroup, filesystems, etc.
+
+Groups can share certain resources like NIC and MultiNICA, although the
+resource has a unique name in each Group.
+
+
+8. Should I put everything in one Service Group, or should
+I have more than one Service Group?
+
+Usually people try to separate different applications as much as possible.
+Service Groups serve as logical divisions for your applications. You
+don't want a failure of one application to cause a failover of all your
+applications if its unnecessary. If all your applications are using the
+same Group, then a failure in that Group can cause all your applications
+to fail.
+
+The goal of high availability is to try to minimize single points of
+failure. That is why separate applications in a cluster usually means
+separate Service Groups are recommended.
+
+
+9. How do I add another Service Group to main.cf?
+You can add a Service Group using the VCS GUI, using VCS commands, or editing
+the main.cf file.
+
+
+10. Can I use vi to edit main.cf?
+You can edit main.cf only when VCS is shutdown. VCS does not read main.cf 
+when it is already running. VCS only reads from the configuration it has
+in memory. If you edit main.cf while VCS is running, VCS will not read
+your updates, and it will overwrite the main.cf with the configuration it
+has in memory.
+
+You can always edit a copy of main.cf and shutdown VCS, move the new
+main.cf into /etc/VRTSvcs/conf/config/ and restart VCS.
+
+Here's an example...
+
+    1) haconf -dump
+    2) cp main.cf /tmp/main.cf
+    3) vi /tmp/main.cf
+    4) haconf -dump -makero
+    5) hastop -all -force
+    6) cp /tmp/main.cf /etc/VRTSvcs/conf/config/
+    7) hastart
+
+
+11. Can different Resources have the same name if they
+are in different Service Groups?
+No, two resources in the cluster cannot have the same name, even if they
+are in different Service Groups. Resource names must be unique in the
+entire cluster.
+
+
+12. What does autodisable mean? Why did VCS autodisable
+my Service Group?
+VCS does not allow failovers or online operation of a Service Group if it is
+autodisabled.
+
+VCS has to autodisable a Service Group when VCS on a particular node
+shuts down *but* the GAB heartbeat is still running. Once GAB is unloaded,
+e.g. when the node actually shuts down to PROM level, reboots, or powers off,
+VCS on the other nodes can automatically clear the autodisable flag.
+
+During the time interval a Group is autodisable, VCS won't allow that Group
+to failover or be onlined anywhere within the cluster. This is a safety
+feature to protect against "split brains", when more than one machine is
+using the same resources, like the same filesystems and virtual IP at the
+same time.
+
+Once a node leaves the cluster, VCS has to assume that machine can be
+user-controlled before it goes down, that theoretically someone can login
+to that machine and manually startup services. It is for that reason that
+VCS autodisables a Group within the existing cluster. But VCS does let you
+clear the autodisable flag yourself. Once you're sure that the node that left
+the cluster doesn't have any services running, you can clear the autodisable
+flag with this command:
+
+       hagrp -autoenable {name of Group} -sys {name of node}
+
+Repeat the command for each Group that has been autodisabled.
+
+The Groups that are autodisabled and the nodes they are autodisabled
+for can be found with this command:
+
+       hastatus -sum
+
+Most of the time VCS autodisables a Group for a short period of time and
+then clears the autodisable flag without you knowing it. If the node that
+leaves the cluster actually shuts down, the GAB module is also unloaded,
+and VCS running on the other nodes will assume that node has shutdown. VCS
+will then automatically clear the autodisable flags for you.
+
+There's one catch...by default VCS on the running cluster requires GAB to be
+unloaded within 60 seconds after VCS on that node is stopped. After 60 seconds,
+if GAB still isn't unloaded, VCS on the existing cluster will assume that node
+isn't shutting down, and will keep the autodisable flags until
+the administrator clears them.
+
+To increase the 60 second window to 120 seconds, run this:
+
+       hasys -modify ShutdownTimeout 120
+
+For large systems that take a long time to shutdown, it is a good idea to
+increase ShutdownTimeout.
+
+Read the VCS User's Guide for more information on autodisable.
+
+
+13. Does VCS require license keys to run? Did VCS 1.3
+require license keys?
+The latest versions of VCS require license keys to run. VCS 1.3 and before
+did not.
+
+
+14. Do I need to create the same VxVM DiskGroup on both
+machines?
+No, when you create a Volume Manager DiskGroup, just pick one machine
+to create the DiskGroup on. You do not create the same DiskGroup on
+both nodes.
+
+After you create a DiskGroup, you can add it as a Resource to your VCS
+configuration. VCS will then use VxVM commands to import and deport
+the DiskGroup between the systems during Service Group online, offline,
+or failover.
+
+
+15. Can I run different versions of VCS in the same cluster?  
+No, absolutely not! Different versions of VCS, and even different patch
+levels of VCS, cannot run at the same time in the same cluster.
+
+Therefore, when you install VCS patches, you must install them on *all* nodes
+at the same time!
+
+The cluster will have to be partially or completely shutdown during upgrades
+or patching. Of course, you can shutdown VCS without shutting down your
+services.
+
+
+16. Does VCS require "shared disks"?
+No, VCS does not require that your nodes are connected to shared disks.
+However, most people like to have storage that can be deported and imported
+during failover. If your applications do not need this, then you do not need
+shared storage. The VCS installation and setup will not ask if you have
+shared storage. This is great for people who don't have the shared storage
+ready, but still want to try out or test VCS.
+
+
+17. What is the difference between freezing the system
+and freezing a Group? Which is better for maintenance?
+
+Freezing a system prevents VCS from onlining a Service Group onto that
+system. This is usually done when a machine in the cluster is unstable
+or undergoing maintenance, and you don't want VCS to try to failover a
+Group to that machine. However, if a Group is already online on a frozen
+system, VCS can still offline that Group.
+
+Freezing a Service Group is the most common practice when maintenance
+needs to be done on the nodes while VCS is still running. When you freeze
+a Group, VCS will take no action on that Group or its Resources no matter
+what happens to the resources. That means you can take down your services,
+like IP's, filesystems, databases and applications, and VCS won't do anything.
+VCS won't offline the Group, or offline any resources. VCS also won't
+online anything in that Group, and it won't online that Group anywhere. This
+basically "locks" the Group on a node, or prevents it from onlining until you
+unfreeze the Group. One thing that sometimes surprises people is that VCS will
+still monitor a frozen Group and its resources. So, during maintenance, VCS
+might tell you that your resources have faulted, or the Group is offline.
+If you manually bring everything back up after maintenance, VCS monitoring
+should refresh and see all your resources and the Group are online again.
+This is a good thing, since it is best to know if VCS thinks your Group and
+its resources are online before you unfreeze the Group.
+
+
+To freeze a Group:
+
+   haconf -makerw
+   hagrp -freeze {Group name} -persistent
+   haconf -dump -makero
+
+To unfreeze a Group:
+
+   haconf -makerw
+   hagrp -unfreeze {Group name} -persistent
+   haconf -dump -makero
+ 
+
+18. I just added a DiskGroup to VCS, and VCS offlined
+everything. Why?
+
+The diskgroup you added was probably already imported manually or
+through VMSA, and without the "-t" option.
+
+    vxdg import {disk group}
+
+VCS imports diskgroups using "-t", which sets the diskgroup's noautoimport
+flag to "on".
+
+    vxdg -t import {disk group}
+
+So, when you added the diskgroup to VCS, VCS detected the new diskgroup was
+imported outside of VCS because the noautoimport flag was set to "off". This
+is considered a violation, and the DiskGroup Agent monitor script will then
+offline the entire Service Group. This is a precaution to prevent split brain.
+
+You can see a diskgroup's noautoimport flag by doing:
+
+    vxprint -at {disk group}
+
+If you've imported a new diskgroup, and have not yet added it to VCS, you
+can deport the diskgroup first, and then add it to VCS. You do not need to
+import a diskgroup to add it to VCS.
+
+
+19. I need to play with a resource inside a Service Group,
+but I don't want to cause the Group to fault. What do I need to do?
+
+You should first make the resource non-critical.
+
+  hares -modify {resource name} Critical 0
+
+By making the resource non-critical, VCS will not offline the Group if it
+thinks this resource faulted.
+
+You must also make any Parents of this resource non-critical. Run this to
+check if there are any parents for this resource:
+
+  hares -dep
+
+If you don't want VCS to monitor your resource, you can disable monitoring by
+doing this:
+
+  hares -modify {resource name} Enabled 0
+
+This prevents VCS from monitoring the state of this resource, so it won't
+fault the Group no matter what you do to the resource, even if it has
+Critical=1.
+
+If the Group is in production, you might want to freeze the Group just to
+be safe.
+
+
+20. After someone started up some process on the other node,
+VCS reports a "Concurrency Violation", and tries to offline that process.
+What is this, and is it bad?
+
+A Concurrency Volation is reported when the Agent of a resource detects
+that same resource or process is running on another node. The Agent will then
+try to run the offline script for that resource on that other node. This is to
+prevent split brain.
+
+If the Agent cannot offline the process on the other node, then you may
+want to manually offline the process or change the Agent's monitoring.
+
+Sometimes a Concurrency Violation is more or less a "false alarm", because
+it has a lot to do with how good your monitoring is. You need to find out
+from your Agent, how exactly is it monitoring? If it is an Application Agent
+resource, look at the MonitorProgram script, or look at MonitorProcesses.
+If it looks like the Agent is just monitoring for something very superficial,
+then just change the monitoring. If you are changing the monitoring in
+production, you may want to freeze the Service Group or make the
+resource non-Critical.
+
+
+
+

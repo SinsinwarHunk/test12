@@ -1,0 +1,152 @@
+ROOT@nygshspltd11:/root # /etc/vx/bin/vxconfigbackup -l /var/tmp spare_VMAX_dg
+Start backing up diskgroup spare_VMAX_dg to /var/tmp/spare_VMAX_dg.1366413701.349.nygshspltd11 ...
+
+VxVM  NOTICE V-5-2-3100 Backup complete for diskgroup: spare_VMAX_dg
+ROOT@nygshspltd11:/root # cd /var/tmp
+ROOT@nygshspltd11:/var/tmp # ls -ltr
+total 2636
+drwxr-xr-x   2 root     root         512 Feb 22 17:20 DBbuild
+lrwxrwxrwx   1 root     other         15 Feb 22 17:39 adsm -> /var/log/tivoli
+drwxr-xr-x   2 root     root         512 Feb 22 21:37 kururam
+drwxr-x---   2 root     root         512 Mar 17 23:27 disk.inv
+-rw-r--r--   1 root     other        819 Mar 28 18:08 emcp_ini_log.587
+-rw-r--r--   1 root     root         257 Apr 10 00:04 admin
+drwxr-xr-x   3 root     other        512 Apr 10 02:35 142933-04.SUNWcsd
+-rwxr-x---   1 root     root       15278 Apr 13 08:06 run-snap
+-rw-r-----   1 root     root     1305457 Apr 13 08:07 snap.out
+drwxrwxr-x   2 root     root        7168 Apr 19 06:48 _osc
+drwxr-xr-x   2 root     root         512 Apr 19 19:45 spare_VMAX_dg.1366413701.349.nygshspltd11
+ROOT@nygshspltd11:/var/tmp # umount /mnt
+ROOT@nygshspltd11:/var/tmp # vxassist -g spare_VMAX_dg remove volume vol1
+ROOT@nygshspltd11:/var/tmp # /etc/vx/bin/vxconfigrestore -l /var/tmp spare_VMAX_dg
+VxVM vxconfigrestore ERROR V-5-2-3705 Diskgroup spare_VMAX_dg is currently online imported.
+ROOT@nygshspltd11:/var/tmp # vxdg deport spare_VMAX_dg
+ROOT@nygshspltd11:/var/tmp # /etc/vx/bin/vxconfigrestore -l /var/tmp spare_VMAX_dg
+Diskgroup spare_VMAX_dg configuration restoration started ......
+
+VxVM vxconfigrestore ERROR V-5-2-3703 Diskgroup spare_VMAX_dg appears to be a deported disk group.
+ROOT@nygshspltd11:/var/tmp # vxdg destroy spare_VMAX_dg
+VxVM vxdg ERROR V-5-1-581 Disk group spare_VMAX_dg: No such disk group is imported
+ROOT@nygshspltd11:/var/tmp # vxdg import spare_VMAX_dg
+ROOT@nygshspltd11:/var/tmp # vxdg destroy spare_VMAX_dg
+ROOT@nygshspltd11:/var/tmp # /etc/vx/bin/vxconfigrestore -l /var/tmp spare_VMAX_dg
+Diskgroup spare_VMAX_dg configuration restoration started ......
+
+Installing volume manager disk header for emcpower621s2 ...
+Installing volume manager disk header for emcpower622s2 ...
+Installing volume manager disk header for emcpower623s2 ...
+Installing volume manager disk header for emcpower624s2 ...
+Installing volume manager disk header for emcpower625s2 ...
+Installing volume manager disk header for emcpower626s2 ...
+Installing volume manager disk header for emcpower627s2 ...
+Installing volume manager disk header for emcpower628s2 ...
+Installing volume manager disk header for emcpower629s2 ...
+Installing volume manager disk header for emcpower630s2 ...
+Installing volume manager disk header for emcpower631s2 ...
+Installing volume manager disk header for emcpower632s2 ...
+Installing volume manager disk header for emcpower633s2 ...
+-
+spare_VMAX_dg's diskgroup configuration is restored (in precommit state).
+Diskgroup can be accessed in read only and can be examined using
+vxprint in this state.
+
+Run:
+  vxconfigrestore -l /var/tmp -c spare_VMAX_dg ==> to commit the restoration.
+  vxconfigrestore -l /var/tmp -d spare_VMAX_dg ==> to abort the restoration.
+ROOT@nygshspltd11:/var/tmp # vxdg list
+NAME         STATE           ID
+apeqtestd1dg enabled,cds          1265096927.234.nygshspltd11
+ameqd1dg     enabled,cds          1299617051.332.nygshspltd11
+apeqtestd2dg enabled,cds          1265180224.246.nygshspltd11
+cageu2_dg    enabled,cds          1314207986.338.nygshspltd11
+cmanqd2dg    enabled,cds          1300854113.334.nygshspltd11
+dsarenad3dg  enabled,cds          1268017256.376.nygshspltd11
+gcdeld03_dg  enabled,cds          1335088087.354.nygshspltd11
+midsd1dg     enabled,cds          1270607757.428.nygshspltd11
+nyeqgsd1dg   enabled,cds          1263957286.95.nygshspltd11
+orcad1_vmx_dg enabled,cds          1309376504.334.nygshspltd11
+rpbd1dg      enabled,cds          1278611165.254.nygshspltd11
+spare_VMAX_dg enabled,cds,restoring 1366413701.349.nygshspltd11
+uxfad2_dg    enabled,cds          1309400354.336.nygshspltd11
+ROOT@nygshspltd11:/var/tmp # vxdisk list
+DEVICE       TYPE            DISK         GROUP        STATUS
+disk_0       auto:SVM        -            -            SVM
+disk_1       auto:SVM        -            -            SVM
+disk_2       auto:SVM        -            -            SVM
+disk_3       auto:SVM        -            -            SVM
+emcpower320s2 auto:cdsdisk    apeqtestd1dg_VMAX_320  apeqtestd1dg online thin
+emcpower321s2 auto:cdsdisk    apeqtestd1dg_VMAX_321  apeqtestd1dg online thin
+emcpower322s2 auto:cdsdisk    apeqtestd1dg_VMAX_322  apeqtestd1dg online thin
+emcpower323s2 auto:cdsdisk    apeqtestd1dg_VMAX_323  apeqtestd1dg online thin
+emcpower324s2 auto:cdsdisk    apeqtestd1dg_VMAX_324  apeqtestd1dg online thin
+emcpower325s2 auto:cdsdisk    apeqtestd1dg_VMAX_325  apeqtestd1dg online thin
+emcpower326s2 auto:cdsdisk    apeqtestd1dg_VMAX_326  apeqtestd1dg online thin
+emcpower327s2 auto:cdsdisk    apeqtestd1dg_VMAX_327  apeqtestd1dg online thin
+emcpower328s2 auto:cdsdisk    apeqtestd1dg_VMAX_328  apeqtestd1dg online thin
+emcpower329s2 auto:cdsdisk    apeqtestd1dg_VMAX_329  apeqtestd1dg online thin
+emcpower330s2 auto:cdsdisk    apeqtestd1dg_VMAX_330  apeqtestd1dg online thin
+emcpower331s2 auto:cdsdisk    apeqtestd1dg_VMAX_331  apeqtestd1dg online thin
+emcpower332s2 auto:cdsdisk    ameqd1dg_VMAX_332  ameqd1dg     online thin
+emcpower333s2 auto:cdsdisk    ameqd1dg_VMAX_333  ameqd1dg     online thin
+emcpower334s2 auto:cdsdisk    ameqd1dg_VMAX_334  ameqd1dg     online thin
+emcpower335s2 auto:cdsdisk    ameqd1dg_VMAX_335  ameqd1dg     online thin
+emcpower336s2 auto:cdsdisk    ameqd1dg_VMAX_336  ameqd1dg     online thin
+emcpower337s2 auto:cdsdisk    ameqd1dg_VMAX_337  ameqd1dg     online thin
+emcpower338s2 auto:cdsdisk    ameqd1dg_VMAX_338  ameqd1dg     online thin
+emcpower339s2 auto:cdsdisk    ameqd1dg_VMAX_339  ameqd1dg     online thin
+emcpower340s2 auto:cdsdisk    ameqd1dg_VMAX_340  ameqd1dg     online thin
+emcpower341s2 auto:cdsdisk    ameqd1dg_VMAX_341  ameqd1dg     online thin
+emcpower342s2 auto:cdsdisk    ameqd1dg_VMAX_342  ameqd1dg     online thin
+emcpower343s2 auto:cdsdisk    ameqd1dg_VMAX_343  ameqd1dg     online thin
+emcpower344s2 auto:cdsdisk    ameqd1dg_VMAX_344  ameqd1dg     online thin
+emcpower345s2 auto:cdsdisk    ameqd1dg_VMAX_345  ameqd1dg     online thin
+emcpower346s2 auto:cdsdisk    ameqd1dg_VMAX_346  ameqd1dg     online thin
+emcpower347s2 auto:cdsdisk    ameqd1dg_VMAX_347  ameqd1dg     online thin
+emcpower348s2 auto:cdsdisk    ameqd1dg_VMAX_348  ameqd1dg     online thin
+emcpower349s2 auto:cdsdisk    ameqd1dg_VMAX_349  ameqd1dg     online thin
+emcpower350s2 auto:cdsdisk    ameqd1dg_VMAX_350  ameqd1dg     online thin
+emcpower351s2 auto:cdsdisk    ameqd1dg_VMAX_351  ameqd1dg     online thin
+emcpower352s2 auto:cdsdisk    ameqd1dg_VMAX_352  ameqd1dg     online thin
+emcpower353s2 auto:cdsdisk    ameqd1dg_VMAX_353  ameqd1dg     online thin
+emcpower354s2 auto:cdsdisk    ameqd1dg_VMAX_354  ameqd1dg     online thin
+emcpower355s2 auto:cdsdisk    ameqd1dg_VMAX_355  ameqd1dg     online thin
+emcpower356s2 auto:cdsdisk    ameqd1dg_VMAX_356  ameqd1dg     online thin
+emcpower357s2 auto:cdsdisk    ameqd1dg_VMAX_357  ameqd1dg     online thin
+emcpower358s2 auto:cdsdisk    ameqd1dg_VMAX_358  ameqd1dg     online thin
+emcpower359s2 auto:cdsdisk    ameqd1dg_VMAX_359  ameqd1dg     online thin
+emcpower360s2 auto:cdsdisk    ameqd1dg_VMAX_360  ameqd1dg     online thin
+emcpower361s2 auto:cdsdisk    ameqd1dg_VMAX_361  ameqd1dg     online thin
+emcpower362s2 auto:cdsdisk    ameqd1dg_VMAX_362  ameqd1dg     online thin
+emcpower363s2 auto:cdsdisk    ameqd1dg_VMAX_363  ameqd1dg     online thin
+emcpower364s2 auto:cdsdisk    ameqd1dg_VMAX_364  ameqd1dg     online thin
+emcpower365s2 auto:cdsdisk    ameqd1dg_VMAX_365  ameqd1dg     online thin
+emcpower366s2 auto:cdsdisk    ameqd1dg_VMAX_366  ameqd1dg     online thin
+emcpower367s2 auto:cdsdisk    ameqd1dg_VMAX_367  ameqd1dg     online thin
+emcpower368s2 auto:cdsdisk    ameqd1dg_VMAX_368  ameqd1dg     online thin
+emcpower621s2 auto:cdsdisk    emcpower621s2  spare_VMAX_dg online
+emcpower622s2 auto:cdsdisk    emcpower622s2  spare_VMAX_dg online
+emcpower623s2 auto:cdsdisk    emcpower623s2  spare_VMAX_dg online
+emcpower624s2 auto:cdsdisk    emcpower624s2  spare_VMAX_dg online
+emcpower625s2 auto:cdsdisk    emcpower625s2  spare_VMAX_dg online
+emcpower626s2 auto:cdsdisk    emcpower626s2  spare_VMAX_dg online
+emcpower627s2 auto:cdsdisk    emcpower627s2  spare_VMAX_dg online
+emcpower628s2 auto:cdsdisk    emcpower628s2  spare_VMAX_dg online
+emcpower629s2 auto:cdsdisk    emcpower629s2  spare_VMAX_dg online
+emcpower630s2 auto:cdsdisk    emcpower630s2  spare_VMAX_dg online
+emcpower631s2 auto:cdsdisk    emcpower631s2  spare_VMAX_dg online
+emcpower632s2 auto:cdsdisk    emcpower632s2  spare_VMAX_dg online
+emcpower633s2 auto:cdsdisk    emcpower633s2  spare_VMAX_dg online
+ROOT@nygshspltd11:/var/tmp # vxinfo -pg spare_VMAX_dg
+vol  vol1           fsgen    Started
+plex vol1-01        ACTIVE
+ROOT@nygshspltd11:/var/tmp # mount -F vxfs /dev/vx/dsk/spare_VMAX_dg/vol1 /mnt
+UX:vxfs mount: ERROR: V-3-21267: /dev/vx/dsk/spare_VMAX_dg/vol1 write-protected
+ROOT@nygshspltd11:/var/tmp # vxconfigrestore -l /var/tmp -c spare_VMAX_dg
+Committing configuration restoration for diskgroup spare_VMAX_dg ....
+
+spare_VMAX_dg's diskgroup configuration restoration is committed.
+ROOT@nygshspltd11:/var/tmp # mount -F vxfs /dev/vx/dsk/spare_VMAX_dg/vol1 /mnt
+ROOT@nygshspltd11:/var/tmp # cd /mnt
+ROOT@nygshspltd11:/mnt # ls
+a           b           c           lost+found  vol1.vxout
+ROOT@nygshspltd11:/mnt #

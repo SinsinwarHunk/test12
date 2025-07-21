@@ -1,0 +1,86 @@
+How to configure a trigger in VCS
+=================================
+
+
+1.Determine which trigger you  want to use. See the  VCS User's Guide for the list of available triggers. 
+
+
+cpuusage
+injeopardy
+loadwarning
+nfs_postoffline
+nfs_preonline
+nofailover
+postoffline
+postonline
+preonline
+preonline_ipc
+preonline_vvr
+resadminwait
+resfault
+resnotoff
+resstatechange
+sysjoin
+sysoffline
+sysup
+unable_to_restart_agent
+unable_to_restart_had
+
+Note that each VCS versions may have a different set of triggers.
+ 
+2.You have two options when it comes to having the trigger execute your actions: 
+a.Write your commands in Perl. If you write your commands in perl you can put them directly into the trigger script.
+
+
+b.Write a shell script (or any other compiled code.) If you write a shell script or use custom code, you can call the script or executable  from the trigger script with a Perl system call as shown below.
+
+
+3.Find the trigger script in the sample triggers directory.
+ 
+/opt/VRTSvcs/bin/sample_triggers
+
+
+4.Find the usage comment. This will show you what arguments are passed to your trigger script.
+
+# Usage:
+# postonline <system> <group>
+#
+# <system>: is the name of the system where group is onlined.
+# <group>: is the name of the group that is onlined.
+
+This will give you the arguments that are passed to your trigger script and if you are using shell, what will be passed to your shell script as shown below. 
+
+
+5.Edit the file, for example postonline. Look for the area where it says put your code here:
+
+# put your code here...
+
+
+
+6.If you have your commands in Perl, you can just paste them below this line and they will execute in Perl.
+
+You can use the perl $ARGV[0] $ARGV[1] to test and filter. You will need to do this because this trigger script will be executed each time a group goes online on each system. By filtering you can limit your script execution or customize the execution for each system and each group. With the exception of the violation, sysoffline and nofailover trigger and the trigger is only executed on the system which experiences the event. 
+
+
+7.If you are writing a shell script, write the script and test it. 
+
+
+8.If you are using a shell script or executable, put the following line in the code area (see 5 above ) . This is a Perl call to execute a script/program on the system:
+
+system("/opt/VRTSvcs/bin/triggers/your_trigger $ARGV[0] $ARGV[1]");
+
+Note that the path can be anywhere you prefer on the system; and you might have more arguments for some triggers and they will be the same syntax with higher values in the brackets as $ARGV[2]. 
+
+In the case of the postonline trigger script the use states:
+
+# postonline <system> <group> 
+
+the syntax for the system command passes the trigger script arguments to the  arguments that your shell script will receive as $1 = systemName $2 = groupName. These are, in this example,  the system name on which the group came online as well as the name of the group itself.   You can use these for filtering postonline events for certain systems and certain groups.   You will need to do this because this trigger script will be executed each time any group goes online on your system. By filtering you can limit your script execution or customize the execution for each system and each group. Your script can simply test the values of the $1 (shell argument 1) and $2 and take the action you desire based on the system or group.  
+
+
+
+9.Move you edited trigger script from /opt/VRTSvcs/bin/trigger_samples to /opt/VRTSvcs/bin/triggers. There may be a standard script there already. You should check to see that it hasn’t been modified by someone else in your organization. However just because there is a script there, does not mean it was modified. 
+
+
+
+10.Remember that the trigger script and shell script/executable will need to be on each machine you expect it to execute on. The script is only executed on the machine it is located on. So if you want all nodes in a cluster to execute your trigger script and you optional shell script, it needs to be on all of the nodes that you expect it to execute on. With the exception of the violation, sysoffline and nofailover trigger and the trigger is only executed on the system which experiences the event

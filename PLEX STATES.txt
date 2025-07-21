@@ -1,0 +1,41 @@
+
+### If plex is showing detach / iofail / disable state , wen can run the below commands to clear the errors.
+
+vxmend -g < dg name > -o force off <plex name >
+
+vxmend -g < dg name > on <plex name >
+
+or 
+
+vxmend -g < dg name > fix stale <plex name >
+
+vxmend -g < dg name > fix clean <plex name >
+
+vxplex -g < dg name > att < vol name > < plex name >
+
+
+For above issue, volume should be disabled.
+
+But if volume is active and enable, you have to detach and attach the plex.
+
+
+#####Or before / after above steps we can run
+
+
+vxrecover -sn < vol name >
+
+
+#### If volume in detach state or offline then 
+
+vxvol -g <dg name > start < vol name >
+
+
+#### when disk is failing / failed we can run the inital command to reattach the disk into veritas again.
+
+/etc/vx/bin/vxreattach -br  <disk name optional >
+
+
+####If disk is having failing tag
+
+vxedit -g < dg name > set failing=off <vm disk name >
+

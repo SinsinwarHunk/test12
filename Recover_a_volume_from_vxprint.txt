@@ -1,0 +1,349 @@
+Problem
+
+How to recover a volume from vxprint -ht output after a disk group has been destroyed
+
+
+Solution
+
+There will be occasions when a disk group and its associated volumes may need to be recovered.  If the volume and disk configuration information cannot be retrieved from the private region of one of the disks concerned, then the only option to recover the volume configuration so that the volume(s) can be rebuilt may be to refer to an old vxprint -th output. 
+
+Below is an example of recovering a striped volume:
+
+# vxprint -ht -g bobdg
+DG NAME        NCONFIG      NLOG    MINORS  GROUP-ID
+DM NAME        DEVICE      TYPE    PRIVLEN  PUBLEN  STATE
+RV NAME        RLINK_CNT    KSTATE  STATE    PRIMARY  DATAVOLS  SRL
+RL NAME        RVG          KSTATE  STATE    REM_HOST REM_DG    REM_RLNK
+V  NAME        RVG          KSTATE  STATE    LENGTH  READPOL  PREFPLEX UTYPE
+PL NAME        VOLUME      KSTATE  STATE    LENGTH  LAYOUT    NCOL/WID MODE
+SD NAME        PLEX        DISK    DISKOFFS LENGTH  [COL/]OFF DEVICE  MODE
+SV NAME        PLEX        VOLNAME  NVOLLAYR LENGTH  [COL/]OFF AM/NM    MODE
+DC NAME        PARENTVOL    LOGVOL
+SP NAME        SNAPVOL      DCO
+
+dg bobdg        default      default  91000    1022000899.1234.Rawfusion
+
+dm bob01        c1t12d0s2    sliced  2393    35833392 -
+dm bob02        c1t14d0s2    sliced  2393    35833392 -
+dm bob03        c2t12d0s2    sliced  3199    17907200 -
+
+v  bobvol      -            ENABLED  ACTIVE  1024000  SELECT    bobvol-01 fsgen
+pl bobvol-01    bobvol      ENABLED  ACTIVE  1027200  STRIPE    3/128    RW
+sd bob01-01    bobvol-01    bob01    0        342342  0/0      c1t12d0  ENA
+sd bob02-01    bobvol-01    bob02    0        342342  1/0      c1t14d0  ENA  
+sd bob03-01    bobvol-01    bob03    0        342400  2/0      c2t12d0  ENA  
+
+Note: Figures in bold represent the offset and corresponding length of each subdisk that are used in the vxmake commands below.
+
+The volume bobvol, mounted onto /test1 has a file system containing various files:
+
+# ls -l /test1
+total 32514
+drwxr-xr-x  3 root    other        96 May 22 10:38 VRTS
+drwxr-xr-x  3 root    other        96 May 22 10:38 VRTSlic
+drwxr-xr-x  11 root    other      1024 May 22 10:39 VRTSsamba
+-rw-r--r--  1 root    other    16645973 May 22 10:39 VRTSsamba.tar.Z
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvmsa
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvras
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvxfs
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvxvm
+drwxr-xr-x  2 root    root          96 May 22 10:37 lost+found
+
+# vxprint -ht -g bobdg > config.out (save the volume and disk configuration to a file for recovery later)
+
+To simulate not being able to recover the disk group information from one of the disk's private regions, the disk group was destroyed:
+
+# umount /test1
+# vxdg destroy bobdg
+
+From the saved output of vxprint -ht, the disk group and associated volume can be recovered.  To perform the recovery, the disk group will have to be reinitialised and the records previously in bobdg remade so that they point to the old data.  The first steps are to reinitialise the disks and rebuild the disk group. Please note that
+reinitialising the disks does not interfere with data.
+
+For disks c1t12d0s2, c1t14d0s2 and c2t12d0s2, ensure they are first reinitialised so that errors such as 'disk is already in use by another system' aren't seen:
+
+# vxdisksetup -i c1t12d0 
+# vxdisksetup -i c1t14d0
+# vxdisksetup -i c2t12d0
+
+Warning: The above vxdisksetup initializes the disks to all default settings only. 
+
+Please be aware that the private region length has been increased in vxvm 3.2 and above.  If one is trying to restore a diskgroup that was created under vxvm 3.1.1 or lower (i.e. diskgroup version 80 or lower) and vxvm 3.2 vxdisksetup is used with the default private region length then one could lose some data, due to the overlapping of the new private and the old public regions. 
+
+Please refer to Related Documents section below for further details.
+
+# vxdg init bobdg bob01=c1t12d0s2 bob02=c1t14d0s2 bob03=c2t12d0s2 (remake the diskgroup and assign the disks back with the same names they had originally)
+
+Using vxmake, build the volume bobvol from the bottom up.  When making a volume from the bottom up, start by making the subdisks using the offsets and lengths from the saved vxprint -ht, then the plex(es) and then the volume itself.
+
+# vxmake -g bobdg sd bob01-01 dm_name=bob01 dm_offset=0 len=342342
+# vxmake -g bobdg sd bob02-01 dm_name=bob02 dm_offset=0 len=342342
+# vxmake -g bobdg sd bob03-01 dm_name=bob03 dm_offset=0 len=342400
+# vxprint -ht -g bobdg
+DG NAME        NCONFIG      NLOG    MINORS  GROUP-ID
+DM NAME        DEVICE      TYPE    PRIVLEN  PUBLEN  STATE
+RV NAME        RLINK_CNT    KSTATE  STATE    PRIMARY  DATAVOLS  SRL
+RL NAME        RVG          KSTATE  STATE    REM_HOST REM_DG    REM_RLNK
+V  NAME        RVG          KSTATE  STATE    LENGTH  READPOL  PREFPLEX UTYPE
+PL NAME        VOLUME      KSTATE  STATE    LENGTH  LAYOUT    NCOL/WID MODE
+SD NAME        PLEX        DISK    DISKOFFS LENGTH  [COL/]OFF DEVICE  MODE
+SV NAME        PLEX        VOLNAME  NVOLLAYR LENGTH  [COL/]OFF AM/NM    MODE
+DC NAME        PARENTVOL    LOGVOL
+SP NAME        SNAPVOL      DCO
+
+dg bobdg        default      default  22000    1022089620.1237.Rawfusion
+
+dm bob01        c1t12d0s2    sliced  2393    35833392 -
+dm bob02        c1t14d0s2    sliced  2393    35833392 -
+dm bob03        c2t12d0s2    sliced  3199    17907200 -
+
+sd bob01-01    -            bob01    0        342342  -        c1t12d0  ENA
+sd bob02-01    -            bob02    0        342342  -        c1t14d0  ENA
+sd bob03-01    -            bob03    0        342400  -        c2t12d0  ENA
+
+Create the striped plex using vxmake, specifying the use of the subdisks, layout, stripe width, columns and the correct ordering of subdisks just created.
+
+# vxmake -g bobdg plex bobvol-01 layout=stripe ncol=3 stwidth=128 sd=bob01-01:0/0,bob02-01:1/0,bob03-01:2/0
+# vxprint -ht -g bobdg (take a look at current configuration)
+DG NAME        NCONFIG      NLOG    MINORS  GROUP-ID
+DM NAME        DEVICE      TYPE    PRIVLEN  PUBLEN  STATE
+RV NAME        RLINK_CNT    KSTATE  STATE    PRIMARY  DATAVOLS  SRL
+RL NAME        RVG          KSTATE  STATE    REM_HOST REM_DG    REM_RLNK
+V  NAME        RVG          KSTATE  STATE    LENGTH  READPOL  PREFPLEX UTYPE
+PL NAME        VOLUME      KSTATE  STATE    LENGTH  LAYOUT    NCOL/WID MODE
+SD NAME        PLEX        DISK    DISKOFFS LENGTH  [COL/]OFF DEVICE  MODE
+SV NAME        PLEX        VOLNAME  NVOLLAYR LENGTH  [COL/]OFF AM/NM    MODE
+DC NAME        PARENTVOL    LOGVOL
+SP NAME        SNAPVOL      DCO
+
+dg bobdg        default      default  22000    1022089620.1237.Rawfusion
+
+dm bob01        c1t12d0s2    sliced  2393    35833392 -
+dm bob02        c1t14d0s2    sliced  2393    35833392 -
+dm bob03        c2t12d0s2    sliced  3199    17907200 -
+
+pl bobvol-01    -            DISABLED -        1027200  STRIPE    3/128    RW
+sd bob01-01    bobvol-01    bob01    0        342342  0/0      c1t12d0  ENA
+sd bob02-01    bobvol-01    bob02    0        342342  1/0      c1t14d0  ENA
+sd bob03-01    bobvol-01    bob03    0        342400  2/0      c2t12d0  ENA
+
+Finally, the volume is made, specifying the plex just made:
+
+# vxmake -g bobdg -U fsgen vol bobvol plex=bobvol-01
+# vxprint -ht -g bobdg
+DG NAME        NCONFIG      NLOG    MINORS  GROUP-ID
+DM NAME        DEVICE      TYPE    PRIVLEN  PUBLEN  STATE
+RV NAME        RLINK_CNT    KSTATE  STATE    PRIMARY  DATAVOLS  SRL
+RL NAME        RVG          KSTATE  STATE    REM_HOST REM_DG    REM_RLNK
+V  NAME        RVG          KSTATE  STATE    LENGTH  READPOL  PREFPLEX UTYPE
+PL NAME        VOLUME      KSTATE  STATE    LENGTH  LAYOUT    NCOL/WID MODE
+SD NAME        PLEX        DISK    DISKOFFS LENGTH  [COL/]OFF DEVICE  MODE
+SV NAME        PLEX        VOLNAME  NVOLLAYR LENGTH  [COL/]OFF AM/NM    MODE
+DC NAME        PARENTVOL    LOGVOL
+SP NAME        SNAPVOL      DCO
+
+dg bobdg        default      default  22000    1022089620.1237.Rawfusion
+
+dm bob01        c1t12d0s2    sliced  2393    35833392 -
+dm bob02        c1t14d0s2    sliced  2393    35833392 -
+dm bob03        c2t12d0s2    sliced  3199    17907200 -
+
+v  bobvol      -            DISABLED EMPTY    1026886  ROUND    -        fsgen
+pl bobvol-01    bobvol      DISABLED EMPTY    1027200  STRIPE    3/128    RW
+sd bob01-01    bobvol-01    bob01    0        342342  0/0      c1t12d0  ENA
+sd bob02-01    bobvol-01    bob02    0        342342  1/0      c1t14d0  ENA
+sd bob03-01    bobvol-01    bob03    0        342400  2/0      c2t12d0  ENA
+
+The volume then needs to be started and the file system fsck'd:
+
+# vxvol -g bobdg start bobvol
+# fsck -F vxfs /dev/vx/rdsk/bobdg/bobvol
+
+file system is clean - log replay is not required
+
+Once mounted, the file system is checked to ensure the data is still present.
+
+# mount -F vxfs /dev/vx/dsk/bobdg/bobvol /test1
+# ls -l /test1
+total 32514
+drwxr-xr-x  3 root    other        96 May 22 10:38 VRTS
+drwxr-xr-x  3 root    other        96 May 22 10:38 VRTSlic
+drwxr-xr-x  11 root    other      1024 May 22 10:39 VRTSsamba
+-rw-r--r--  1 root    other    16645973 May 22 10:39 VRTSsamba.tar.Z
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvmsa
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvras
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvxfs
+drwxr-xr-x  5 root    other        96 May 22 10:39 VRTSvxvm
+drwxr-xr-x  2 root    root          96 May 22 10:37 lost+found
+
+==============================================================================================================================
+
+Problem
+
+Considerations when using vxdisksetup while performing a disk-group rebuild
+
+
+Solution
+
+Prior to VERITAS Volume Manager (VxVM) 3.2,  when you ran  vxdisksetup to re-initialize the disk for disk-group rebuild recovery,  the main consideration
+was to make sure the private region length was the same as the original size the disk was initialized on.
+
+VxVM 3.2 and future releases now reserve an extra cylinder for Common Data Storage (CDS) and, taking this into consideration, rebuilding disk groups and recovering VxVM volumes results in the public region offsets being offset additionally by the CDS sector.
+
+NOTE: To rebuild a disk group,  consider the following before attempting the initialization:
+
+1. Run prtvtoc on all the disks in the disk group. Check the VxVM public and private region offsets.
+2. Use vxdisk -f init <device>  instead of vxdisksetup as this will just zero out the private region and not re-initialize with the default settings that vxdisksetup does.
+
+If you still need to use this command, the following details will show how to use vxdisksetup to successfully restore the original public and private regions offsets.
+
+NOTE: Confirm VxVM release
+
+1. VxVM 3.2 with patch one or greater or VxVM 3.5 or higher  See Section Two
+2. VxVM 3.2 or less                                                            See Section Three
+
+
+Section One - Using prtvtoc to obtain the necessary information
+
+1. prtvtoc /dev/rdsk/c*t*d*s2
+
+example
+-------
+
+#> prtvtoc /dev/rdsk/c1t5d0s2
+
+
+* /dev/rdsk/c1t5d0s2 partition map                                        
+*                                                                          
+* Dimensions:                                                              
+*    512 bytes/sector                                                    
+*    686 sectors/track                                                    
+*      2 tracks/cylinder                                                  
+*    1372 sectors/cylinder                                                
+*  26125 cylinders                                                        
+*  26123 accessible cylinders                                            
+*                                                                          
+* Flags:                                                                  
+*  1: unmountable                                                        
+*  10: read-only                                                          
+*                                                                          
+*                          First    Sector    Last                        
+* Partition  Tag  Flags    Sector    Count    Sector  Mount Directory    
+      2      5    01          0  35840756  35840755                      
+      3    15    01          0      1372      1371                      
+      4    14    01      1372  35839384  35840755    
+
+NOTE: Now refer to the relevant section for your VxVM release
+
+Section Two        
+      
+With VxVM 3.2 and patch one or VxVM 3.5 or greater there is an additional command line option called old_layout. It will initialize the disk without the reserved CDS sector. Without specifying old_layout, vxdisksetup will reserve this CDS sector which will cause the public region to be still offset by a sector.
+
+example
+-------------
+
+#vxdisksetup -i c1t5d0 privlen=1372
+#prtvtoc /dev/rdsk/c1t5d0s2
+
+* Dimensions:                                                              
+*    512 bytes/sector                                                      
+*    686 sectors/track                                                    
+*      2 tracks/cylinder                                                  
+*    1372 sectors/cylinder                                                  
+*  26125 cylinders                                                        
+*  26123 accessible cylinders                                              
+*                                                                          
+* Flags:                                                                    
+*  1: unmountable                                                          
+*  10: read-only                                                            
+*                                                                          
+* Unallocated space:                                                        
+*      First    Sector    Last                                            
+*      Sector    Count    Sector                                          
+*        1372      1372      2743                                          
+*                                                                          
+*                          First    Sector    Last                        
+* Partition  Tag  Flags    Sector    Count    Sector  Mount Directory      
+      2      5    01          0  35840756  35840755                        
+      3    15    01          0      1372      1371                        
+      4    14    01      2744  35838012  35840755 
+
+From the information, it can be seen that the public region (tag 14) starts at 2744 calculation  privlen sector count +  sector/cylinder    (1372+1372=2744)
+
+Looking at the prtvtoc from section one,  it can be seen that the public region offset starts straight after the private region's sector count; recovering the volumes at this point will again put the volumes in the wrong offset.
+
+To initialize correctly use the following:
+
+#>vxdisksetup -i c1t5d0 privlen=1372 old_layout
+#>prvtoc /dev/rdsk/c1t5d0
+
+* /dev/rdsk/c1t5d0s2 partition map                                        
+*                                                                          
+* Dimensions:                                                              
+*    512 bytes/sector                                                    
+*    686 sectors/track                                                    
+*      2 tracks/cylinder                                                  
+*    1372 sectors/cylinder                                                
+*  26125 cylinders                                                        
+*  26123 accessible cylinders                                            
+*                                                                          
+* Flags:                                                                  
+*  1: unmountable                                                        
+*  10: read-only                                                          
+*                                                                          
+*                          First    Sector    Last                        
+* Partition  Tag  Flags    Sector    Count    Sector  Mount Directory    
+      2      5    01          0  35840756  35840755                      
+      3    15    01          0      1372      1371                      
+      4    14    01      1372  35839384  35840755                      
+
+Section Three
+
+With VxVM 3.2 [unpatched] the old_layout option was not included,  which would prevent vxdisksetup from reserving an extra cylinder for CDS. To Initialize
+the disk using vxdisksetup, it is necessary to specify the following to the commands: 
+
+1. privlen
+2. puboffset
+
+The privlen is based on the "sector count" for tag 15 and the puboffset is based on the "first sector" for tag 14. 
+
+The following may also be required:
+
+1. privoffset
+2. publen
+
+In the  prtvtoc from section one:
+
+                              First    Sector
+                              Sector  Count
+      3    15    01        0        1372      1371                      
+      4    14    01      1372    35839384  35840755    
+
+To correctly align public and private regions:
+
+#>vxdisksetup -i c1t5d0 privlen=1372  puboffset=1372 [privoffset=] [publen=]
+#>prtvotc /dev/rdsk/c1t5d0s2
+
+* /dev/rdsk/c1t5d0s2 partition map                                          
+*                                                                          
+* Dimensions:                                                              
+*    512 bytes/sector                                                      
+*    686 sectors/track                                                    
+*      2 tracks/cylinder                                                  
+*    1372 sectors/cylinder                                                  
+*  26125 cylinders                                                        
+*  26123 accessible cylinders                                              
+*                                                                          
+* Flags:                                                                    
+*  1: unmountable                                                          
+*  10: read-only                                                            
+*                                                                          
+*                          First    Sector    Last                        
+* Partition  Tag  Flags    Sector    Count    Sector  Mount Directory      
+      2      5    01          0  35840756  35840755                        
+      3    15    01          0      1372      1371                        
+      4    14    01      1372  35839384  35840755                        
+
+
+NOTE: Even if the disk was initialized with a larger private region or with the CDS sector, you can still initialize it again to the original size. You will lose access to the first volume contained on that disk if the private region size has encroached into the public region. But the other volumes should be fine if they had no issues prior to the disk group rebuild.
+
+

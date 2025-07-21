@@ -1,0 +1,43 @@
+Vxconfig daemon not-running 
+
+Option #1:  Online device tree clean-up procedure
+
+# devfsadm –Cv
+# mv /etc/vx/disk.info /etc/vx/old_disk.info
+# mv /etc/vx/array.info /etc/vx/old_array.info
+# mv /etc/vx/jbod.info /etc/vx/old_jbod.info
+
+To reset invalid device entries remove all entries except the rootdisk, rootmirror, or any of the 'rootdg' devices from /dev/vx/dmp, and /dev/vx/rdmp directories. Again, do not remove the bootdisk, bootmirror, or 'rootdg' devices from any of these directories. 
+
+IMPORTANT: If the boot disk or boot mirror device tree entries are removed the system will not boot and the operating system will need to be re-installed.
+
+/dev/vx/dmp/
+/dev/vx/rdmp/
+
+# vxconfigd –k  (Freeze VCS/Clustering before running this command.)
+# vxdctl init
+# vxdctl initdmp
+# vxdctl enable
+
+
+Option #2:  Offline device tree clean-up procedure
+
+To update OS device tree, the DMP paths, and flush the kernel perform the following procedure.   
+
+# mv /etc/vx/disk.info /etc/vx/old_disk.info
+# mv /etc/vx/array.info /etc/vx/old_array.info
+# mv /etc/vx/jbod.info /etc/vx/old_jbod.info
+
+Remove all the entries from the /dev/vx/dmp, and /dev/vx/rdmp directories except entires for bootdisk or bootmirror from the following directories
+
+/dev/vx/dmp/
+/dev/vx/rdmp/
+
+# reboot -- -r 
+
+Option #3: 
+
+#vxconfigd -k -m disable
+#vxconfigd -m boot
+#vxdctl enable
+#vxdctl mode

@@ -1,0 +1,36 @@
+
+When Veritas loses contact (e.g., if a fiber cable is removed between a server and a storage array) with an active device, Veritas will place the device in the failed state, which will be reported as “failed was: cXtXdX” in the vxdisk(1m) output: 
+
+$ vxdisk list
+
+DEVICE       TYPE            DISK         GROUP        STATUS
+c0t0d0s2     auto:none       -            -            online invalid
+c0t1d0s2     auto:none       -            -            online invalid
+c1t1d0s2     auto:cdsdisk    c1t1d0       oradg        online
+c1t2d0s2     auto:cdsdisk    -            -            online
+c1t3d0s2     auto:cdsdisk    -            -            online
+c1t4d0s2     auto:cdsdisk    -            -            online
+c1t5d0s2     auto:cdsdisk    -            -            online
+c1t6d0s2     auto:cdsdisk    -            -            online
+-            -         c1t2d0       oradg        failed was:c1t2d0s2
+-            -         c1t3d0       oradg        failed was:c1t3d0s2
+-            -         c1t4d0       oradg        failed was:c1t4d0s2
+-            -         c1t5d0       oradg        failed was:c1t5d0s2
+-            -         c1t6d0       oradg        failed was:c1t6d0s2
+When situations like this arise, the vxreattach(1m) utility can be used to reconnect Veritas to lost devices:
+
+$ vxreattach
+
+$ vxdisk list
+
+DEVICE       TYPE            DISK         GROUP        STATUS
+c0t0d0s2     auto:none       -            -            online invalid
+c0t1d0s2     auto:none       -            -            online invalid
+c1t1d0s2     auto:cdsdisk    c1t1d0       oradg        online
+c1t2d0s2     auto:cdsdisk    c1t2d0       oradg        online
+c1t3d0s2     auto:cdsdisk    c1t3d0       oradg        online
+c1t4d0s2     auto:cdsdisk    c1t4d0       oradg        online
+c1t5d0s2     auto:cdsdisk    c1t5d0       oradg        online
+c1t6d0s2     auto:cdsdisk    c1t6d0       oradg        online
+Prior to running vxreattach(1m), the problem that caused Veritas to lose contact with the devices should be corrected (e.g., the fiber cable should be reconnected to the server), or vxreattach(1m) should be invoked with the “-c” (check if a reattach is possible) option to see if a reattach is possible. vxreattach(1m) is a cool utility, and should go into every storage adminstrators utility belt.
+

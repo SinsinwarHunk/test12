@@ -1,0 +1,55 @@
+"vxdisk scandisk" command will give rise to the error when the newly added LUNs are detected.
+
+
+Error
+
+
+#vxdisk scandisks
+VxVM vxdisk ERROR V-5-1-14519 Data Corruption Protection Activated - User Corrective Action Needed 
+VxVM vxdisk INFO V-5-1-14521 To recover, first ensure that the OS device tree is up to date (requires OS specific commands). 
+VxVM vxdisk INFO V-5-1-14520  Then, execute 'vxdisk rm' on the following devices before reinitiating device discovery:
+ 
+/var/adm/messages
+Feb  8 10:54:08 symc-linux  vxvm:vxconfigd: V-5-1-14523 LUN serial number of the OS device path with device number 120/992 has changed from 141E6000 (emcpowerbk) to 60060480000290102714533030314536 (emcpowerbk) 
+Feb  8 10:54:08 symc-linux  vxvm:vxconfigd: V-5-1-14523 LUN serial number of the OS device path with device number 120/0 has changed from 14"%<000 (emcpowera) to 60060480000290102714533033353731 (emcpowera) 
+Feb  8 10:54:08 symc-linux  vxvm:vxconfigd: V-5-1-14522 Attempt to isolate DMP node 120/0 failed, error retuned is Device or resource busy: Device or resource busy
+
+
+
+
+Cause
+
+
+vxdisk scandisks error will occur for data protection, after adding new Luns to the system.
+"data corruption possibility" is detected during device discovery when inconsistency is found, DMP aborts reconfiguration and logs the message. 
+
+Solution
+
+[ WHAT NEED TO DO ]
+
+1. If the systems are in clustered environment, then please freeze the system prior to refresh the VxVM config: 
+Before the maintenance: 
+#haconf -makerw 
+#hasys -freeze -persistent -sys <sysname> 
+#haconf dump 
+
+After the maintenance: 
+#haconf -makerw 
+#hasys -unfreeze -persistent -sys <sysname> 
+#haconf dump 
+  
+2. Thereafter, Please use below procedure to recreate VxVM DMP devices: 
+a)Update the OS device tree using OS tools 
+#devfsadm -Cv   
+
+b) Update VxVM config 
+#mv /etc/vx/array.info /etc/vx/array.info.old 
+#mv /etc/vx/disk.info /etc/vx/disk.info.old 
+
+Remove all the entries from the /dev/vx/dmp and /dev/vx/rdmp directories except entires for bootdisk or bootmirror from the following directories. 
+#rm -rf /dev/vx/dmp/* 
+#rm -rf /dev/vx/rdmp/* 
+ 
+3) Rebuild the DMP device tree.
+# vxconfigd -k
+

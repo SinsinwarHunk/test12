@@ -1,0 +1,26 @@
+1. vxprint -htg rootdg
+2. vxinfo -pg rootdg
+2. vxtask list
+
+A. Dettaching a vxvm rootmirror plese from rootvol 
+
+		vxplex -g rootdg dis rootvol-02
+
+
+	pl rootvol-02   -            DISABLED -        8392072  CONCAT    -        RW
+	sd rootmirror-01 rootvol-02  rootmirror 0      8392072  0         c1t2d0   ENA
+
+		( rootvol-02 ) is dettached from rootvol. 
+
+B. Issue Fsck on root vol.
+
+	fsck -F ufs /dev/vx/rdsk/bootdg/rootvol
+
+c. Attaching a vxvm plex to volume rootvol 
+
+vxplex -g rootdg att rootvol rootvol-02
+
+D. Check Vxprint -htg rootdg for rootvol-02 is Active or not ( which was disabled as point A above)
+
+
+

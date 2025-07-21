@@ -1,0 +1,15 @@
+How to check and modify monitor or probe time out time of a resource
+============================================================================
+
+
+# hatype -display $TYPE -attribute MonitorTimeout
+
+  TYPE=Application
+
+  Application  MonitorTimeout         60
+  (thats the default value)
+
+
+# haconf -makerw
+# hatype -modify $TYPE MonitorTimeout 120
+# haconf -dump -makero

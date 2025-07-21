@@ -1,0 +1,3 @@
+https://sort.symantec.com/public/documents/sf/5.1/aix/html/vcs_admin/vcs_usersTOC.html
+
+https://sort.symantec.com/public/documents/sf/5.1/aix/html/vcs_admin/ch_vcs_controlling_behavior.html#207050

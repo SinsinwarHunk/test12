@@ -1,0 +1,117 @@
+VCS Diskgroup Agent PanicSystemOnDGLoss attribute is new behavior in 5.0
+========================================================================
+
+
+By default the PanicSystemOnDGLoss attribute is set to 1 (true). 
+
+The attribute will cause VCS to panic the system on sudden loss of the diskgroup via execution of the "uadmin 5 0" command. 
+
+A loss of storage connectivity can cause the disk group to become disabled. 
+
+If the value of this attribute is 1 and the disk group becomes disabled, the node panics. 
+
+If the value of the attribute is 0 and the disk group becomes disabled, the following occurs: 
+
+- If the cluster has I/O fencing enabled, the DiskGroup resource is marked FAULTED. 
+  This state results in the agent attempting to take the service group offline. 
+  As part of bringing the DiskGroup resource offline, the agent attempts to deport the disabled disk group. Even if disabled disk group fails to deport, the DiskGroup    resource enters a FAULTED state. This state enables the failover of the service group that contains the resource. To fail back the DiskGroup resource, manually   deport the disk group after restoring storage connectivity
+- If the cluster does not use I/O fencing, a message is logged and the resource is reported ONLINE. 
+
+
+The reason for halting the system is to ensure a failover takes place and there is no data corruption due to 2 hosts wanting to write to the shared storage.
+This not only controls if a system is paniced when there is a dg disable but also if the diskgroup clean script is called due to monitor timeout. 
+However, it would be extremely useful to have any crashdump created as a result of VCS pancing a box due to DiskGroup monitor timeouts as this will likely be when vxconfigd is very busy. 
+
+In version 4.x, the resource will also need to be marked as "Critical" for the panic to occur and VCS will not panic the system if the resource is not marked critical. The VCS Diskgroup Agent PanicSystemOnDGLoss attribute has new behavior in 5.0 which does not depend on the resource being marked critical.  
+
+VCS will then perform an evacuation of the resource and related service group to the next surviving node. If the surviving node is unable to online the resource, no further panics are induced. The clean procedure is called and VCS stops trying to online the resource until the fault is cleared.
+
+panic string
+
+panic[cpu0]/thread=3000aa82cc0: forced crash dump initiated at user request
+
+000002a101c8b850 genunix:kadmin+4a4 (b4, 0, 0, 11eec00, 5, 0)
+ %l0-3: 0000000001814000 00000000011ad400 0000000000000004 0000000000000004
+ %l4-7: 0000000000000438 0000000000000010 0000000000000004 0000000000000000
+000002a101c8b910 genunix:uadmin+110 (5, 0, 0, ff38e000, 18898, 5)
+ %l0-3: 0000000000000000 0000000000000000 00000000f6db0000 000000000000f6db
+ %l4-7: 0000000000000001 0000000000000000 0000000000000000 0000030003767610
+
+syncing file systems... 14 8 done
+dumping to /dev/dsk/c5t29d0s2, offset 65536, content: kernel
+100% done: 33087 pages dumped, compression ratio 3.12, dump succeeded
+
+
+VCS evacuates resources
+
+ 
+2009/07/23 09:37:57 VCS CRITICAL V-16-10001-1073 (wicked) DiskGroup:mydg:monitorisk Group: mydg is disabled on system: wicked. System will panic to migrate all service groups to another VCS node in system list
+ 
+
+
+The surviving node stops attempts to online resource
+
+VxVM vxdg ERROR V-5-1-580 Disk group mydg: Flush failed: Disk group not found
+VxVM vxdg ERROR V-5-1-581 Disk group mydg: No such disk group is imported
+2009/07/23 09:42:54 VCS INFO V-16-2-13068 (jerr1) Resource(mydg) - clean completed successfully.
+2009/07/23 09:42:54 VCS INFO V-16-2-13071 (jerr1) Resource(mydg): reached OnlineRetryLimit(1).
+2009/07/23 09:42:55 VCS ERROR V-16-1-10303 Resource mydg (Owner: unknown, Group: mysg) is FAULTED (timed out) on sys jerr1
+2009/07/23 09:42:55 VCS INFO V-16-1-10493 Evaluating wicked as potential target node for group mysg
+2009/07/23 09:42:55 VCS INFO V-16-1-10494 System wicked not in RUNNING state
+
+
+
+How to check the default value for the PanicSystemOnDGLoss:
+---------------------------------------------------------- 
+eg. We see the value is set to 1 (enabled) by default.
+# grep "boolean Panic" /etc/VRTSvcs/conf/config/types.cf
+       boolean PanicSystemOnDGLoss = 1
+
+How to change the default value for PanicSystemOnDGLoss:
+-------------------------------------------------------
+# haconf -makerw
+# haattr -default DiskGroup PanicSystemOnDGLoss 0
+# haconf -dump -makero
+
+Note : haattr command preserves the existing resource values by modifying the main.cf, Check the Resource Values and modify them with "hares -modify" as per your requirement.
+
+Eg:
+
+# grep -i panicsystemondgloss /etc/VRTSvcs/conf/config/main.cf
+# grep -i panicsystemondgloss /etc/VRTSvcs/conf/config/types.cf
+        static str ArgList[] = { DiskGroup, StartVolumes, StopVolumes, MonitorOnly, MonitorReservation, tempUseFence, PanicSystemOnDGLoss, DiskGroupType, UmountVolumes }
+        boolean PanicSystemOnDGLoss = 1
+# haconf -makerw
+# haattr -default DiskGroup PanicSystemOnDGLoss 0
+# haconf -dump -makero
+# grep -i panicsystemondgloss /etc/VRTSvcs/conf/config/main.cf     --> to preserve the existing resources values, the main.cf was modified.
+                PanicSystemOnDGLoss = 1
+                PanicSystemOnDGLoss = 1
+# grep -i panicsystemondgloss /etc/VRTSvcs/conf/config/types.cf
+        static str ArgList[] = { DiskGroup, StartVolumes, StopVolumes, MonitorOnly, MonitorReservation, tempUseFence, PanicSystemOnDGLoss, DiskGroupType, UmountVolumes }
+        boolean PanicSystemOnDGLoss = 0
+
+
+
+Confirm that both the temporary and persistent definitions have been reset to 0:
+-------------------------------------------------------------------------------
+# haattr -display DiskGroup |grep Panic
+PanicSystemOnDGLoss [boolean/scalar]     =      0
+
+# grep "boolean Panic" /etc/VRTSvcs/conf/config/types.cf
+       boolean PanicSystemOnDGLoss = 0
+
+
+How to change the value for this attribute for individual DiskGroup resources:
+-----------------------------------------------------------------------------
+In certain cases, it may be necessary to change this attribute to 1 for few selected DiskGroup resources.
+
+# haconf -makerw
+# hares -display DG_Res1 | grep PanicSystemOnDGLoss
+DG_Res1 PanicSystemOnDGLoss global     0
+# hares -modify DG_Res1 PanicSystemOnDGLoss 1
+# hares -display DG_Res1 | grep PanicSystemOnDGLoss
+DG_Res1 PanicSystemOnDGLoss global     1
+# haconf -dump -makero
+
+In the Storage Foundation 5.1 Release, the default for PanicSystemOnDGLoss has been changed to "0", so that users are not surprised that VCS nodes panic when DGDISABLED condition is hit during a SAN outage

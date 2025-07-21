@@ -1,0 +1,32 @@
+vxdisksetup format=sliced|simple|cdsdisk ? what are the differences?
+==================================================================== 
+
+==> cds is default from 4.0 onwards it cross platform format aka deport dg from aix and import to solaris box
+
+
+==> sliced is for rootdg so u can't have cds for rootdg
+
+==> simple is not so common aka like emc powerpath uses it
+
+
+
+cdsdisk        The disk is formatted as a CDS disk that is  suitable  for  moving between different operating systems. This is the default  format  (provided  that
+               the  -i  option is used to write the disk header). It is not suitable for boot disks.
+
+               Slice 7 is created to hold the private and  public regions with all other slices (apart from slice 2) zeroed out.  The private region is used by VxVM 
+	       to store  configuration  information, and is followed by a public region  from  which  subdisks  can  be allocated.
+
+	       Note: As the CDS format is applied to  the  entire disk and is unsuitable for boot disks, options and attributes that relate to  partitions,  slices  		       or booting are not applicable.
+
+             
+none           The disk is unformatted.
+
+
+simple         Slice 3 is created to hold the private and  public regions with all other slices (apart from slice 2) zeroed out.  The private region is used by VxVM 
+	       to store  configuration  information, and is followed by a public region  from  which  subdisks  can  be allocated.
+
+sliced         Slices 3  and  4  are  created  to  hold  separate private  and  public  region  partitions  with all other slices (apart from slice 2) zeroed  out.
+               This  format  can  be applied to disks that can be used to boot the system.  If the disk is not  initialized  as a boot disk, space is reserved on the
+               disk to allow it to be converted to cdsdisk format if required.
+
+

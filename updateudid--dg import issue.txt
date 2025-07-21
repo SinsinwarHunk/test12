@@ -1,0 +1,69 @@
+You can also enable vxconfigd daemon logging as follows:
+
+# vxdctl debug 9 /var/adm/vx/vxconfigd_debug.out
+
+The debug information that is enabled is accumulated in the system console log and in the text file /var/adm/vx/vxconfigd_debug.out. 
+'9' represents the level of debugging. '1' represents minimal debugging. '9' represents verbose output.
+
+Caution: 
+ Turning on vxconfigd debugging degrades VxVM performance. Use vxconfigd debugging with discretion in a production environment.
+ 
+
+To disable vxconfigd debugging:
+
+# vxdctl debug 0
+
+################################################################################################################################################################
+
+The command "vxdisk updateudid <device>" modifies the DISK_ID value of the device as well as updating the Unique Device ID value in the disk private region
+
+vxdisk updateudid command does not support the disk access name for non-default diskgroups.  Only disk media names are supported.
+
+# vxdisk list
+DEVICE       TYPE            DISK         GROUP        STATUS
+c14t0d0     auto:cdsdisk    disk14          testdg       online
+  
+c14t0d0 is the disk access (da) name
+disk14 is the disk media (dm) name
+
+# vxdisk -g testdg updateudid disk14
+
+
+################################################################################################################################################################
+
+VxVM vxdg ERROR V-5-1-10978 Disk group dbsourcep1_dg: import failed:
+No valid disk found containing disk group
+
+
+vxdctl debug 9 /var/adm/vxconfigd9-debug.out
+vxdg -Cf import dbsourcep1_dg
+vxdctl debug 0
+ls -lt /var/adm/vxconfigd9-debug.out
+more /var/adm/vxconfigd9-debug.out
+
+
+vxdisk -oalldgs list | grep -i dbsourcep1_dg
+for i in `cat`; do vxdisk -g dbsourcep1_dg updateudid $i ; done
+
+vxdisk -oalldgs list | grep -i dbsourcep1_dg
+vxdg import dbsourcep1_dg
+vxdisk -oalldgs list | grep -i dbsourcep1_dg
+
+vxprint -htg dbsourcep1_dg
+vxvol -g dbsourcep1_dg startall
+vxprint -htg dbsourcep1_dg
+
+hastatus -summ
+hagrp -resources dbsourcep1
+for i in `cat`; do hares -state $i; done | grep -i lonbkdbspltp1a
+for i in `cat`; do hares -state $i; done | grep -i lonbkdbspltp1a | grep -i offline
+vxdg list
+vxprint -htg dbsourcep1_dg |more
+
+vxdisk -oalldgs list | grep -i dbsourcep1_dg
+for i in `cat`; do vxdisk set $i clone=off; done
+
+vxdisk -oalldgs list | grep -i dbsourcep1_dg
+
+hagrp -online dbsourcep1 -sys lonbkdbspltp1a
+hastatus -sum

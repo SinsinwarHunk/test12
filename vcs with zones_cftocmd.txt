@@ -1,0 +1,53 @@
+hagrp -add orasg
+hagrp -modify orasg SystemList  node1 0 node2 1
+hagrp -modify orasg ContainerInfo  Name orazone Type Zone Enabled 1 -sys node1
+hagrp -modify orasg ContainerInfo  Name orazone Type Zone Enabled 1 -sys node2
+hagrp -modify orasg AutoStartList  node1
+hagrp -modify orasg Administrators  z_reszone_node1 z_reszone_node2
+hagrp -modify orasg SourceFile "./main.cf"
+hares -add dg_oradg DiskGroup orasg
+hares -modify dg_oradg Critical 0
+hares -modify dg_oradg DiskGroup oradg
+hares -modify dg_oradg StartVolumes 1
+hares -modify dg_oradg StopVolumes 1
+hares -modify dg_oradg MonitorReservation 0
+hares -modify dg_oradg tempUseFence INVALID
+hares -modify dg_oradg PanicSystemOnDGLoss 0
+hares -modify dg_oradg DiskGroupType private
+hares -modify dg_oradg Enabled 1
+hares -add ip_orasg IP orasg
+hares -modify ip_orasg Critical 0
+hares -modify ip_orasg Device e1000g0
+hares -modify ip_orasg Address "192.168.184.136"
+hares -modify ip_orasg ArpDelay 1
+hares -modify ip_orasg Enabled 1
+hares -add mount_orasg Mount orasg
+hares -modify mount_orasg Critical 0
+hares -modify mount_orasg MountPoint "/oravol"
+hares -modify mount_orasg BlockDevice "/dev/vx/dsk/oradg/oravol"
+hares -modify mount_orasg FSType vxfs
+hares -modify mount_orasg FsckOpt "%-y"
+hares -modify mount_orasg CkptUmount 1
+hares -modify mount_orasg SecondLevelMonitor 0
+hares -modify mount_orasg SecondLevelTimeout 30
+hares -modify mount_orasg RecursiveMnt 0
+hares -modify mount_orasg VxFSMountLock 1
+hares -modify mount_orasg Enabled 1
+hares -add nic_orasg NIC orasg
+hares -modify nic_orasg Device e1000g0
+hares -modify nic_orasg PingOptimize 1
+hares -modify nic_orasg Enabled 1
+hares -add vol_orasg Volume orasg
+hares -modify vol_orasg Critical 0
+hares -modify vol_orasg Volume oravol
+hares -modify vol_orasg DiskGroup oradg
+hares -modify vol_orasg Enabled 1
+hares -add reszone Zone orasg
+hares -modify reszone Enabled 1
+hares -link webip csgnic
+hares -link ip_orasg nic_orasg
+hares -link ip_orasg reszone
+hares -link mount_orasg vol_orasg
+hares -link reszone mount_orasg
+hares -link vol_orasg dg_oradg
+bash-3.2#

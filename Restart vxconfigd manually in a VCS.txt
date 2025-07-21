@@ -1,0 +1,24 @@
+Restart vxconfigd manually in a VCS
+====================================
+
+It may sometimes be necessary to restart vxconfigd manually in a VCS controlled cluster to resolve a VxVM issue.
+Please do not run the command vxconfigd -k if you are running in cluster environment.
+Please freeze the all your service groups before running the vxconfigd -k and if it is standalone then it's fine
+
+Warning: 
+The -r reset option to vxconfigd restarts the vxconfigd daemon and recreates all states from scratch. This option cannot be used to restart vxconfigd while a node is joined to a cluster because it causes cluster information to be discarded.
+
+
+To restart vxconfigd manually
+
+1.Use the following command to disable failover on any service groups that contain VxVM objects:
+
+# hagrp -freeze groupname
+
+2.Enter the following command to stop and restart the VxVM configuration daemon on the affected node: 
+
+# vxconfigd -k
+
+3.Use the following command to re-enable failover for the service groups that you froze in step 1: 
+
+# hagrp -unfreeze groupname

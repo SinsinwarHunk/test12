@@ -1,0 +1,81 @@
+'vxevac' command to move data from one storage location to a new location
+=========================================================================
+
+To migrate data from a disk in a volume, the vxevac utility can be used.  
+The vxevac utility moves all subdisks off the specified  Volume Manager disk to the specified destination disks. 
+The vxevac command works by taking a source Disk Media record (DM records are the names for disks inside the disk group, attached to the underlying storage): 
+
+dm disk01 ams_wms0_000a auto 65536 10340608 - 
+dm disk02 ams_wms0_000b auto 65536 10340608 - 
+dm disk03 ams_wms0_0004 auto 65536 10340608 - 
+
+The 'disk01', 'disk02', and 'disk03' records are the DM records, while ams_wms0_**** are the Disk Access (DA) records. 
+
+# vxevac -g <diskgroup> <source_DM> [target_DM]... 
+
+The target list can be a space delimited list or you can specify a 1 to 1 relationship. Target can also be omitted and then target space will be acquired by VM automatically from the disk group.
+
+This operation assumes there is sufficient space in the disk group to complete the operation.  If the process runs out of space, then some of the volumes on the disk may  not be evacuated.
+
+For example,
+
+# vxprint -g wong -ht
+
+DG NAME         NCONFIG      NLOG     MINORS   GROUP-ID
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+V  NAME         USETYPE      KSTATE   STATE    LENGTH   READPOL   PREFPLEX
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+
+dg wong         default      default  45000    952551940.1284.wong
+
+dm wong01       c1t4d0s2     sliced   1089     8921650  -
+dm wong02       c1t5d0s2     sliced   1089     8921650  -
+dm wong03       c1t6d0s2     sliced   1089     8921650  -
+dm wong04       c1t8d0s2     sliced   1089     8921650  -
+
+v  svol         fsgen        ENABLED  ACTIVE   4096     SELECT    svol-01
+pl svol-01      svol         ENABLED  ACTIVE   4484     STRIPE    2/128    RW
+sd wong03-01    svol-01      wong03   0        2180     0/0       c1t6d0   ENA
+sd wong02-01    svol-01      wong02   0        2180     1/0       c1t5d0   ENA
+         
+vxevac utility can be used to move subdisks on wong03 to any other disk available in the diskgroup, example wong01
+
+# /etc/vx/bin/vxevac -g wong  wong03  wong01
+
+
+# vxprint -g wong -ht
+
+DG NAME         NCONFIG      NLOG     MINORS   GROUP-ID
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+V  NAME         USETYPE      KSTATE   STATE    LENGTH   READPOL   PREFPLEX
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+
+dg wong         default      default  45000    952551940.1284.wong
+
+dm wong01       c1t4d0s2     sliced   1089     8921650  -
+dm wong02       c1t5d0s2     sliced   1089     8921650  -
+dm wong03       c1t6d0s2     sliced   1089     8921650  -
+dm wong04       c1t8d0s2     sliced   1089     8921650  -
+
+v  svol         fsgen        ENABLED  ACTIVE   4096     SELECT    svol-01
+pl svol-01      svol         ENABLED  ACTIVE   4484     STRIPE    2/128    RW
+sd wong01-01    svol-01      wong01   0        2180     0/0       c1t4d0   ENA
+sd wong02-01    svol-01      wong02   0        2180     1/0       c1t5d0   ENA 
+
+
+Notice that the subdisk wong03-01 on disk wong03 has been evacuated to subdisk wong01-01  on disk wong01.
+
+Evacuation is performed using the following algorithm: 
+
+* New Sub-Disk elements are allocated on target media based on source Sub-Disk elements. 
+
+* New Plex associations are created to begin mirroring from original sub-disk to target sub-disks. 
+IO can remain active to the volume during this procedure (standard mirror operation) 
+
+* When 100% synchronization between original sub-disk and target sub-disk is established, target sub-disk and source disk are swapped / Target is placed in main Volume configuration, original is moved to temporary plex. 
+
+* Once swap is completed, the temporary plex (and original sub-disk allocation) are removed

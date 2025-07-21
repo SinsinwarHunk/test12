@@ -1,0 +1,22 @@
+Resize a Veritas File System by using the fsadm command.
+
+fsadm -F vxfs [-b newsize] [-r rawdev] mount_point
+
+
+1. Verify free space on underlying device:
+
+# vxdg -g "datavol" free
+
+2. Expand the volume using vxassist:
+
+# vxassist -g "datadg" growto "myvol" "newsize"
+example: #vxassist -g testdg growto datavol 1024000
+
+3. Expand the file system using fsadm:
+
+# fsadm -F vxfs -b "newsize" -r /dev/vx/rdsk/testdg/datavol /datavol
+
+4. Verify that the file system was resized by using df:
+
+# df -k /datavol
+

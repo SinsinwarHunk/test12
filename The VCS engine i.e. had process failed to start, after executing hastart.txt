@@ -1,0 +1,110 @@
+The VCS engine i.e., /opt/VRTS/bin/had process, failed to "start", after executing /opt/VRTS/bin/hastart.
+=========================================================================================================
+
+Problem:
+
+ROOT@loneqfccappu5 [UAT Active] /etc/rc2.d# ps -ef | grep -i had
+    root 15029     1   0 12:35:40 ?           0:00 /opt/VRTSvcs/bin/hashadow
+    root 17105 10079   0 12:48:15 pts/1       0:00 grep -i had
+
+##########################################################################################################################
+
+Error:
+
+
+engine_A.log:
+
+TAG_D 2002/11/22 17:10:29 VCS:11022:VCS engine (had) started
+TAG_D 2002/11/22 17:10:30 VCS:10114:opening GAB library
+TAG_B 2002/11/22 17:10:33 VCS:10116:GabHandle::open failed errno = 261
+TAG_B 2002/11/22 17:10:33 VCS:11033:GAB open failed. Exiting
+TAG_D 2002/11/22 17:10:43 VCS:11022:VCS engine (had) started
+TAG_D 2002/11/22 17:10:43 VCS:11027:VCS engine startup arguments=-restart
+TAG_D 2002/11/22 17:10:43 VCS:10114:opening GAB library
+TAG_B 2002/11/22 17:10:44 VCS:10116:GabHandle::open failed errno = 261
+TAG_B 2002/11/22 17:10:44 VCS:11033:GAB open failed. Exiting
+
+##########################################################################################################################
+hashadow_A.log:
+
+TAG_B 2002/11/22 17:12:34 VCS:11103:VCS exited. It will restart
+TAG_C 2002/11/22 17:12:34 VCS:11277:Retry Interval is 50 at fault 5
+TAG_D 2002/11/22 17:13:24 VCS:11107:Restarting VCS with following arguments
+  /opt/VRTSvcs/bin/had   -restart
+TAG_B 2002/11/22 17:13:29 VCS:11103:VCS exited. It will restart
+
+
+##########################################################################################################################
+
+Its giving the following error:
+
+ROOT@loneqfccappu5 [UAT Active] gabconfig -c -x 
+GAB gabconfig ERROR V-15-2-25015 LLT not configured
+
+ROOT@loneqfccappu5 [UAT Active]# lltstat -nvv (LLT in IDLE state)
+LLT node information:
+    Node                 State    Link  Status  Address
+   * 0 loneqfccappu5     IDLE     e1000g2   
+                             	  e1000g0
+     	  			  e1000g3   
+     1 loneqfccappu6     IDLE     e1000g2                       
+                                  e1000g0
+                                  e1000g3
+
+
+##########################################################################################################################
+Cause:
+
+
+In summary, the VCS engine, would not start, as per design, since, the VCS GAB module was not in a "configured" state, 
+hence the GabHandle::open failed errno = 261 message.
+
+
+ROOT@loneqfccappu5 [UAT Active] /sbin/gabconfig -l | grep "Driver state"
+Driver state         : unconfigured
+
+
+##########################################################################################################################
+
+Solution:
+
+
+Before, starting the VCS engine, confirm that the GAB module is in a configured state:
+
+ROOT@loneqfccappu5 [UAT Active] gabconfig -U
+ROOT@loneqfccappu5 [UAT Active] lltconfig -U
+lltconfig: this will attempt to stop and reset LLT. Confirm (y/n)? y
+ROOT@loneqfccappu5 [UAT Active] lltconfig -c (This will take few seconds)
+ROOT@loneqfccappu5 [UAT Active] gabconfig -c -n 2
+ROOT@loneqfccappu5 [UAT Active] gabconfig -a 
+GAB Port Memberships
+======================================
+Port a gen 1fa5ce79 membership 012345 (HAD is not running)
+
+ROOT@loneqfccappu5 [UAT Active] /sbin/gabconfig -l | grep "Driver state"
+Driver state         : Configured
+
+ROOT@loneqfccappu5 [UAT Active] hastart
+ROOT@loneqfccappu5 [UAT Active] gabconfig -a
+GAB Port Memberships
+======================================
+Port a gen 1fa5ce79 membership 012345
+Port h gen 5b053324 membership 012345
+
+ROOT@loneqfccappu5 [UAT Active] # ps -ef | grep -i had
+    root 15027     1   0 12:35:39 ?           0:01 /opt/VRTSvcs/bin/had
+    root 15029     1   0 12:35:40 ?           0:00 /opt/VRTSvcs/bin/hashadow
+    root 17105 10079   0 12:48:15 pts/1       0:00 grep -i had
+
+ROOT@loneqfccappu5 [UAT Active] # lltstat -nvv (LLT in IDLE state)
+LLT node information:
+    Node                 State    Link  Status  Address
+   * 0 loneqfccappu5     OPEN
+                                  e1000g2   UP      00:14:4F:40:DB:96
+                                  e1000g3   UP      00:14:4F:40:DB:97
+                                  e1000g0   UP      00:14:4F:40:DB:94
+     1 loneqfccappu6     OPEN
+                                  e1000g2   UP      00:14:4F:CD:95:54
+                                  e1000g3   UP      00:14:4F:CD:95:56
+                                  e1000g0   UP	    00:14:4F:40:DB:97
+

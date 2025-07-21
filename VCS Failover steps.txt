@@ -1,0 +1,16 @@
+zone down
+file system down
+volume down
+dg down
+SRDF down
+Group down
+------------------->>
+
+SRDF online
+symdg failover
+symdg swap
+dg online
+volume online
+fs online
+zone online
+group online

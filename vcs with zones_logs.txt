@@ -1,0 +1,1741 @@
+Password:
+Last login: Tue Oct 20 03:00:41 2015 from 192.168.184.1
+Oracle Corporation      SunOS 5.10      Generic Patch   January 2005
+-bash-3.2#
+-bash-3.2# bash
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.2G   424K   2.2G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.2G    40K   2.2G     1%    /tmp
+swap                   2.2G    32K   2.2G     1%    /var/run
+swap                   2.2G     0K   2.2G     0%    /dev/vx/dmp
+swap                   2.2G     0K   2.2G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.4M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+bash-3.2# gabconfig -a
+GAB Port Memberships
+===============================================================
+Port a gen   3db001 membership 01
+Port b gen   3db003 membership 01
+Port h gen   3db004 membership 01
+bash-3.2# uname -a
+SunOS node1 5.10 Generic_147441-01 i86pc i386 i86pc
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - ora_zone         installed  /oravol/zone                   native   shared
+bash-3.2# vxdisk -eo alldgs list
+DEVICE       TYPE           DISK        GROUP        STATUS               OS_NATIVE_NAME   ATTR
+disk_0       auto:cdsdisk   oradisk1     oradg       online               c2t3d0s2         -
+disk_1       auto:none      -            -           online invalid       c1t0d0s2         -
+disk_2       auto:none      -            -           online invalid       c1t1d0           -
+disk_5       auto:cdsdisk   oradisk2     oradg       online               c2t4d0s2         -
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.2G   424K   2.2G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.2G    40K   2.2G     1%    /tmp
+swap                   2.2G    32K   2.2G     1%    /var/run
+swap                   2.2G     0K   2.2G     0%    /dev/vx/dmp
+swap                   2.2G     0K   2.2G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.4M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - ora_zone         installed  /oravol/zone                   native   shared
+bash-3.2# zonecfg -z ora_zone
+zonecfg:ora_zone> exit
+bash-3.2# zonecfg -z ora_zone info
+zonename: ora_zone
+zonepath: /oravol/zone
+brand: native
+autoboot: true
+bootargs:
+pool:
+limitpriv:
+scheduling-class:
+ip-type: shared
+hostid:
+inherit-pkg-dir:
+        dir: /lib
+inherit-pkg-dir:
+        dir: /platform
+inherit-pkg-dir:
+        dir: /sbin
+inherit-pkg-dir:
+        dir: /usr
+bash-3.2# vxprint -htv
+Disk group: oradg
+
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+DC NAME         PARENTVOL    LOGVOL
+SP NAME         SNAPVOL      DCO
+EX NAME         ASSOC        VC                       PERMS    MODE     STATE
+
+v  oravol       -            ENABLED  ACTIVE   1843200  SELECT    -        fsgen
+pl oravol-01    oravol       ENABLED  ACTIVE   1843200  CONCAT    -        RW
+sd oradisk1-01  oravol-01    oradisk1 0        951040   0         disk_0   ENA
+sd oradisk2-01  oravol-01    oradisk2 0        892160   951040    disk_5   ENA
+bash-3.2#
+bash-3.2# Nov  2 21:28:35 node1 Had[2203]: [ID 702911 daemon.alert] VCS WARNING V-16-1-51047 HAD Self Check: Excessive delay in the HAD heartbeat to GAB (10 seconds)
+
+bash-3.2#
+bash-3.2#
+bash-3.2# hagrp -add  orasg
+VCS NOTICE V-16-1-10136 Group added; populating SystemList and setting the Parallel attribute recommended before adding resources
+bash-3.2# hagrp -modify orasg SystemList  node1 0 node2 1
+bash-3.2# hagrp -modify orasg AutoStartList node1
+bash-3.2# hagrp -modify orasg Parallel 0
+bash-3.2#
+bash-3.2#
+bash-3.2# hastatus -summ
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               OFFLINE
+B  orasg           node2                Y          N               OFFLINE
+B  orasg1          node1                Y          N               OFFLINE
+B  orasg1          node2                Y          N               OFFLINE
+bash-3.2# hastatus -summ
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+bash-3.2# hagrp -add  orasg
+VCS NOTICE V-16-1-10136 Group added; populating SystemList and setting the Parallel attribute recommended before adding resources
+bash-3.2# hagrp -modify orasg1 SystemList  node1 0 node2 1
+VCS WARNING V-16-1-12130 Group orasg1 does not exist
+bash-3.2# hastatus -summ
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+bash-3.2# hagrp -modify orasg SystemList  node1 0 node2 1
+bash-3.2# hastatus -summ
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               OFFLINE
+B  orasg           node2                Y          N               OFFLINE
+bash-3.2# hagrp -modify orasg AutoStartList node1
+bash-3.2# hagrp -modify orasg Parallel 0
+bash-3.2# hastatus -summ
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               OFFLINE
+B  orasg           node2                Y          N               OFFLINE
+bash-3.2# vxprint -htv
+Disk group: oradg
+
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+DC NAME         PARENTVOL    LOGVOL
+SP NAME         SNAPVOL      DCO
+EX NAME         ASSOC        VC                       PERMS    MODE     STATE
+
+v  oravol       -            ENABLED  ACTIVE   1843200  SELECT    -        fsgen
+pl oravol-01    oravol       ENABLED  ACTIVE   1843200  CONCAT    -        RW
+sd oradisk1-01  oravol-01    oradisk1 0        951040   0         disk_0   ENA
+sd oradisk2-01  oravol-01    oradisk2 0        892160   951040    disk_5   ENA
+bash-3.2# vxdg -eo alldgs list
+VxVM vxdg: illegal option -- e
+VxVM vxdg INFO V-5-1-1443
+    Usage: vxdg  keyword arg ...
+For detailed help use: vxdg -H | help
+bash-3.2# vxdisk -eo alldgs list
+DEVICE       TYPE           DISK        GROUP        STATUS               OS_NATIVE_NAME   ATTR
+disk_0       auto:cdsdisk   oradisk1     oradg       online               c2t3d0s2         -
+disk_1       auto:none      -            -           online invalid       c1t0d0s2         -
+disk_2       auto:none      -            -           online invalid       c1t1d0           -
+disk_5       auto:cdsdisk   oradisk2     oradg       online               c2t4d0s2         -
+bash-3.2# hares -add  dg_oradg DiskGroup  orasg
+VCS NOTICE V-16-1-10242 Resource added. Enabled attribute must be set before agent monitors
+bash-3.2# hares -modify dg_oradg Critical 1
+bash-3.2# hares -modify dg_oradg DiskGroup  oradg
+bash-3.2# hares -modify dg_oradg Enabled 1
+bash-3.2# hares -add  vol_orasg  Volume  orasghares -add  vol_orasg  Volume  orasg
+bash-3.2# hares -add  vol_orasg  Volume  orasg
+VCS NOTICE V-16-1-10242 Resource added. Enabled attribute must be set before agent monitors
+bash-3.2# hares -modify vol_orasg Critical 0
+bash-3.2# hares -modify vol_orasg Volume  oravol
+bash-3.2# hares -modify vol_orasg DiskGroup  oradg
+bash-3.2# hares -modify vol_orasg Enabled 1
+bash-3.2# hares -add  mount_orasg  Mount  orasg
+VCS NOTICE V-16-1-10242 Resource added. Enabled attribute must be set before agent monitors
+bash-3.2# hares -modify mount_orasg Critical 0
+bash-3.2# hares -modify mount_orasg MountPoint  /oravol
+bash-3.2# hares -modify mount_orasg BlockDevice  /dev/vx/dsk/oradg/oravol
+bash-3.2# hares -modify mount_orasg FSType  vxfs
+bash-3.2# hares -modify mount_orasg FsckOpt  -y
+VCS WARNING V-16-1-10603 Unknown option: -y
+VCS INFO V-16-1-10601 Usage:
+        hares -add <res> <type> <group>
+        hares -delete [-force] <res>
+
+        hares -local <res> <attr>
+        hares -global <res> <attr> <value> ... | <key> ...
+                 | {<key> <value>} ...
+
+        hares -action <res> <token> [-actionargs <arg1> ...]
+                 -sys <system> [-clus <cluster> | -localclus]
+
+        hares -link <parent res> <child res>
+        hares -unlink <parent res> <child res>
+
+        hares -clear <res> [-sys <system>]
+        hares -online [-force] <res> -sys <system>
+        hares -offline [-ignoreparent|-parentprop] <res> -sys <system>
+
+        hares -refreshinfo <res> [-sys <system>] -clus <cluster> | -localclus
+        hares -flushinfo <res> [-sys <system>] -clus <cluster> | -localclus
+
+        hares -offprop [-ignoreparent] <res> -sys <system>
+
+        hares -override <res> <staticattribute>
+        hares -undo_override <res> <staticattribute>
+
+        hares -probe <res> -sys <system>
+
+        hares -dep [<resource(s)>]
+
+        hares -display [<resource(s)>] [-attribute <attribute(s)>]
+                [-group <group(s)>] [-type <type(s)>] [-sys <system(s)>]
+                [-clus <cluster> | -localclus]
+        hares -display -ovalues [<resource(s)>]
+                [-group <group(s)>] [-type <type(s)>]
+
+        hares -state [<res> -sys <system>]
+                [-clus <cluster> | -localclus]
+
+        hares -list [<conditional(s)]
+                [-clus <cluster> | -localclus]
+
+        hares -value <res> <attr> [<system>]
+                [-clus <cluster> | -localclus]
+
+        hares -wait <res> <attr> <value> [-clus <cluster>]
+                [-sys <system>] [-time <timeout>]
+
+        hares [-help [-modify|-list]]
+
+bash-3.2# hares -modify mount_orasg FsckOpt  -y
+VCS WARNING V-16-1-10603 Unknown option: -y
+VCS INFO V-16-1-10601 Usage:
+        hares -add <res> <type> <group>
+        hares -delete [-force] <res>
+
+        hares -local <res> <attr>
+        hares -global <res> <attr> <value> ... | <key> ...
+                 | {<key> <value>} ...
+
+        hares -action <res> <token> [-actionargs <arg1> ...]
+                 -sys <system> [-clus <cluster> | -localclus]
+
+        hares -link <parent res> <child res>
+        hares -unlink <parent res> <child res>
+
+        hares -clear <res> [-sys <system>]
+        hares -online [-force] <res> -sys <system>
+        hares -offline [-ignoreparent|-parentprop] <res> -sys <system>
+
+        hares -refreshinfo <res> [-sys <system>] -clus <cluster> | -localclus
+        hares -flushinfo <res> [-sys <system>] -clus <cluster> | -localclus
+
+        hares -offprop [-ignoreparent] <res> -sys <system>
+
+        hares -override <res> <staticattribute>
+        hares -undo_override <res> <staticattribute>
+
+        hares -probe <res> -sys <system>
+
+        hares -dep [<resource(s)>]
+
+        hares -display [<resource(s)>] [-attribute <attribute(s)>]
+                [-group <group(s)>] [-type <type(s)>] [-sys <system(s)>]
+                [-clus <cluster> | -localclus]
+        hares -display -ovalues [<resource(s)>]
+                [-group <group(s)>] [-type <type(s)>]
+
+        hares -state [<res> -sys <system>]
+                [-clus <cluster> | -localclus]
+
+        hares -list [<conditional(s)]
+                [-clus <cluster> | -localclus]
+
+        hares -value <res> <attr> [<system>]
+                [-clus <cluster> | -localclus]
+
+        hares -wait <res> <attr> <value> [-clus <cluster>]
+                [-sys <system>] [-time <timeout>]
+
+        hares [-help [-modify|-list]]
+
+bash-3.2# hares -modify mount_orasg FsckOpt -y
+VCS WARNING V-16-1-10603 Unknown option: -y
+VCS INFO V-16-1-10601 Usage:
+        hares -add <res> <type> <group>
+        hares -delete [-force] <res>
+
+        hares -local <res> <attr>
+        hares -global <res> <attr> <value> ... | <key> ...
+                 | {<key> <value>} ...
+
+        hares -action <res> <token> [-actionargs <arg1> ...]
+                 -sys <system> [-clus <cluster> | -localclus]
+
+        hares -link <parent res> <child res>
+        hares -unlink <parent res> <child res>
+
+        hares -clear <res> [-sys <system>]
+        hares -online [-force] <res> -sys <system>
+        hares -offline [-ignoreparent|-parentprop] <res> -sys <system>
+
+        hares -refreshinfo <res> [-sys <system>] -clus <cluster> | -localclus
+        hares -flushinfo <res> [-sys <system>] -clus <cluster> | -localclus
+
+        hares -offprop [-ignoreparent] <res> -sys <system>
+
+        hares -override <res> <staticattribute>
+        hares -undo_override <res> <staticattribute>
+
+        hares -probe <res> -sys <system>
+
+        hares -dep [<resource(s)>]
+
+        hares -display [<resource(s)>] [-attribute <attribute(s)>]
+                [-group <group(s)>] [-type <type(s)>] [-sys <system(s)>]
+                [-clus <cluster> | -localclus]
+        hares -display -ovalues [<resource(s)>]
+                [-group <group(s)>] [-type <type(s)>]
+
+        hares -state [<res> -sys <system>]
+                [-clus <cluster> | -localclus]
+
+        hares -list [<conditional(s)]
+                [-clus <cluster> | -localclus]
+
+        hares -value <res> <attr> [<system>]
+                [-clus <cluster> | -localclus]
+
+        hares -wait <res> <attr> <value> [-clus <cluster>]
+                [-sys <system>] [-time <timeout>]
+
+        hares [-help [-modify|-list]]
+
+bash-3.2# hares -modify mount_orasg fsckOpt -y
+VCS WARNING V-16-1-10603 Unknown option: -y
+VCS INFO V-16-1-10601 Usage:
+        hares -add <res> <type> <group>
+        hares -delete [-force] <res>
+
+        hares -local <res> <attr>
+        hares -global <res> <attr> <value> ... | <key> ...
+                 | {<key> <value>} ...
+
+        hares -action <res> <token> [-actionargs <arg1> ...]
+                 -sys <system> [-clus <cluster> | -localclus]
+
+        hares -link <parent res> <child res>
+        hares -unlink <parent res> <child res>
+
+        hares -clear <res> [-sys <system>]
+        hares -online [-force] <res> -sys <system>
+        hares -offline [-ignoreparent|-parentprop] <res> -sys <system>
+
+        hares -refreshinfo <res> [-sys <system>] -clus <cluster> | -localclus
+        hares -flushinfo <res> [-sys <system>] -clus <cluster> | -localclus
+
+        hares -offprop [-ignoreparent] <res> -sys <system>
+
+        hares -override <res> <staticattribute>
+        hares -undo_override <res> <staticattribute>
+
+        hares -probe <res> -sys <system>
+
+        hares -dep [<resource(s)>]
+
+        hares -display [<resource(s)>] [-attribute <attribute(s)>]
+                [-group <group(s)>] [-type <type(s)>] [-sys <system(s)>]
+                [-clus <cluster> | -localclus]
+        hares -display -ovalues [<resource(s)>]
+                [-group <group(s)>] [-type <type(s)>]
+
+        hares -state [<res> -sys <system>]
+                [-clus <cluster> | -localclus]
+
+        hares -list [<conditional(s)]
+                [-clus <cluster> | -localclus]
+
+        hares -value <res> <attr> [<system>]
+                [-clus <cluster> | -localclus]
+
+        hares -wait <res> <attr> <value> [-clus <cluster>]
+                [-sys <system>] [-time <timeout>]
+
+        hares [-help [-modify|-list]]
+
+bash-3.2# hares -modify mount_orasg Enabled 1
+bash-3.2# hares -modify mount_orasg fsckOpt -y
+VCS WARNING V-16-1-10603 Unknown option: -y
+VCS INFO V-16-1-10601 Usage:
+        hares -add <res> <type> <group>
+        hares -delete [-force] <res>
+
+        hares -local <res> <attr>
+        hares -global <res> <attr> <value> ... | <key> ...
+                 | {<key> <value>} ...
+
+        hares -action <res> <token> [-actionargs <arg1> ...]
+                 -sys <system> [-clus <cluster> | -localclus]
+
+        hares -link <parent res> <child res>
+        hares -unlink <parent res> <child res>
+
+        hares -clear <res> [-sys <system>]
+        hares -online [-force] <res> -sys <system>
+        hares -offline [-ignoreparent|-parentprop] <res> -sys <system>
+
+        hares -refreshinfo <res> [-sys <system>] -clus <cluster> | -localclus
+        hares -flushinfo <res> [-sys <system>] -clus <cluster> | -localclus
+
+        hares -offprop [-ignoreparent] <res> -sys <system>
+
+        hares -override <res> <staticattribute>
+        hares -undo_override <res> <staticattribute>
+
+        hares -probe <res> -sys <system>
+
+        hares -dep [<resource(s)>]
+
+        hares -display [<resource(s)>] [-attribute <attribute(s)>]
+                [-group <group(s)>] [-type <type(s)>] [-sys <system(s)>]
+                [-clus <cluster> | -localclus]
+        hares -display -ovalues [<resource(s)>]
+                [-group <group(s)>] [-type <type(s)>]
+
+        hares -state [<res> -sys <system>]
+                [-clus <cluster> | -localclus]
+
+        hares -list [<conditional(s)]
+                [-clus <cluster> | -localclus]
+
+        hares -value <res> <attr> [<system>]
+                [-clus <cluster> | -localclus]
+
+        hares -wait <res> <attr> <value> [-clus <cluster>]
+                [-sys <system>] [-time <timeout>]
+
+        hares [-help [-modify|-list]]
+
+bash-3.2# hares -modify mount_orasg fsckopt -y
+VCS WARNING V-16-1-10603 Unknown option: -y
+VCS INFO V-16-1-10601 Usage:
+        hares -add <res> <type> <group>
+        hares -delete [-force] <res>
+
+        hares -local <res> <attr>
+        hares -global <res> <attr> <value> ... | <key> ...
+                 | {<key> <value>} ...
+
+        hares -action <res> <token> [-actionargs <arg1> ...]
+                 -sys <system> [-clus <cluster> | -localclus]
+
+        hares -link <parent res> <child res>
+        hares -unlink <parent res> <child res>
+
+        hares -clear <res> [-sys <system>]
+        hares -online [-force] <res> -sys <system>
+        hares -offline [-ignoreparent|-parentprop] <res> -sys <system>
+
+        hares -refreshinfo <res> [-sys <system>] -clus <cluster> | -localclus
+        hares -flushinfo <res> [-sys <system>] -clus <cluster> | -localclus
+
+        hares -offprop [-ignoreparent] <res> -sys <system>
+
+        hares -override <res> <staticattribute>
+        hares -undo_override <res> <staticattribute>
+
+        hares -probe <res> -sys <system>
+
+        hares -dep [<resource(s)>]
+
+        hares -display [<resource(s)>] [-attribute <attribute(s)>]
+                [-group <group(s)>] [-type <type(s)>] [-sys <system(s)>]
+                [-clus <cluster> | -localclus]
+        hares -display -ovalues [<resource(s)>]
+                [-group <group(s)>] [-type <type(s)>]
+
+        hares -state [<res> -sys <system>]
+                [-clus <cluster> | -localclus]
+
+        hares -list [<conditional(s)]
+                [-clus <cluster> | -localclus]
+
+        hares -value <res> <attr> [<system>]
+                [-clus <cluster> | -localclus]
+
+        hares -wait <res> <attr> <value> [-clus <cluster>]
+                [-sys <system>] [-time <timeout>]
+
+        hares [-help [-modify|-list]]
+
+bash-3.2# hares -add  nic_orasg  NIC  orasg
+VCS NOTICE V-16-1-10242 Resource added. Enabled attribute must be set before agent monitors
+bash-3.2# hares -modify nic_orasg Critical 1
+bash-3.2# hares -modify nic_orasg Device  e1000g0
+bash-3.2# hares -modify nic_orasg Enabled 1
+bash-3.2# hares -add  ip_orasg  IP  orasg
+VCS NOTICE V-16-1-10242 Resource added. Enabled attribute must be set before agent monitors
+bash-3.2# hares -modify ip_orasg Critical 0
+bash-3.2# hares -modify ip_orasg ArpDelay  1
+bash-3.2# hares -modify ip_orasg Device  e1000g0
+bash-3.2# hares -modify ip_orasg Address  192.168.184.136
+bash-3.2# hares -modify ip_orasg Enabled 1
+bash-3.2# mount /dev/vx/dsk/oradg/oravol /oravol
+mount: /dev/vx/dsk/oradg/oravol is not this fstype
+bash-3.2# mount -F vxfs /dev/vx/dsk/oradg/oravol /oravol
+UX:vxfs mount: ERROR: V-3-21268: /dev/vx/dsk/oradg/oravol is corrupted. needs checking
+bash-3.2# fsck -y /dev/vx/dsk/oradg/oravol
+** /dev/vx/rdsk/oradg/oravol
+BAD SUPERBLOCK AT BLOCK 16: MAGIC NUMBER WRONG
+
+LOOK FOR ALTERNATE SUPERBLOCKS WITH MKFS?  yes
+
+
+LOOK FOR ALTERNATE SUPERBLOCKS WITH NEWFS?  yes
+
+SEARCH FOR ALTERNATE SUPERBLOCKS FAILED.
+
+USE GENERIC SUPERBLOCK FROM MKFS?  yes
+
+CALCULATED GENERIC SUPERBLOCK WITH MKFS
+If filesystem was created with manually-specified geometry, using
+auto-discovered superblock may result in irrecoverable damage to
+filesystem and user data.
+
+CANCEL FILESYSTEM CHECK?  yes
+
+Please verify that the indicated block contains a proper
+superblock for the filesystem (see fsdb(1M)).
+
+FSCK was running in YES mode.  If you wish to run in that mode using
+the alternate superblock, run `fsck -y -o b=1836576 /dev/vx/rdsk/oradg/oravol'.
+bash-3.2# mount -F vxfs /dev/vx/dsk/oradg/oravol /oravol
+UX:vxfs mount: ERROR: V-3-21268: /dev/vx/dsk/oradg/oravol is corrupted. needs checking
+bash-3.2# fsck -y /dev/vx/dsk/oradg/oravol
+** /dev/vx/rdsk/oradg/oravol
+BAD SUPERBLOCK AT BLOCK 16: MAGIC NUMBER WRONG
+
+LOOK FOR ALTERNATE SUPERBLOCKS WITH MKFS?  yes
+
+
+LOOK FOR ALTERNATE SUPERBLOCKS WITH NEWFS?  yes
+
+SEARCH FOR ALTERNATE SUPERBLOCKS FAILED.
+
+USE GENERIC SUPERBLOCK FROM MKFS?  yes
+
+CALCULATED GENERIC SUPERBLOCK WITH MKFS
+If filesystem was created with manually-specified geometry, using
+auto-discovered superblock may result in irrecoverable damage to
+filesystem and user data.
+
+CANCEL FILESYSTEM CHECK?  yes
+
+Please verify that the indicated block contains a proper
+superblock for the filesystem (see fsdb(1M)).
+
+FSCK was running in YES mode.  If you wish to run in that mode using
+the alternate superblock, run `fsck -y -o b=1836576 /dev/vx/rdsk/oradg/oravol'.
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.2G   424K   2.2G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.2G    40K   2.2G     1%    /tmp
+swap                   2.2G    32K   2.2G     1%    /var/run
+swap                   2.2G     0K   2.2G     0%    /dev/vx/dmp
+swap                   2.2G     0K   2.2G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.4M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+bash-3.2# hares -modify mount_orasg FsckOpt  -y
+bash-3.2# vxprint -htv
+Disk group: oradg
+
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+DC NAME         PARENTVOL    LOGVOL
+SP NAME         SNAPVOL      DCO
+EX NAME         ASSOC        VC                       PERMS    MODE     STATE
+
+v  oravol       -            ENABLED  ACTIVE   1843200  SELECT    -        fsgen
+pl oravol-01    oravol       ENABLED  ACTIVE   1843200  CONCAT    -        RW
+sd oradisk1-01  oravol-01    oradisk1 0        951040   0         disk_0   ENA
+sd oradisk2-01  oravol-01    oradisk2 0        892160   951040    disk_5   ENA
+bash-3.2# mount -F vxfs /dev/vx/dsk/oradg/oravol /oravol
+UX:vxfs mount: ERROR: V-3-21268: /dev/vx/dsk/oradg/oravol is corrupted. needs checking
+bash-3.2# oneadm list -cv
+bash: oneadm: command not found
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - ora_zone         installed  /oravol/zone                   native   shared
+bash-3.2# vxedit -g oradg -rf rm oravol
+
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - ora_zone         installed  /oravol/zone                   native   shared
+bash-3.2# vxprint -htv
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - ora_zone         installed  /oravol/zone                   native   shared
+bash-3.2# zonecfg -z ora_zone delete
+Are you sure you want to delete zone ora_zone (y/[n])? y
+Zone ora_zone not in configured state; delete not allowed.  Use -F to force delete.
+bash-3.2# zonecfg -z ora_zone delete -F
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+bash-3.2#
+bash-3.2# vxassist -g oradg make oravol 1G
+VxVM vxassist ERROR V-5-1-15315 Cannot allocate space for 2097152 block volume: Not enough HDD devices available for allocation.
+bash-3.2# vxassist -g oradg free
+VxVM vxassist INFO V-5-1-9632
+vxassist - Perform simple volume administration
+
+
+    Usage: vxassist [-g diskgroup] [-U usetype] [-t taskid] [-d file] [-E lang_spec_file] [-nbf] [-k ] [-O operation-tag] [-o verify | override | ordered ]... keyword arg ...
+Recognized keywords:
+    make volume-name len [attrs...]
+    relayout {volume-name|plex-name} [attrs...]
+    convert volume-name [attrs...]
+    mirror volume-name [attrs...]
+    addlog volume-name [attrs...]
+    [-k [-O operation-tag]] move volume-name storage-spec ... [attrs...]
+    [-O operation-tag] commit volume-name
+    [-O operation-tag] rollback volume-name
+    growto volume-name new-length [attrs...]
+    growby volume-name length-change [attrs...]
+    shrinkto volume-name new-length [attrs...]
+    shrinkby volume-name length-change [attrs...]
+    snapstart [nmirror=<N>] volume-name [attrs...]
+    snapwait volume-name
+    snapshot [comment=<comment>] [nmirrors=N] volume-name [snapshot-name]
+    snapback [nmirrors=N] replica-volume
+    snapprint [volume-name]
+    snapclear volume-name [ snap-name ]
+    snapabort volume-name
+    remove {volume|mirror|log} volume-name [storage-spec ...] [attrs...]
+    [-p] maxsize [attrs...]
+    [-p] maxgrow volume-name [attrs...]
+    connectivity
+    list tag=tagname[=tagvalue]...
+    settag volume-name|vset-name tagname[=tagvalue] [tagname[=tagvalue]...]
+    removetag volume-name|vset-name tagname[=tagvalue] [tagname[=tagvalue]...]
+    replacetag volume-name|vset-name oldtag newtag
+    listtag volume-name|vset-name
+    add column volume-name [storage-spec ...] [attrs...]
+    evacuate {column|disk|log|mirror|subdisk|volume} volume-name storage-spec [attrs...]
+bash-3.2# vxassist -g oradg
+bash-3.2# xdisk -eo alldgs list
+bash: xdisk: command not found
+bash-3.2# vxprint -ut
+Disk group: oradg
+
+DG NAME         NCONFIG      NLOG     MINORS   GROUP-ID
+ST NAME         STATE        DM_CNT   SPARE_CNT         APPVOL_CNT
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+RV NAME         RLINK_CNT    KSTATE   STATE    PRIMARY  DATAVOLS  SRL
+RL NAME         RVG          KSTATE   STATE    REM_HOST REM_DG    REM_RLNK
+CO NAME         CACHEVOL     KSTATE   STATE
+VT NAME         RVG          KSTATE   STATE    NVOLUME
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+
+dg oradg        default      default  13000    1444897344.11.node1
+dm oradisk1     disk_0       auto     32m      464m     -
+dm oradisk2     disk_5       auto     32m      464m     -
+bash-3.2# vxassist -g oradg make oravol 800m
+bash-3.2# vxprint -ut
+Disk group: oradg
+
+DG NAME         NCONFIG      NLOG     MINORS   GROUP-ID
+ST NAME         STATE        DM_CNT   SPARE_CNT         APPVOL_CNT
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+RV NAME         RLINK_CNT    KSTATE   STATE    PRIMARY  DATAVOLS  SRL
+RL NAME         RVG          KSTATE   STATE    REM_HOST REM_DG    REM_RLNK
+CO NAME         CACHEVOL     KSTATE   STATE
+VT NAME         RVG          KSTATE   STATE    NVOLUME
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+
+dg oradg        default      default  13000    1444897344.11.node1
+dm oradisk1     disk_0       auto     32m      464m     -
+dm oradisk2     disk_5       auto     32m      464m     -
+sd oradisk1-01  oravol-01    oradisk1 0        464m     0         disk_0   ENA
+sd oradisk2-01  oravol-01    oradisk2 0        335m     464m      disk_5   ENA
+pl oravol-01    oravol       ENABLED  ACTIVE   800m     CONCAT    -        RW
+v  oravol       -            ENABLED  ACTIVE   800m     SELECT    -        fsgen
+bash-3.2# vxprint -utv
+Disk group: oradg
+
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+
+v  oravol       -            ENABLED  ACTIVE   800m     SELECT    -        fsgen
+bash-3.2#
+bash-3.2# mount -F vxfs /dev/vx/dsk/oradg/oravol /oravol
+UX:vxfs mount: ERROR: V-3-21268: /dev/vx/dsk/oradg/oravol is corrupted. needs checking
+bash-3.2# mkfs /dev/vx/rdsk/oradg/oravol
+size not specified
+ufs usage: mkfs [-F FSType] [-V] [-m] [-o options] special size(sectors) \
+[nsect ntrack bsize fragsize cpg free rps nbpi opt apc gap nrpos maxcontig mtb]
+ -m : dump fs cmd line used to make this partition
+ -V :print this command line and return
+ -o :ufs options: :nsect=32,ntrack=16,bsize=8192,fragsize=1024
+ -o :ufs options: :cgsize=0,free=0,rps=60,nbpi=2048,opt=t
+ -o :ufs options: :apc=0,gap=0,nrpos=0,maxcontig=0
+ -o :ufs options: :mtb=n,calcsb,calcbinsb
+NOTE that all -o suboptions: must be separated only by commas so as to
+be parsed as a single argument
+bash-3.2# mkfs -F vxfs /dev/vx/rdsk/oradg/oravol
+    version 7 layout
+    1638400 sectors, 819200 blocks of size 1024, log size 16384 blocks
+    largefiles supported
+bash-3.2#
+bash-3.2# mount -F vxfs /dev/vx/dsk/oradg/oravol /oravol
+bash-3.2# df -h /oravol
+Filesystem             size   used  avail capacity  Mounted on
+/dev/vx/dsk/oradg/oravol
+                       800M    17M   734M     3%    /oravol
+bash-3.2# cd /oravol/
+bash-3.2# ls
+lost+found
+bash-3.2# zonecfg -z orazone
+orazone: No such zone configured
+Use 'create' to begin configuring a new zone.
+zonecfg:orazone> create -t SUNWsolaris9
+SUNWsolaris9: No such zone configured
+zonecfg:orazone> create
+zonecfg:orazone> set zonepath=/oravol/orazone
+zonecfg:orazone> set autoboot=true
+zonecfg:orazone> ingo
+syntax error at 'i'
+Commands:
+
+add <resource-type>
+        (global scope)
+add <property-name> <property-value>
+        (resource scope)
+cancel
+clear <property-name>
+commit
+create [-F] [ -a <path> | -b | -t <template> ]
+delete [-F]
+end
+exit [-F]
+export [-f output-file]
+help [commands] [syntax] [usage] [<command-name>]
+info [<resource-type> [property-name=property-value]*]
+remove [-F] <resource-type> [ <property-name>=<property-value> ]*
+        (global scope)
+remove <property-name> <property-value>
+        (resource scope)
+revert [-F]
+select <resource-type> { <property-name>=<property-value> }
+set <property-name>=<property-value>
+verify
+zonecfg:orazone> info
+zonename: orazone
+zonepath: /oravol/orazone
+brand: native
+autoboot: true
+bootargs:
+pool:
+limitpriv:
+scheduling-class:
+ip-type: shared
+hostid:
+inherit-pkg-dir:
+        dir: /lib
+inherit-pkg-dir:
+        dir: /platform
+inherit-pkg-dir:
+        dir: /sbin
+inherit-pkg-dir:
+        dir: /usr
+zonecfg:orazone> commit
+zonecfg:orazone> exit
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - orazone          configured /oravol/orazone                native   shared
+bash-3.2# zoneadm -z orazone install
+Preparing to install zone <orazone>.
+Creating list of files to copy from the global zone.
+
+
+Copying <5524> files to the zone.
+Initializing zone product registry.
+Determining zone package initialization order.
+Preparing to initialize <1120> packages on the zone.
+Initialized <1120> packages on zone.
+Zone <orazone> is initialized.
+Installation of <3> packages was skipped.
+The file </oravol/orazone/root/var/sadm/system/logs/install_log> contains a log of the zone installation.
+bash-3.2#
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - orazone          installed  /oravol/orazone                native   shared
+bash-3.2# zoneadm -z orazone boot
+
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   1 orazone          running    /oravol/orazone                native   shared
+bash-3.2# zlogin -C orazone
+[Connected to zone 'orazone' console]                                                                              157/157
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+What type of terminal are you using?
+ 1) ANSI Standard CRT
+ 2) DEC VT52
+ 3) DEC VT100
+ 4) Heathkit 19
+ 5) Lear Siegler ADM31
+ 6) PC Console
+ 7) Sun Command Tool
+ 8) Sun Workstation
+ 9) Televideo 910
+ 10) Televideo 925
+ 11) Wyse Model 50
+ 12) X Terminal Emulator (xterms)
+ 13) CDE Terminal Emulator (dtterm)
+ 14) Other
+Type the number of your choice and press Return: 3
+Creating new rsa public/private host key pair
+Creating new dsa public/private host key pair
+Configuring network interface addresses:.
+- Host Name --------------------------------------------------------------------
+
+  Enter the host name which identifies this system on the network.  The name
+  must be unique within your domain; creating a duplicate host name will cause
+  problems on the network after you install Solaris.
+
+  A host name must have at least one character; it can contain letters,
+  digits, and minus signs (-).
+
+
+                           Host name orazone
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+    Esc-2_Continue    Esc-6_Help
+- Confirm Information ----------------------------------------------------------
+
+  > Confirm the following information.  If it is correct, press F2;
+    to change any information, press F4.
+
+
+                          Host name: orazone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+    Esc-2_Continue    Esc-4_Change    Esc-6_Help
+- Time Zone --------------------------------------------------------------------
+
+  On this screen you must specify your default time zone.  You can specify a
+  time zone in three ways:  select one of the continents or oceans from the
+  list, select other - offset from GMT, or other - specify time zone file.
+
+  > To make a selection, use the arrow keys to highlight the option and
+    press Return to mark it [X].
+
+
+      Continents and Oceans
+      ----------------------------------
+  -   [ ] Africa
+  ¦   [ ] Americas
+  ¦   [ ] Antarctica
+  ¦   [ ] Arctic Ocean
+  ¦   [X] Asia
+  ¦   [ ] Atlantic Ocean
+  ¦   [ ] Australia
+  ¦   [ ] Europe
+  v   [ ] Indian Ocean
+
+--------------------------------------------------------------------------------
+    Esc-2_Continue    Esc-6_Help
+- Country or Region ------------------------------------------------------------
+
+  > To make a selection, use the arrow keys to highlight the option and
+    press Return to mark it [X].
+
+
+      Countries and Regions
+      ------------------------
+  ^   [ ] Georgia
+  ¦   [ ] Hong Kong
+  ¦   [X] India
+  ¦   [ ] Indonesia
+  ¦   [ ] Iran
+  ¦   [ ] Iraq
+  ¦   [ ] Israel
+  ¦   [ ] Japan
+  ¦   [ ] Jordan
+  ¦   [ ] Kazakhstan
+  ¦   [ ] Korea (North)
+  ¦   [ ] Korea (South)
+  v   [ ] Kuwait
+
+--------------------------------------------------------------------------------
+    Esc-2_Continue    Esc-6_Help
+- Confirm Information ----------------------------------------------------------
+
+  > Confirm the following information.  If it is correct, press F2;
+    to change any information, press F4.
+
+
+                          Time zone: Asia/Calcutta
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+    Esc-2_Continue    Esc-4_Change    Esc-6_Help
+- Root Password ----------------------------------------------------------------
+
+  Please enter the root password for this system.
+
+  The root password may contain alphanumeric and special characters.  For
+  security, the password will not be displayed on the screen as you type it.
+
+  > If you do not want a root password, leave both entries blank.
+
+
+                     Root password:
+                     Root password:
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+    Esc-2_Continue    Esc-6_Help
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rebooting system due to change(s) in /etc/default/init
+
+
+[NOTICE: Zone rebooting]
+
+
+SunOS Release 5.10 Version Generic_147441-01 64-bit
+Copyright (c) 1983, 2011, Oracle and/or its affiliates. All rights reserved.
+Hostname: orazone
+
+orazone console login: Nov  3 00:00:59 orazone sendmail[15540]: My unqualified host name (localhost) unknown; sleeping for retry
+Nov  3 00:00:59 orazone sendmail[15544]: My unqualified host name (localhost) unknown; sleeping for retry
+
+orazone console login: root
+Nov  3 00:01:38 orazone login: ROOT LOGIN /dev/console
+
+Oracle Corporation      SunOS 5.10      Generic Patch   January 2005
+# # df -h
+Filesystem             size   used  avail capacity  Mounted on
+/                      800M   299M   469M    39%    /
+/dev                   800M   299M   469M    39%    /dev
+/lib                    14G    10G   3.8G    74%    /lib
+/platform               14G    10G   3.8G    74%    /platform
+/sbin                   14G    10G   3.8G    74%    /sbin
+/usr                    14G    10G   3.8G    74%    /usr
+proc                     0K     0K     0K     0%    /proc
+ctfs                     0K     0K     0K     0%    /system/contract
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+objfs                    0K     0K     0K     0%    /system/object
+swap                   2.0G   312K   2.0G     1%    /etc/svc/volatile
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.0G    68K   2.0G     1%    /tmp
+swap                   2.0G    16K   2.0G     1%    /var/run
+# uname --a
+uname: illegal option -- a
+usage:  uname [-snrvmapiX]
+        uname [-S system_name]
+# ^[[A^[[D
+^[[A^[[D: not found
+# uname -a
+SunOS orazone 5.10 Generic_147441-01 i86pc i386 i86pc
+# #>
+# >
+syntax error: `newline or ;' unexpected
+# >
+syntax error: `newline or ;' unexpected
+# !>
+syntax error: `newline or ;' unexpected
+# ~.
+
+[Connection to zone 'orazone' console closed]
+
+
+bash-3.2#
+bash-3.2# ~.
+
+bash: ~.: command not found
+bash-3.2#
+bash-3.2#
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   2 orazone          running    /oravol/orazone                native   shared
+bash-3.2# ls  /oravol/orazone
+dev   root
+bash-3.2# ls /oravol
+lost+found  orazone
+bash-3.2# ls -l /oravol
+total 0
+drwxr-xr-x   2 root     root          96 Nov  2 23:02 lost+found
+drwx------   4 root     root          96 Nov  2 23:55 orazone
+bash-3.2# hastatus -summ
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               ONLINE
+B  orasg           node2                Y          N               OFFLINE
+bash-3.2# zoneadm lixt -cv
+
+usage:  zoneadm help
+        zoneadm [-z <zone>] [-u <uuid-match>] list
+        zoneadm {-z <zone>|-u <uuid-match>} <subcommand>
+
+Subcommands:
+
+help
+boot [-- boot_arguments]
+halt
+ready
+reboot [-- boot_arguments]
+list [-cipv]
+verify
+install [-x nodataset] [brand-specific args]
+uninstall [-F]
+clone [-m method] [-s <ZFS snapshot>] zonename
+move zonepath
+detach [-n]
+attach [-F] [-n <path>] [-b patchid]* [-u|-U]
+mark incomplete
+
+bash-3.2#
+bash-3.2# Nov  3 00:14:12 node1 last message repeated 1 time
+Nov  3 00:14:13 node1 Had[2203]: [ID 702911 daemon.alert] VCS WARNING V-16-1-53034 had Signal SIGABRT received
+Nov  3 00:14:36 node1 AgentFramework[2275]: [ID 702911 daemon.alert] VCS WARNING V-16-1-53034 HostMonitor Signal SIGABRT received
+
+bash-3.2#
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   2 orazone          running    /oravol/orazone                native   shared
+bash-3.2# hazonesetup orasg reszone orazone password node1 node1 node2
+VCS WARNING V-16-1-50129 Operation 'hagrp -add' rejected as the node is in REMOTE_BUILD state
+V-16-34-1102 Error Adding Service Group
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   2 orazone          running    /oravol/orazone                native   shared
+bash-3.2# gabconfig -a
+GAB Port Memberships
+===============================================================
+Port a gen   3db001 membership 01
+Port b gen   3db003 membership 01
+Port h gen   3db006 membership 01
+bash-3.2# hazonesetup orasg reszone orazone password node1 node1 node2
+V-16-34-1103 Group orasg is already present
+VCS WARNING V-16-1-10563 Key node1 already in list.
+VCS WARNING V-16-1-10340 Group not completely offline in cluster, can not change attribute
+VCS WARNING V-16-1-10563 Key node2 already in list.
+VCS WARNING V-16-1-10340 Group not completely offline in cluster, can not change attribute
+VCS ERROR V-16-1-11332 Invalid credentials, unable to create halogin session
+(reverse-i-search)`x': zoneadm lixt -cv
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   2 orazone          running    /oravol/orazone                native   shared
+bash-3.2# zoneadm -z orazone halt
+
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   - orazone          installed  /oravol/orazone                native   shared
+bash-3.2# vxdisk -eo alldgs list
+DEVICE       TYPE           DISK        GROUP        STATUS               OS_NATIVE_NAME   ATTR
+disk_0       auto:cdsdisk   oradisk1     oradg       online               c2t3d0s2         -
+disk_1       auto:none      -            -           online invalid       c1t0d0s2         -
+disk_2       auto:none      -            -           online invalid       c1t1d0           -
+disk_5       auto:cdsdisk   oradisk2     oradg       online               c2t4d0s2         -
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.1G   424K   2.1G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.1G    52K   2.1G     1%    /tmp
+swap                   2.1G    32K   2.1G     1%    /var/run
+swap                   2.1G     0K   2.1G     0%    /dev/vx/dmp
+swap                   2.1G     0K   2.1G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.7M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+df: cannot statvfs /oravol: I/O error
+bash-3.2#
+bash-3.2# umount /oravol
+UX:vxfs umount: ERROR: V-3-21705: /oravol cannot unmount : Device busy
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.1G   424K   2.1G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.1G    52K   2.1G     1%    /tmp
+swap                   2.1G    32K   2.1G     1%    /var/run
+swap                   2.1G     0K   2.1G     0%    /dev/vx/dmp
+swap                   2.1G     0K   2.1G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.7M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+df: cannot statvfs /oravol: I/O error
+bash-3.2# pwd
+/oravol
+bash-3.2# cd
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.1G   424K   2.1G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.1G    52K   2.1G     1%    /tmp
+swap                   2.1G    32K   2.1G     1%    /var/run
+swap                   2.1G     0K   2.1G     0%    /dev/vx/dmp
+swap                   2.1G     0K   2.1G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.7M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+df: cannot statvfs /oravol: I/O error
+bash-3.2# umount /oravol
+UX:vxfs umount: ERROR: V-3-21705: /oravol cannot unmount : Device busy
+bash-3.2# umount -f /oravol
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.1G   424K   2.1G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.1G    52K   2.1G     1%    /tmp
+swap                   2.1G    32K   2.1G     1%    /var/run
+swap                   2.1G     0K   2.1G     0%    /dev/vx/dmp
+swap                   2.1G     0K   2.1G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.7M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+bash-3.2#
+bash-3.2# vxdisk -eo alldgs list
+DEVICE       TYPE           DISK        GROUP        STATUS               OS_NATIVE_NAME   ATTR
+disk_0       auto:cdsdisk   -            (oradg)     online               c2t3d0s2         -
+disk_1       auto:none      -            -           online invalid       c1t0d0s2         -
+disk_2       auto:none      -            -           online invalid       c1t1d0           -
+disk_5       auto:cdsdisk   -            (oradg)     online               c2t4d0s2         -
+bash-3.2# hazonesetup orasg reszone orazone password node1 node1 node2
+V-16-34-1103 Group orasg is already present
+VCS WARNING V-16-1-10563 Key node1 already in list.
+VCS WARNING V-16-1-10563 Key node2 already in list.
+V-16-34-1109 User z_reszone_node1 already present
+VCS WARNING V-16-1-10563 Key z_reszone_node1 already in list.
+V-16-34-1111 Zone orazone not running. Please run /opt/VRTSvcs/bin/halogin inside the zone.
+bash-3.2#
+bash-3.2#
+bash-3.2# vxdisk -eo alldgs list
+DEVICE       TYPE           DISK        GROUP        STATUS               OS_NATIVE_NAME   ATTR
+disk_0       auto:cdsdisk   oradisk1     oradg       online               c2t3d0s2         -
+disk_1       auto:none      -            -           online invalid       c1t0d0s2         -
+disk_2       auto:none      -            -           online invalid       c1t1d0           -
+disk_5       auto:cdsdisk   oradisk2     oradg       online               c2t4d0s2         -
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   3 orazone          running    /oravol/orazone                native   shared
+bash-3.2# ifconfig -a
+lo0: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+        inet 127.0.0.1 netmask ff000000
+lo0:1: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+        zone orazone
+        inet 127.0.0.1 netmask ff000000
+e1000g0: flags=1000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4> mtu 1500 index 2
+        inet 192.168.184.20 netmask ffffff00 broadcast 192.168.184.255
+        ether 0:c:29:dc:a4:96
+bash-3.2# ifconfig -a
+lo0: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+        inet 127.0.0.1 netmask ff000000
+lo0:1: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+        zone orazone
+        inet 127.0.0.1 netmask ff000000
+e1000g0: flags=1000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4> mtu 1500 index 2
+        inet 192.168.184.20 netmask ffffff00 broadcast 192.168.184.255
+        ether 0:c:29:dc:a4:96
+bash-3.2# ifconfig -a
+lo0: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+        inet 127.0.0.1 netmask ff000000
+lo0:1: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+        zone orazone
+        inet 127.0.0.1 netmask ff000000
+e1000g0: flags=1000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4> mtu 1500 index 2
+        inet 192.168.184.20 netmask ffffff00 broadcast 192.168.184.255
+        ether 0:c:29:dc:a4:96
+e1000g0:1: flags=1000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4> mtu 1500 index 2
+        zone orazone
+        inet 192.168.184.136 netmask ffffff00 broadcast 192.168.184.255
+bash-3.2# hastatus -summ
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               ONLINE
+B  orasg           node2                Y          N               OFFLINE
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               ONLINE
+B  orasg           node2                Y          N               OFFLINE
+bash-3.2# hagrp -switch orasg -to node2
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               ONLINE|STOPPING
+B  orasg           node2                Y          N               OFFLINE
+
+-- RESOURCES OFFLINING
+-- Group           Type            Resource             System               IState
+
+G  orasg           IP              ip_orasg             node1                W_OFFLINE_PROPAGATE
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               STOPPING|PARTIAL
+B  orasg           node2                Y          N               OFFLINE
+
+-- RESOURCES OFFLINING
+-- Group           Type            Resource             System               IState
+
+G  orasg           Zone            reszone              node1                W_OFFLINE_PROPAGATE
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   3 orazone          running    /oravol/orazone                native   shared
+bash-3.2# pwd
+/
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   3 orazone          running    /oravol/orazone                native   shared
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   3 orazone          running    /oravol/orazone                native   shared
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   3 orazone          running    /oravol/orazone                native   shared
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   3 orazone          running    /oravol/orazone                native   shared
+bash-3.2# df -h
+Filesystem             size   used  avail capacity  Mounted on
+rpool/ROOT/s10x_u10wos_17b
+                        16G    10G   3.8G    74%    /
+/devices                 0K     0K     0K     0%    /devices
+ctfs                     0K     0K     0K     0%    /system/contract
+proc                     0K     0K     0K     0%    /proc
+mnttab                   0K     0K     0K     0%    /etc/mnttab
+swap                   2.0G   424K   2.0G     1%    /etc/svc/volatile
+objfs                    0K     0K     0K     0%    /system/object
+sharefs                  0K     0K     0K     0%    /etc/dfs/sharetab
+/usr/lib/libc/libc_hwcap1.so.1
+                        14G    10G   3.8G    74%    /lib/libc.so.1
+fd                       0K     0K     0K     0%    /dev/fd
+swap                   2.0G    52K   2.0G     1%    /tmp
+swap                   2.0G    36K   2.0G     1%    /var/run
+swap                   2.0G     0K   2.0G     0%    /dev/vx/dmp
+swap                   2.0G     0K   2.0G     0%    /dev/vx/rdmp
+d1                     159M    31K   159M     1%    /d1
+rpool/export            16G    32K   3.8G     1%    /export
+rpool/export/home       16G    31K   3.8G     1%    /export/home
+rpool                   16G    42K   3.8G     1%    /rpool
+swap                   2.0G    31K   8.7M     1%    /swap
+/dev/odm                 0K     0K     0K     0%    /dev/odm
+/hgfs                   16G   4.0M    16G     1%    /hgfs
+/tmp/VMwareDnD           0K     0K     0K     0%    /var/run/vmblock
+/dev/vx/dsk/oradg/oravol
+                       800M   302M   467M    40%    /oravol
+bash-3.2#
+bash-3.2# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   3 orazone          running    /oravol/orazone                native   shared
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               STOPPING|PARTIAL
+B  orasg           node2                Y          N               OFFLINE
+
+-- RESOURCES OFFLINING
+-- Group           Type            Resource             System               IState
+
+G  orasg           Volume          vol_orasg            node1                W_OFFLINE_PROPAGATE
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               STOPPING|PARTIAL
+B  orasg           node2                Y          N               OFFLINE
+
+-- RESOURCES OFFLINING
+-- Group           Type            Resource             System               IState
+
+G  orasg           Volume          vol_orasg            node1                W_OFFLINE_PROPAGATE
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               OFFLINE
+B  orasg           node2                Y          N               OFFLINE|STARTING
+
+-- RESOURCES ONLINING
+-- Group           Type            Resource             System               IState
+
+F  orasg           DiskGroup       dg_oradg             node2                W_ONLINE
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               OFFLINE
+B  orasg           node2                Y          N               STARTING|PARTIAL
+
+-- RESOURCES ONLINING
+-- Group           Type            Resource             System               IState
+
+F  orasg           Zone            reszone              node2                W_ONLINE
+bash-3.2# haconf -dump makero
+VCS WARNING V-16-1-10611 Invalid arguments
+VCS INFO V-16-1-10601 Usage:
+        haconf -makerw
+        haconf -dump [-makero]
+        haconf -help
+
+bash-3.2# haconf -dump -makero
+bash-3.2#  hacf -cftocmd /etc/VRTSvcs/conf/config -dest /tmp  hacf -cftocmd /etc/VRTSvcs/conf/config -dest /tmp  hacf -cftocmd /etc/VRTSvcs/conf/config -dest /tmp
+bash-3.2#  hacf -cftocmd /etc/VRTSvcs/conf/config -dest /tmp
+bash-3.2# ls /tmp
+VMwareDnD                     hsperfdata_root               p.9979                        vx.135434.017406.000161.2941
+admin.dflt.9923               main.cmd                      pkgremoval.SUNWjdsrm.9923
+hsperfdata_noaccess           ogl_select1549                vx.066476.066512.000055.2945
+bash-3.2# hastatus -summary
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  node1                RUNNING              0
+A  node2                RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  ClusterService  node1                Y          N               OFFLINE
+B  ClusterService  node2                Y          N               ONLINE
+B  orasg           node1                Y          N               OFFLINE
+B  orasg           node2                Y          N               STARTING|PARTIAL
+
+-- RESOURCES ONLINING
+-- Group           Type            Resource             System               IState
+
+F  orasg           Zone            reszone              node2                W_ONLINE
+bash-3.2#

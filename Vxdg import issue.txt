@@ -1,0 +1,839 @@
+Try to import the DG by having the healthy “disk id” from a disk which is in enabled state.
+============================================================================================
+
+root@sol-test: vxdisk list emc1_0a85 | grep -i config
+flags:     online ready private autoconfig
+configs:   count=1 len=48144
+config   priv 000048-000239[000192]: copy=01 offset=000000 enabled
+config   priv 000256-048207[047952]: copy=01 offset=000192 enabled
+
+
+Below is the script you can use to find quick info to look upon all disk
+==========================================================================
+
+root@sol-test: vxdisk -o alldgs list | grep -i sol-test-zone-oradbdg | awk ‘{print $1}’ | while read disk 
+> do 
+> vxdisk list $disk 
+> done
+
+
+
+root@sol-test: vxdisk list emc1_0a95
+Device:    emc1_0a95
+devicetag: emc1_0a95
+type:      auto
+hostid:    
+disk:      name= id=1219342434.97.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+info:      format=cdsdisk,privoffset=256,pubslice=2,privslice=2
+flags:     online ready private autoconfig
+pubpaths:  block=/dev/vx/dmp/emc1_0a95s2 char=/dev/vx/rdmp/emc1_0a95s2
+guid:      {ea373576-1dd1-11b2-a9d8-00144fe7198f}
+udid:      EMC%5FSYMMETRIX%5F000187870472%5F72A95000
+site:      -
+version:   3.1
+iosize:    min=512 (bytes) max=2048 (blocks)
+public:    slice=2 offset=65792 len=92374528 disk_offset=0
+private:   slice=2 offset=256 len=65536 disk_offset=0
+update:    time=1332050876 seqno=0.76
+ssb:       actual_seqno=0.0
+headers:   0 240
+configs:   count=1 len=48144
+logs:      count=1 len=7296
+Defined regions:
+config   priv 000048-000239[000192]: copy=01 offset=000000 enabled
+config   priv 000256-048207[047952]: copy=01 offset=000192 enabled
+log      priv 048208-055503[007296]: copy=01 offset=000000 disabled
+lockrgn  priv 055504-055647[000144]: part=00 offset=000000
+Multipathing information:
+numpaths:   2
+c4t50060482CCAB4208d43s2        state=enabled
+c2t50060482CCAB4227d43s2        state=enabled
+
+ —————– output compressed ——————————
+
+
+
+To import the diskgroup with config copy from the good disk, use the following command:
+======================================================================================
+
+#/usr/sbin/vxdg -Cf -o selectcp=1219342434.97.sol-test import sol-test-zone-oradbdg
+
+Where 1348408946.248.lonbkdbspltp1b is disk id
+
+
+# vxprint -htg dgD280silo1
+ 
+dg dgD280silo1  default      default  26000    1095738111.20.gopal
+ 
+dm d1           c2t1d0s2     auto     2048     35838448 - 
+dm d2           c2t2d0s2     auto     2048     35838448 -
+dm d3           c2t3d0s2     auto     2048     35838448 -
+dm d4           c2t9d0s2     auto     2048     35838448 -
+
+v  SNAP-vol_db2silo1.1 -     DISABLED ACTIVE   1024000  SELECT    -        fsgen
+pl SNAP-vol_db2silo1.1-01 SNAP-vol_db2silo1.1 DISABLED ACTIVE 1024000 STRIPE 2/1024 RW
+sd d3-01        SNAP-vol_db2silo1.1-01 d3 0    512000   0/0       c2t3d0   ENA
+sd d4-01        SNAP-vol_db2silo1.1-01 d4 0    512000   1/0       c2t9d0   ENA
+dc SNAP-vol_db2silo1.1_dco SNAP-vol_db2silo1.1 SNAP-vol_db2silo1.1_dcl
+v  SNAP-vol_db2silo1.1_dcl - DISABLED ACTIVE   544      SELECT    -        gen
+pl SNAP-vol_db2silo1.1_dcl-01 SNAP-vol_db2silo1.1_dcl DISABLED ACTIVE 544 CONCAT - RW
+sd d3-02        SNAP-vol_db2silo1.1_dcl-01 d3 512000 544 0        c2t3d0   ENA
+
+v  orgvol       -            DISABLED ACTIVE   1024000  SELECT    -        fsgen
+pl orgvol-01    orgvol       DISABLED ACTIVE   1024000  STRIPE    2/128    RW
+sd d1-01        orgvol-01    d1       0        512000   0/0       c2t1d0   ENA
+sd d2-01        orgvol-01    d2       0        512000   1/0       c2t2d0   ENA
+
+# vxrecover -g dgD280silo1 -sbE
+
+
+-E Starts disabled volumes or plexes even when they are in the EMPTY state. This is useful for starting up volumes restored by the vxmake utility when specified along with the -s option.
+
+# mount -F vxfs /dev/vx/dsk/dgD280silo1/orgvol /orgvol
+
+UX:vxfs mount: ERROR: V-3-21268: /dev/vx/dsk/dgD280silo1/orgvol is corrupted. needs checking
+
+# fsck -F vxfs /dev/vx/rdsk/dgD280silo1/orgvol 
+log replay in progress
+replay complete - marking super-block as CLEAN
+
+# mount -F vxfs /dev/vx/dsk/dgD280silo1/orgvol /orgvol
+
+# df /orgvol
+
+/orgvol            (/dev/vx/dsk/dgD280silo1/orgvol): 1019102 blocks   127386 files
+
+# vxdisk -o alldgs list
+
+DEVICE       TYPE            DISK         GROUP        STATUS
+c2t1d0s2     auto:cdsdisk    d1           dgD280silo1  online
+c2t2d0s2     auto:cdsdisk    d2           dgD280silo1  online
+c2t3d0s2     auto:cdsdisk    d3           dgD280silo1  online
+c2t9d0s2     auto:cdsdisk    d4           dgD280silo1  online
+
+# vxprint -htg dgD280silo1
+
+dg dgD280silo1  default      default  26000    1095738111.20.gopal
+
+dm d1           c2t1d0s2     auto     2048     35838448 -
+dm d2           c2t2d0s2     auto     2048     35838448 -
+dm d3           c2t3d0s2     auto     2048     35838448 -
+dm d4           c2t9d0s2     auto     2048     35838448 -
+
+v  SNAP-vol_db2silo1.1 -     ENABLED  ACTIVE   1024000  SELECT    SNAP-vol_db2silo1.1-01 fsgen
+pl SNAP-vol_db2silo1.1-01 SNAP-vol_db2silo1.1 ENABLED ACTIVE 1024000 STRIPE 2/1024 RW
+sd d3-01        SNAP-vol_db2silo1.1-01 d3 0    512000   0/0       c2t3d0   ENA
+sd d4-01        SNAP-vol_db2silo1.1-01 d4 0    512000   1/0       c2t9d0   ENA
+dc SNAP-vol_db2silo1.1_dco SNAP-vol_db2silo1.1 SNAP-vol_db2silo1.1_dcl
+v  SNAP-vol_db2silo1.1_dcl - ENABLED  ACTIVE   544      SELECT    -        gen
+pl SNAP-vol_db2silo1.1_dcl-01 SNAP-vol_db2silo1.1_dcl ENABLED ACTIVE 544 CONCAT - RW
+sd d3-02        SNAP-vol_db2silo1.1_dcl-01 d3 512000 544 0        c2t3d0   ENA
+
+v  orgvol       -            ENABLED  ACTIVE   1024000  SELECT    orgvol-01 fsgen
+pl orgvol-01    orgvol       ENABLED  ACTIVE   1024000  STRIPE    2/128    RW
+sd d1-01        orgvol-01    d1       0        512000   0/0       c2t1d0   ENA
+sd d2-01        orgvol-01    d2       0        512000   1/0       c2t2d0   ENA
+
+
+However, we can get an error like this on importing dg:
+
+VxVM vxconfigd ERROR V-5-1-13087 Unable to find a diskgroup configuration copy in specified disk: 1219342434.97.sol-test VxVM vxdg ERROR V-5-1-10978
+Disk group sol-test-zone-oradbdg: import failed: Diskgroup configuration copy disabled on selected disk. Please select another disk which has config copy enable
+
+
+Note: If Above approach has been failed , trying Below if we can restore the DG back
+=====================================================================================
+
+root@sol-test: /usr/lib/vxvm/bin/vxconfigrestore -p sol-test-zone-oradbdg
+
+Diskgroup sol-test-zone-oradbdg configuration restoration started ……
+
+Installing volume manager disk header for emc1_079b …
+Installing volume manager disk header for emc1_079d …
+Installing volume manager disk header for emc1_079f …
+Installing volume manager disk header for emc1_07a1 …
+VxVM vxconfigrestore ERROR V-5-2-3690 Binary Configuration backup /etc/vx/cbr/bk/sol-test-zoneoradbdg.1219342435.99.sol-test/1219342435.99.sol-test.binconfig does not exist.VxVM vxconfigrestore ERROR V-5-2-3706 Diskgroup configuration restoration for sol-test-zone-oradbdg failed.
+
+
+Note: If We are unable to restore by above method, we need to apply different approach as below:
+================================================================================================
+
+See the configuration copy of any of the good disk within a Disk Group which is having the Enable configuration by using “vxprivutil” command as below:
+=======================================================================================================================================================
+
+
+# /usr/lib/vxvm/diag.d/vxprivutil dumpconfig /dev/vx/rdmp/emc1_0a85 > /tmp/dumpconfig.out
+
+root@sol-test: cat /tmp/dumpconfig.out
+
+#Config copy 01
+
+#Header nblocks=192576 blksize=128 hdrsize=512
+#flags=0×100 (CLEAN)
+#version: 4/14
+#dgname: sol-test-zone-oradbdg  dgid: 1219342435.99.sol-test
+#config: tid=0.1569 nstpool=0 nrvg=0 nrlink=0 ncache=0 nvol=6 nplex=6 nsd=23 ndm=29 nda=0 nexp=0
+#pending: tid=0.1569 nstpool=0 nrvg=0 nrlink=0 ncache=0 nvol=6 nplex=6 nsd=23 ndm=29 nda=0 nexp=0
+#
+#Block    5: flag=0    ref=201  offset=0    frag_size=95  
+#Block    7: flag=0    ref=103  offset=0    frag_size=104 
+#Block    9: flag=0    ref=103  offset=104  frag_size=19  
+#Block   12: flag=0    ref=104  offset=0    frag_size=104 
+#Block   14: flag=0    ref=104  offset=104  frag_size=21  
+#Block   16: flag=0    ref=105  offset=0    frag_size=104 
+#Block   17: flag=0    ref=105  offset=104  frag_size=21  
+#Block   20: flag=0    ref=106  offset=0    frag_size=104 
+#Block   22: flag=0    ref=106  offset=104  frag_size=21  
+#Block   26: flag=0    ref=107  offset=0    frag_size=104 
+#Block   28: flag=0    ref=107  offset=104  frag_size=21  
+#Block   32: flag=0    ref=108  offset=0    frag_size=104 
+#Block   34: flag=0    ref=108  offset=104  frag_size=21  
+#Block   38: flag=0    ref=109  offset=0    frag_size=104 
+#Block   40: flag=0    ref=109  offset=104  frag_size=21  
+#Block   42: flag=0    ref=110  offset=0    frag_size=104 
+#Block   43: flag=0    ref=110  offset=104  frag_size=21  
+#Block   45: flag=0    ref=111  offset=0    frag_size=104 
+#Block   46: flag=0    ref=111  offset=104  frag_size=21  
+#Block   48: flag=0    ref=112  offset=0    frag_size=104 
+#Block   49: flag=0    ref=112  offset=104  frag_size=21  
+#Block   51: flag=0    ref=113  offset=0    frag_size=104 
+#Block   52: flag=0    ref=113  offset=104  frag_size=21  
+#Block   54: flag=0    ref=114  offset=0    frag_size=104 
+#Block   55: flag=0    ref=114  offset=104  frag_size=21  
+#Block   57: flag=0    ref=115  offset=0    frag_size=104 
+#Block   58: flag=0    ref=115  offset=104  frag_size=21  
+#Block   60: flag=0    ref=116  offset=0    frag_size=104 
+#Block   61: flag=0    ref=116  offset=104  frag_size=21  
+#Block   63: flag=0    ref=117  offset=0    frag_size=104 
+#Block   64: flag=0    ref=117  offset=104  frag_size=21  
+#Block   66: flag=0    ref=118  offset=0    frag_size=104 
+#Block   67: flag=0    ref=118  offset=104  frag_size=21  
+#Block   69: flag=0    ref=119  offset=0    frag_size=104 
+#Block   70: flag=0    ref=119  offset=104  frag_size=21  
+#Block   72: flag=0    ref=120  offset=0    frag_size=104 
+#Block   73: flag=0    ref=120  offset=104  frag_size=21  
+#Block   75: flag=0    ref=121  offset=0    frag_size=104 
+#Block   76: flag=0    ref=121  offset=104  frag_size=21  
+#Block   78: flag=0    ref=122  offset=0    frag_size=104
+
+dm   sol-test-zone-oradbdg01
+  comment=”
+  putil0=”
+  putil1=”
+  putil2=”
+  diskid=1219342434.97.sol-test
+  last_diskid=1219342434.97.sol-test
+  last_da_name=emc1_0a95
+  rid=0.1026
+  guid={ea97c044-1dd1-11b2-a9d8-00144fe7198f}
+  allocator_reserved=off
+  removed=off
+  spare=off
+  failing=off
+  missing=off
+  update_tid=0.1568
+  last_da_dev=118/152
+  last_disk_offset=65792
+  ssbid=0.0
+#Record  104: type=0xb3114 flags=0    gen_flags=0×4  size=125
+#Blocks: 12 14
+dm   sol-test-zone-oradbdg02
+  comment=”
+  putil0=”
+  putil1=”
+  putil2=”
+  diskid=1219342438.101.sol-test
+  last_diskid=1219342438.101.sol-test
+  last_da_name=emc1_0a5d
+  rid=0.1028
+  guid={eccc325a-1dd1-11b2-a9d8-00144fe7198f}
+  allocator_reserved=off
+  removed=off
+  spare=off
+  failing=off
+  missing=off
+  update_tid=0.1568
+  last_da_dev=118/264
+  last_disk_offset=65792
+  ssbid=0.0
+#Record  105: type=0xb3114 flags=0    gen_flags=0×4  size=125
+#Blocks: 16 17
+dm   sol-test-zone-oradbdg03
+  comment=”
+  putil0=”
+  putil1=”
+  putil2=”
+  diskid=1219342441.103.sol-test
+  last_diskid=1219342441.103.sol-test
+  last_da_name=emc1_0a8d
+  rid=0.1030
+  guid={eef6d454-1dd1-11b2-a9d8-00144fe7198f}
+  allocator_reserved=off
+  removed=off
+  spare=off
+  failing=off
+  missing=off
+  update_tid=0.1568
+  last_da_dev=118/168
+  last_disk_offset=65792
+  ssbid=0.0
+#Record  106: type=0xb3114 flags=0    gen_flags=0×4  size=125
+#Blocks: 20 22
+dm   sol-test-zone-oradbdg04
+  comment=”
+  putil0=”
+  putil1=”
+  putil2=”
+  diskid=1219342445.105.sol-test
+  last_diskid=1219342445.105.sol-test
+  last_da_name=emc1_0a4d
+  rid=0.1032
+  guid={f1239e7e-1dd1-11b2-a9d8-00144fe7198f}
+  allocator_reserved=off
+  removed=off
+  spare=off
+  failing=off
+  missing=off
+  update_tid=0.1568
+  last_da_dev=118/296
+  last_disk_offset=65792
+  ssbid=0.0
+#Record  107: type=0xb3114 flags=0    gen_flags=0×4  size=125
+#Blocks: 26 28
+dm   sol-test-zone-oradbdg05
+  comment=”
+  putil0=”
+  putil1=”
+  putil2=”
+  diskid=1219342449.107.sol-test
+last_diskid=1219342449.107.sol-test
+last_da_name=emc1_0a75
+rid=0.1034
+guid={f35c1d74-1dd1-11b2-a9d8-00144fe7198f}
+allocator_reserved=off
+removed=off
+spare=off
+failing=off
+missing=off
+update_tid=0.1568
+last_da_dev=118/216
+last_disk_offset=65792
+ssbid=0.0
+#Record  108: type=0xb3114 flags=0    gen_flags=0×4  size=125
+#Blocks: 32 34
+
+
+
+Now we will take a real structure of the Disk group configuration from the “dumpconfig.out” file which we have saved by combining with “vxprint utility” as below & again save this copy for reference….
+====================================================================================================================================================================
+
+# cat /tmp/dumpconfig.out | vxprint -D – -ht > /tmp/dmpconfig.vx
+
+root@sol-test: cat /tmp/dmpconfig.vx
+
+Disk group: sol-test-zone-oradbdg
+DG NAME         NCONFIG      NLOG     MINORS   GROUP-ID
+
+ST NAME         STATE        DM_CNT   SPARE_CNT         APPVOL_CNT
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+RV NAME         RLINK_CNT    KSTATE   STATE    PRIMARY  DATAVOLS  SRL
+RL NAME         RVG          KSTATE   STATE    REM_HOST REM_DG    REM_RLNK
+CO NAME         CACHEVOL     KSTATE   STATE
+VT NAME         RVG          KSTATE   STATE    NVOLUME
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+DC NAME         PARENTVOL    LOGVOL
+SP NAME         SNAPVOL      DCO
+EX NAME         ASSOC        VC                       PERMS    MODE     STATE
+SR NAME         KSTATE
+
+dg sol-test-zone-oradbdg default  default  46000    1219342435.99.sol-test
+
+dm sol-test-zone-oradbdg01 -      -        -        -        -
+dm sol-test-zone-oradbdg02 -      -        -        -        -
+dm sol-test-zone-oradbdg03 -      -        -        -        -
+dm sol-test-zone-oradbdg04 -      -        -        -        -
+dm sol-test-zone-oradbdg05 -      -        -        -        -
+dm sol-test-zone-oradbdg06 -      -        -        -        -
+dm sol-test-zone-oradbdg07 -      -        -        -        -
+dm sol-test-zone-oradbdg08 -      -        -        -        -
+dm sol-test-zone-oradbdg09 -      -        -        -        -
+dm sol-test-zone-oradbdg10 -      -        -        -        -
+dm sol-test-zone-oradbdg11 -      -        -        -        -
+dm sol-test-zone-oradbdg12 -      -        -        -        -
+dm sol-test-zone-oradbdg13 -      -        -        -        -
+dm sol-test-zone-oradbdg14 -      -        -        -        -
+dm sol-test-zone-oradbdg15 -      -        -        -        -
+dm sol-test-zone-oradbdg16 -      -        -        -        -
+dm sol-test-zone-oradbdg17 -      -        -        -        -
+dm sol-test-zone-oradbdg18 -      -        -        -        -
+dm sol-test-zone-oradbdg19 -      -        -        -        -
+dm sol-test-zone-oradbdg20 -      -        -        -        -
+dm sol-test-zone-oradbdg21 -      -        -        -        -
+dm sol-test-zone-oradbdg22 -      -        -        -        -
+dm sol-test-zone-oradbdg23 -      -        -        -        -
+dm sol-test-zone-oradbdg24 -      -        -        -        -
+dm sol-test-zone-oradbdg25 -      -        -        -        -
+dm sol-test-zone-oradbdg26 -      -        -        -        -
+dm sol-test-zone-oradbdg27 -      -        -        -        -
+dm sol-test-zone-oradbdg28 -      -        -        -        -
+dm sol-test-zone-oradbdg29 -      -        -        -        -
+
+v  vol01        -            DISABLED ACTIVE   92274688 SELECT    -        fsgen
+pl vol01-01     vol01        DISABLED ACTIVE   92274688 CONCAT    -        RW
+sd sol-test-zone-oradbdg23-01 vol01-01 sol-test-zone-oradbdg23 0 92274688 0 -        DIS
+
+v  vol02        -            DISABLED ACTIVE   270336   SELECT    -        fsgen
+pl vol02-01     vol02        DISABLED ACTIVE   270336   CONCAT    -        RW
+sd sol-test-zone-oradbdg01-01 vol02-01 sol-test-zone-oradbdg01 0 270336 0   -        DIS
+
+v  vol03        -            DISABLED ACTIVE   738197504 SELECT   -        fsgen
+pl vol03-01     vol03        DISABLED ACTIVE   738197504 CONCAT   -        RW
+sd sol-test-zone-oradbdg02-01 vol03-01 sol-test-zone-oradbdg02 0 92374528 0 -        DIS
+sd sol-test-zone-oradbdg03-01 vol03-01 sol-test-zone-oradbdg03 0 92374528 92374528 – DIS
+sd sol-test-zone-oradbdg04-01 vol03-01 sol-test-zone-oradbdg04 0 92374528 184749056 – DIS
+sd sol-test-zone-oradbdg05-01 vol03-01 sol-test-zone-oradbdg05 0 92374528 277123584 – DIS
+sd sol-test-zone-oradbdg06-01 vol03-01 sol-test-zone-oradbdg06 0 92374528 369498112 – DIS
+sd sol-test-zone-oradbdg07-01 vol03-01 sol-test-zone-oradbdg07 0 92374528 461872640 – DIS
+sd sol-test-zone-oradbdg08-01 vol03-01 sol-test-zone-oradbdg08 0 92374528 554247168 – DIS
+sd sol-test-zone-oradbdg09-01 vol03-01 sol-test-zone-oradbdg09 0 91575808 646621696 – DIS
+
+v  vol04        -            DISABLED ACTIVE   738197504 SELECT   -        fsgen
+pl vol04-01     vol04        DISABLED ACTIVE   738197504 CONCAT   -        RW
+sd sol-test-zone-oradbdg10-01 vol04-01 sol-test-zone-oradbdg10 0 92374528 0 -        DIS
+sd sol-test-zone-oradbdg11-01 vol04-01 sol-test-zone-oradbdg11 0 92374528 92374528 – DIS
+sd sol-test-zone-oradbdg12-01 vol04-01 sol-test-zone-oradbdg12 0 92374528 184749056 – DIS
+sd sol-test-zone-oradbdg13-01 vol04-01 sol-test-zone-oradbdg13 0 92374528 277123584 – DIS
+sd sol-test-zone-oradbdg14-01 vol04-01 sol-test-zone-oradbdg14 0 92374528 369498112 – DIS
+sd sol-test-zone-oradbdg15-01 vol04-01 sol-test-zone-oradbdg15 0 92374528 461872640 – DIS
+sd sol-test-zone-oradbdg16-01 vol04-01 sol-test-zone-oradbdg16 0 92374528 554247168 – DIS
+sd sol-test-zone-oradbdg17-01 vol04-01 sol-test-zone-oradbdg17 0 91575808 646621696 – DIS
+v  vol05        -            DISABLED ACTIVE   276824064 SELECT   -        fsgen
+pl vol05-01     vol05        DISABLED ACTIVE   276824064 CONCAT   -        RW
+sd sol-test-zone-oradbdg18-01 vol05-01 sol-test-zone-oradbdg18 0 92374528 0 -        DIS
+sd sol-test-zone-oradbdg19-01 vol05-01 sol-test-zone-oradbdg19 0 92374528 92374528 – DIS
+sd sol-test-zone-oradbdg20-01 vol05-01 sol-test-zone-oradbdg20 0 92075008 184749056 – DIS
+
+v  vol06        -            DISABLED ACTIVE   184549376 SELECT   -        fsgen
+pl vol06-01     vol06        DISABLED ACTIVE   184549376 CONCAT   -        RW
+sd sol-test-zone-oradbdg21-01 vol06-01 sol-test-zone-oradbdg21 0 92374528 0 -        DIS
+sd sol-test-zone-oradbdg22-01 vol06-01 sol-test-zone-oradbdg22 0 92174848 92374528 – DIS
+
+
+
+Note: Just a quick check to see if all the disk in the Disk group are with same group id or any mismatch…
+=========================================================================================================
+
+root@sol-test: vxdisk -o alldgs list |grep sol-test-zone-oradbdg |awk ‘{print $1}’ | while read disk
+> do 
+> vxdisk list $disk | grep “group:”
+> done
+
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+group:     name=sol-test-zone-oradbdg id=1219342435.99.sol-test
+
+
+
+
+We can merge above two steps in one command as follow:
+========================================================
+
+vxprivutil dumpconfig /dev/vx/rdmp/emcpower111s2|vxprint -D - -qht |more
+
+
+
+We can verify the number of disks in DG
+=======================================
+
+vxprivutil dumpconfig /dev/vx/rdmp/emcpower111s2|vxprint -D - -qht |grep ^dm |wc -l
+vxdisk -o alldgs list |grep dbsourceu1_dg |wc -l
+
+
+Now we have to delete all the “dgid’s” from all the disk which are within the Problematic Disk Group.
+=======================================================================================================
+
+Below is the small script which will sort all the disk names  for the disk group and will set the “dgid” & “dg_name” null to all by using “vxprivutil” command again
+
+root@sol-test: for i in `vxdisk -o alldgs list| grep –I sol-test-zone-oradbdg | awk ‘{print $1}’`
+> do
+> /etc/vx/diag.d/vxprivutil -D set /dev/vx/rdmp/$i dg_name=”"
+> done
+
+root@sol-test: for i in `cat`;do /etc/vx/diag.d/vxprivutil -D set /dev/vx/rdmp/$i dgid=”";done
+ 
+Note: Ignore the above error , see the below output asnow all the disk are now out of the Disg group as soon as we have deleted the “dgid” ? earlier the disk wwe attached to the Disk group and  DG was in  deported state !
+
+root@sol-test: vxdisk -o alldgs list
+
+DEVICE       TYPE            DISK         GROUP        STATUS
+disk_0       auto:none       -            -            online invalid
+disk_1       auto:none       -            -            online invalid
+emc1_0aad    auto:cdsdisk    sol-test-zone-appldg02  sol-test-zone-appldg online
+emc1_0aa1    auto:cdsdisk    -            -            online
+emc1_0aa5    auto:cdsdisk    -            -            online
+emc1_0aa9    auto:cdsdisk    sol-test-zone-appldg01  sol-test-zone-appldg online
+emc1_0a01    auto:cdsdisk    sol-test-zone-oraappldg01  sol-test-zone-oraappldg online
+emc1_0a4d    auto:cdsdisk    -            -            online
+emc1_0a05    auto:cdsdisk    sol-test-zone-oraappldg02  sol-test-zone-oraappldg online
+emc1_0a5d    auto:cdsdisk    -            -            online
+emc1_0a6d    auto:cdsdisk    -            -            online
+emc1_0a7d    auto:cdsdisk    -            -            online
+emc1_0a8d    auto:cdsdisk    -            -            online
+emc1_0a9d    auto:cdsdisk    -            -            online
+emc1_0a45    auto:cdsdisk    -            -            online
+emc1_0a49    auto:cdsdisk    -            -            online
+emc1_0a51    auto:cdsdisk    -            -            online
+emc1_0a55    auto:cdsdisk    -            -            online
+emc1_0a59    auto:cdsdisk    -            -            online
+emc1_0a61    auto:cdsdisk    -            -            online
+emc1_0a65    auto:cdsdisk    -            -            online
+
+——– output just snipped —————————–
+ 
+
+Note: Now  create the dg again and add the all the disk into the disk group in the similar fashion as those were before like “ospseudoname=san_allocated_name”
+
+Eg: sol-test-zone-oradbdg01=emc1_0a95
+
+sol-test-zone-oradbdg01 –> ospsudoname or say conventional approach & “emc1_0a95” EMC disk_name.
+
+
+root@sol-test: vxdg init sol-test-zone-oradbdg sol-test-zone-oradbdg01=emc1_0a95 sol-test-zone-oradbdg02=emc1_0a5d sol-test-zone-oradbdg03=emc1_0a8d sol-test-zone-oradbdg04=emc1_0a4d sol-test-zone-oradbdg05=emc1_0a75 lspz 0280-oradbdg06=emc1_0a99 sol-test-zone-oradbdg07=emc1_0a49 
+sol-test-zone-oradbdg08=emc1_0a7
+In the similar fashion we will add all the disk name.
+
+If again it will show you the error like disk is not in configuration… or something like.. then you need to remove all the “dmp” file like we did below. While removing your DMP controller may change or failover to another linke fron emc1 to emc0
+
+root@sol-test: rm /etc/vx/disk.info
+root@sol-test: rm /etc/vx/jbod.info
+root@sol-test: rm –rf /dev/vx/rdmp*
+root@sol-test: rm –rf /dev/vx/dmp*
+
+Or simply remove (rm /etc/vx/*info)in one shot..
+
+Now re-create the device tree…..
+
+root@sol-test: devfsadm –C (refresh & recreate the device tree)
+
+root@sol-test: vxconfigd -k –> (start new vxconfigd daemon rereading /etc/vx/*.info files, normally run after deleting /etc/vx/*.info files)
+
+root@sol-test: vxdctl initdmp (corrects the incorrect entries in /dev/vx/dmp)
+ 
+Note: 1.) Now we will be able to create / add the disk into but need to careful as this might change the controller this happened to my case and then I need to use the emc0 rather than emc1 while adding the disk example
+
+2.)  sol-test-zone-oradbdg01=emc1_0a95  will be now as sol-test-zone-oradbdg01=emc0_0a95 and same for all !!!
+
+ 
+
+Now the Disk Group Recovery will be started
+============================================
+ 
+
+1.) Creating and adding Disk into the Disk Group !
+
+root@sol-test: vxdg init sol-test-zone-oradbdg sol-test-zone-oradbdg01=emc0_0a95 sol-test-zone-oradbdg02=emc0_0a5d sol-test-zone-oradbdg03=emc0_0a8d sol-test-zone-oradbdg04=emc0_0a4d sol-test-zone-oradbdg05=emc0_0a75 lspz 0280-oradbdg06=emc0_0a99 sol-test-zone-oradbdg07=emc0_0a49  sol-test-zone-oradbdg08=emc0_0a7
+
+2.) Now collecting the information from the “dumpconfig.out” file which I took from a Disk which was having the Enable configuration earlier in the exercise !
+
+root@sol-test: cat /tmp/dumpconfig.out | vxprint -D – -mvphsr > /var/vxmake.out
+
+3.) Now we will create the whole Disk group configuration using the “vxmake” command from the “vxmake.out” file which we have build from the “dumpconfig.out” file. Here it will put all the volume(s)/plex(s)/Sub Disk(s) back to the configuaration including their original layout !
+
+root@sol-test: vxmake -g sol-test-zone-oradbdg -d /var/vxmake.out
+
+root@sol-test: vxprint -htg sol-test-zone-oradbdg
+Note:: While looking the Volumes it will show you in Empty Disable state we will make them Enable active by manually by command line & then we will able to start the volumes in a fashionable way !!!…
+
+root@sol-test: vxvol -g  sol-test-zone-oradbdg startall
+4.) Startall will not work as longer the volumes is Empty Disable state need to make them in Enable Active to recover the data…
+
+root@sol-test: vxvol -g  sol-test-zone-oradbdg init active vol01
+root@sol-test: vxvol -g  sol-test-zone-oradbdg init active vol02
+root@sol-test: vxvol -g  sol-test-zone-oradbdg init active vol03
+root@sol-test: vxvol -g  sol-test-zone-oradbdg init active vol04
+root@sol-test: vxvol -g  sol-test-zone-oradbdg init active vol05
+root@sol-test: vxvol -g  sol-test-zone-oradbdg init active vol06
+
+5.) Now all the  volumes in Enable Active state and  now we can start the volume  one by one we will be done.
+
+root@sol-test: vxvol -g  sol-test-zone-oradbdg start vol01
+Do start all volumes  and then mount all the Filesystems…………We are done !!!
+
+
+Note:  This is the veritas DG Configuration backup location which is used by default by VXVM to store DG configuration information.
+===================================================================================================================================
+
+root@sol-test: cd /etc/vx/cbr/bk/ 
+ 
+root@sol-test ls
+sol-test-zone-appldg.1219341636.55.sol-test
+sol-test-zone-oraappldg.1219341851.61.sol-test
+sol-test-zone-oradbdg.1219342435.99.sol-test  —->  Problematic DG
+sol-test-zone-redo01dg.1219342053.67.sol-test
+sol-test-zone-redo02dg.1219342103.71.sol-test
+sol-test-zone-redo03dg.1219342150.75.sol-test
+sol-test-zonedg.1219331487.52.sol-test
+openvdg.1219332714.56.sol-test
+rootdg.1219294245.47.sol-test
+rootdg2.1219295004.48.sol-test
+Note:  Below are the Files which are having the DG information.
+
+root@sol-test: ls -l  /etc/vx/cbr/bk/sol-test-zone-oradbdg*
+ -rw-r–r–   1 root     root      0 Feb 27 12:08 1219342435.99.sol-test.binconfig
+ -rw-r–r–   1 root     root      61227 Feb 27 12:08 1219342435.99.sol-test.cfgrec
+ -rw-r–r–   1 root     root      7269 Feb 27 12:08 1219342435.99.sol-test.dginfo
+ -rw-r–r–   1 root     root      36342 Feb 27 12:08 1219342435.99.sol-test.diskinfo
+
+Note:  From the *cfgrec file we have the last good know configuration of data.
+===============================================================================
+
+root@sol-test: cat 1219342435.99.sol-test.cfgrec | vxprint -D – -htr >/tmp/kk.vx
+
+Note:  Below is a true copy of the data for the Disk Group “sol-test-zone-oradbdg” which will let us know the state of volumes/plexes & SD.
+
+root@sol-test: cat /tmp/kk.vx  –> (Good Known Configuration from cfgrec)
+
+Disk group: sol-test-zone-oradbdg
+
+DG NAME         NCONFIG      NLOG     MINORS   GROUP-ID
+ST NAME         STATE        DM_CNT   SPARE_CNT         APPVOL_CNT
+DM NAME         DEVICE       TYPE     PRIVLEN  PUBLEN   STATE
+RV NAME         RLINK_CNT    KSTATE   STATE    PRIMARY  DATAVOLS  SRL
+RL NAME         RVG          KSTATE   STATE    REM_HOST REM_DG    REM_RLNK
+CO NAME         CACHEVOL     KSTATE   STATE
+VT NAME         RVG          KSTATE   STATE    NVOLUME
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+DC NAME         PARENTVOL    LOGVOL
+SP NAME         SNAPVOL      DCO
+EX NAME         ASSOC        VC                       PERMS    MODE     STATE
+SR NAME         KSTATE
+
+dg sol-test-zone-oradbdg default  default  46000    1219342435.99.sol-test
+
+dm sol-test-zone-oradbdg01 emc1_0a95 auto  65536    92374528 -
+dm sol-test-zone-oradbdg02 emc1_0a5d auto  65536    92374528 -
+dm sol-test-zone-oradbdg03 emc1_0a8d auto  65536    92374528 -
+dm sol-test-zone-oradbdg04 emc1_0a4d auto  65536    92374528 -
+dm sol-test-zone-oradbdg05 emc1_0a75 auto  65536    92374528 -
+dm sol-test-zone-oradbdg06 emc1_0a99 auto  65536    92374528 -
+dm sol-test-zone-oradbdg07 emc1_0a49 auto  65536    92374528 -
+dm sol-test-zone-oradbdg08 emc1_0a71 auto  65536    92374528 -
+dm sol-test-zone-oradbdg09 emc1_0a79 auto  65536    92374528 -
+dm sol-test-zone-oradbdg10 emc1_0a7d auto  65536    92374528 -
+dm sol-test-zone-oradbdg11 emc1_0a61 auto  65536    92374528 -
+dm sol-test-zone-oradbdg12 emc1_0a45 auto  65536    92374528 -
+dm sol-test-zone-oradbdg13 emc1_0a85 auto  65536    92374528 -
+dm sol-test-zone-oradbdg14 emc1_0a81 auto  65536    92374528 -
+dm sol-test-zone-oradbdg15 emc1_0a55 auto  65536    92374528 -
+dm sol-test-zone-oradbdg16 emc1_0a65 auto  65536    92374528 -
+dm sol-test-zone-oradbdg17 emc1_0a9d auto  65536    92374528 -
+dm sol-test-zone-oradbdg18 emc1_0a89 auto  65536    92374528 -
+dm sol-test-zone-oradbdg19 emc1_0a51 auto  65536    92374528 -
+dm sol-test-zone-oradbdg20 emc1_0aa1 auto  65536    92374528 -
+dm sol-test-zone-oradbdg21 emc1_0a69 auto  65536    92374528 -
+dm sol-test-zone-oradbdg22 emc1_0a6d auto  65536    92374528 -
+dm sol-test-zone-oradbdg23 emc1_0a91 auto  65536    92374528 -
+dm sol-test-zone-oradbdg24 emc1_0aa5 auto  65536    92374528 -
+dm sol-test-zone-oradbdg25 emc1_0a59 auto  65536    92374528 -
+dm sol-test-zone-oradbdg26 emc1_079b auto  65536    46154368 -
+dm sol-test-zone-oradbdg27 emc1_079d auto  65536    46154368 -
+dm sol-test-zone-oradbdg28 emc1_079f auto  65536    46154368 -
+dm sol-test-zone-oradbdg29 emc1_07a1 auto  65536    46154368 -
+
+v  vol01        -            ENABLED  ACTIVE   92274688 SELECT    -        fsgen
+pl vol01-01     vol01        ENABLED  ACTIVE   92274688 CONCAT    -        RW
+sd sol-test-zone-oradbdg23-01 vol01-01 sol-test-zone-oradbdg23 0 92274688 0 emc1_0a91 ENA
+
+v  vol02        -            ENABLED  ACTIVE   270336   SELECT    -        fsgen
+pl vol02-01     vol02        ENABLED  ACTIVE   270336   CONCAT    -        RW
+sd sol-test-zone-oradbdg01-01 vol02-01 sol-test-zone-oradbdg01 0 270336 0   emc1_0a95 ENA
+
+v  vol03        -            ENABLED  ACTIVE   738197504 SELECT   -        fsgen
+pl vol03-01     vol03        ENABLED  ACTIVE   738197504 CONCAT   -        RW
+sd sol-test-zone-oradbdg02-01 vol03-01 sol-test-zone-oradbdg02 0 92374528 0 emc1_0a5d ENA
+sd sol-test-zone-oradbdg03-01 vol03-01 sol-test-zone-oradbdg03 0 92374528 92374528 emc1_0a8d ENA
+sd sol-test-zone-oradbdg04-01 vol03-01 sol-test-zone-oradbdg04 0 92374528 184749056 emc1_0a4d ENA
+sd sol-test-zone-oradbdg05-01 vol03-01 sol-test-zone-oradbdg05 0 92374528 277123584 emc1_0a75 ENA
+sd sol-test-zone-oradbdg06-01 vol03-01 sol-test-zone-oradbdg06 0 92374528 369498112 emc1_0a99 ENA
+sd sol-test-zone-oradbdg07-01 vol03-01 sol-test-zone-oradbdg07 0 92374528 461872640 emc1_0a49 ENA
+sd sol-test-zone-oradbdg08-01 vol03-01 sol-test-zone-oradbdg08 0 92374528 554247168 emc1_0a71 ENA
+sd sol-test-zone-oradbdg09-01 vol03-01 sol-test-zone-oradbdg09 0 91575808 646621696 emc1_0a79 ENA
+
+v  vol04        -            ENABLED  ACTIVE   738197504 SELECT   -        fsgen
+pl vol04-01     vol04        ENABLED  ACTIVE   738197504 CONCAT   -        RW
+sd sol-test-zone-oradbdg10-01 vol04-01 sol-test-zone-oradbdg10 0 92374528 0 emc1_0a7d ENA
+sd sol-test-zone-oradbdg11-01 vol04-01 sol-test-zone-oradbdg11 0 92374528 92374528 emc1_0a61 ENA
+sd sol-test-zone-oradbdg12-01 vol04-01 sol-test-zone-oradbdg12 0 92374528 184749056 emc1_0a45 ENA
+sd sol-test-zone-oradbdg13-01 vol04-01 sol-test-zone-oradbdg13 0 92374528 277123584 emc1_0a85 ENA
+sd sol-test-zone-oradbdg14-01 vol04-01 sol-test-zone-oradbdg14 0 92374528 369498112 emc1_0a81 ENA
+sd sol-test-zone-oradbdg15-01 vol04-01 sol-test-zone-oradbdg15 0 92374528 461872640 emc1_0a55 ENA
+sd sol-test-zone-oradbdg16-01 vol04-01 sol-test-zone-oradbdg16 0 92374528 554247168 emc1_0a65 ENA
+sd sol-test-zone-oradbdg17-01 vol04-01 sol-test-zone-oradbdg17 0 91575808 646621696 emc1_0a9d ENA
+
+v  vol05        -            ENABLED  ACTIVE   276824064 SELECT   -        fsgen
+pl vol05-01     vol05        ENABLED  ACTIVE   276824064 CONCAT   -        RW
+sd sol-test-zone-oradbdg18-01 vol05-01 sol-test-zone-oradbdg18 0 92374528 0 emc1_0a89 ENA
+sd sol-test-zone-oradbdg19-01 vol05-01 sol-test-zone-oradbdg19 0 92374528 92374528 emc1_0a51 ENA
+sd sol-test-zone-oradbdg20-01 vol05-01 sol-test-zone-oradbdg20 0 92075008 184749056 emc1_0aa1 ENA
+
+v  vol06        -            ENABLED  ACTIVE   184549376 SELECT   -        fsgen
+pl vol06-01     vol06        ENABLED  ACTIVE   184549376 CONCAT   -        RW
+sd sol-test-zone-oradbdg21-01 vol06-01 sol-test-zone-oradbdg21 0 92374528 0 emc1_0a69 ENA
+sd sol-test-zone-oradbdg22-01 vol06-01 sol-test-zone-oradbdg22 0 92174848 92374528 emc1_0a6d ENA
+Note: We can just sort out the disk info from the configuration for our restoration process.
+
+root@sol-test: cat /tmp/kk.vx |grep ^dm
+dm sol-test-zone-oradbdg01 emc1_0a95 auto  65536    92374528 -
+dm sol-test-zone-oradbdg02 emc1_0a5d auto  65536    92374528 -
+dm sol-test-zone-oradbdg03 emc1_0a8d auto  65536    92374528 -
+dm sol-test-zone-oradbdg04 emc1_0a4d auto  65536    92374528 -
+dm sol-test-zone-oradbdg05 emc1_0a75 auto  65536    92374528 -
+dm sol-test-zone-oradbdg06 emc1_0a99 auto  65536    92374528 -
+
+———- output snipped————————————
+
+
+Note: The *dginfo file will make your search handy to look after “dgid/vxvm version / Disk(s) serial number & several disk configuration details.
+=================================================================================================================================================
+
+root@sol-test: cat 1219342435.99.sol-test.dginfo
+ TIMESTAMP
+Mon Feb 27 12:08:19 EST 2012
+Support information:
+vxconfigd_vrsn:   24
+dg_minimum:       20
+dg_maximum:       140
+kernel:           18
+protocol_minimum: 80
+protocol_maximum: 80
+protocol_current: 0
+BACKUP_HOST
+sol-test
+VXVM_VERSION=5.0
+All_DISK_UNDER_VXVM
+DEVICE       TYPE            DISK         GROUP        STATUS
+disk_0       auto:none       -            -            online invalid
+disk_1       auto:none       -            -            online invalid
+emc1_0aad    auto:cdsdisk    sol-test-zone-appldg02  sol-test-zone-appldg online
+emc1_0aa1    auto:cdsdisk    sol-test-zone-oradbdg20  sol-test-zone-oradbdg online
+emc1_0aa5    auto:cdsdisk    sol-test-zone-oradbdg24  sol-test-zone-oradbdg online
+emc1_0aa9    auto:cdsdisk    sol-test-zone-appldg01  sol-test-zone-appldg online
+emc1_07bb    auto:none       -            -            online invalid
+emc1_09cd    auto:sliced     rootdisk     rootdg       online
+emc1_09d5    auto:sliced     rootdisk     rootdg2      online
+emc1_09fd    auto:cdsdisk    sol-test-zonedg01  sol-test-zonedg   online
+
+DISK_GROUP_CONFIGURATION
+ Group:     sol-test-zone-oradbdg
+ dgid:      1219342435.99.sol-test
+ import-id: 1024.51
+ flags:     cds
+ version:   140
+ alignment: 8192 (bytes)
+ ssb:            on
+ autotagging:    off
+ detach-policy: global
+ dg-fail-policy: dgdisable
+ copies:    nconfig=default nlog=default
+ config:    seqno=0.1569 permlen=48144 free=48093 templen=22 loglen=7296
+ config disk emc1_0aa1 copy 1 len=48144 disabled
+ config disk emc1_0aa5 copy 1 len=48144 disabled
+ config disk emc1_0a4d copy 1 len=48144 disabled
+ config disk emc1_0a5d copy 1 len=48144 state=clean online
+ config disk emc1_0a6d copy 1 len=48144 disabled
+ config disk emc1_0a7d copy 1 len=48144 disabled
+ config disk emc1_0a8d copy 1 len=48144 disabled
+ config disk emc1_0a9d copy 1 len=48144 disabled
+ config disk emc1_0a45 copy 1 len=48144 disabled
+ config disk emc1_0a49 copy 1 len=48144 disabled
+ config disk emc1_0a51 copy 1 len=48144 disabled
+ config disk emc1_0a55 copy 1 len=48144 disabled
+ config disk emc1_0a59 copy 1 len=48144 disabled
+ config disk emc1_0a61 copy 1 len=48144 disabled
+ config disk emc1_0a65 copy 1 len=48144 disabled
+ config disk emc1_0a69 copy 1 len=48144 disabled
+ config disk emc1_0a71 copy 1 len=48144 disabled
+ config disk emc1_0a75 copy 1 len=48144 disabled
+ config disk emc1_0a79 copy 1 len=48144 state=clean online
+ config disk emc1_0a81 copy 1 len=48144 state=clean online
+ config disk emc1_0a85 copy 1 len=48144 state=clean online
+ config disk emc1_0a89 copy 1 len=48144 state=clean online
+ config disk emc1_0a91 copy 1 len=48144 disabled
+ config disk emc1_0a95 copy 1 len=48144 state=clean online
+ config disk emc1_0a99 copy 1 len=48144 disabled
+ config disk emc1_07a1 copy 1 len=48144 disabled
+ config disk emc1_079b copy 1 len=48144 disabled
+ config disk emc1_079d copy 1 len=48144 disabled
+ config disk emc1_079f copy 1 len=48144 disabled
+ log disk emc1_0aa1 copy 1 len=7296
+ log disk emc1_0aa5 copy 1 len=7296 disabled
+ log disk emc1_0a4d copy 1 len=7296
+ log disk emc1_0a5d copy 1 len=7296 disabled
+ log disk emc1_0a6d copy 1 len=7296 disabled
+ log disk emc1_0a7d copy 1 len=7296 disabled
+ log disk emc1_0a8d copy 1 len=7296 disabled
+ log disk emc1_0a9d copy 1 len=7296 disabled
+ log disk emc1_0a45 copy 1 len=7296 disabled
+ log disk emc1_0a49 copy 1 len=7296 disabled
+ log disk emc1_0a51 copy 1 len=7296
+ log disk emc1_0a55 copy 1 len=7296 disabled
+ log disk emc1_0a59 copy 1 len=7296 disabled
+ log disk emc1_0a61 copy 1 len=7296 disabled
+ log disk emc1_0a65 copy 1 len=7296
+ log disk emc1_0a69 copy 1 len=7296 disabled
+ log disk emc1_0a71 copy 1 len=7296 disabled
+ log disk emc1_0a75 copy 1 len=7296 disabled
+ log disk emc1_0a79 copy 1 len=7296 disabled
+ log disk emc1_0a81 copy 1 len=7296 disabled
+ log disk emc1_0a85 copy 1 len=7296
+ log disk emc1_0a89 copy 1 len=7296 disabled
+ log disk emc1_0a91 copy 1 len=7296 disabled
+ log disk emc1_0a95 copy 1 len=7296 disabled
+ log disk emc1_0a99 copy 1 len=7296 disabled
+ log disk emc1_07a1 copy 1 len=7296 disabled
+ log disk emc1_079b copy 1 len=7296
+ log disk emc1_079d copy 1 len=7296 disabled
+ log disk emc1_079f copy 1 len=7296 disabled
+ base_minor 46000
+ 
+CONFIG_DISK_STATUS
+config_region_len=48144
+config_disk EMC%5FSYMMETRIX%5F000187870472%5F7279B000 emc1_079b copy=01 len=48144 state=disabled
+config_disk EMC%5FSYMMETRIX%5F000187870472%5F7279D000 emc1_079d copy=01 len=48144 state=disabled
+config_disk EMC%5FSYMMETRIX%5F000187870472%5F7279F000 emc1_079f copy=01 len=48144 state=disabled
+config_disk EMC%5FSYMMETRIX%5F000187870472%5F727A1000 emc1_07a1 copy=01 len=48144 state=disabled
+BACKUPCOMPLETED=Mon Feb 27 12:08:19 EST 2012
+
+
+

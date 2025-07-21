@@ -1,0 +1,54 @@
+Service group dependency
+========================
+
+
+I have a 3 node cluster with VCS 5.0.1 
+
+On the first two nodes by default different production applications are active and on the third node the acceptance applications (UAT) are active.
+
+The acceptance applications should be brought Offline, prior to the fail-over of the production applications to the third node.
+
+The acceptance applications should never fail-over.
+
+I've solved this with a preonline trigger script, but I wonder if there is not another, easier, way of doing this making it less script depend.
+
+
+
+Solution
+--------
+
+You need an offline local dependency so make Both production service group parent of child acceptance service group so you have:
+
+prod1_grp depends on accept_grp offline local
+
+prod2_grp depends on accept_grp offline local
+
+This means accept_grp must be offline on node 3 to be able to online or switch prod1_grp or prod2_grp to node3, so you will get a 'group dependency violation error' if you try to do this as the expectation is that if you manually switch or online prod1_grp or prod2_grp on node3, that you manually offline accept_grp first, BUT, if prod1_grp or prod2_grp fault and tries to switch to node3, then the service group dependency means VCS will automatically offlines accept_grp so that prod grp can online on node3 and in this instance if accept_grp can only run on node3, it will stay down. 
+
+
+Linking service groups
+-----------------------
+
+To link service groups from the command line
+
+# hagrp -link parent_group child_group gd_category gd_location gd_type
+
+parent_group --> Name of the parent group
+child_group --> Name of the child group
+gd_category --> Category of group dependency (online/offline).
+gd_location --> The scope of dependency (local/global/remote).
+gd_type --> Type of group dependency (soft/firm/hard). Default is firm.
+
+
+Eg.
+
+ROOT@nygshspltp28a:/root # hagrp -dep
+#Parent      Child      Relationship
+apabmmu1     apabmmp1   offline local
+apdbusu1     apdbusp1   offline local
+apdbusu3     apdbusp3   offline local
+apdbusu4     apdbusp4   offline local
+apdbusu5     apdbusp5   offline local
+apfameu1     apfamep1   offline local
+apgiftu1     apgiftp1   offline local
+appwmu1      appwmp1    offline local

@@ -1,0 +1,188 @@
+bash-3.00$ hclssh -q dapoptu1
+
+Hostname       : dapoptu1.uk.db.com
+HCL Access     : Yes - In Scope
+Classification : Active
+Server Purpose : UAT
+Asset Location : /DB LOCATION/UK/UNITED KINGDOM/CROYDON/CROYDON DATA CENTRE/1/IT400/CM071/
+Support Group  : LON_UNIX_ES UK UNIX SUPPORT
+Brand          : SUN MICROSYSTEMS
+Model          : M5000
+Serial Number  :
+OS             : SOLARIS SPARC 10
+Console        :
+Host Flag      : VIRTUAL
+Parent         : lonshspltp24b.uk.db.com
+Business Area  : IES GLOBAL SERVICES & SECURITY
+
+bash-3.00$ hclssh -q lonshspltp24b
+
+Hostname       : lonshspltp24b.uk.db.com
+HCL Access     : Yes - In Scope
+Classification : Active
+Server Purpose : DR
+Asset Location : /DB LOCATION/UK/UNITED KINGDOM/CROYDON/CROYDON DATA CENTRE/1/IT400/CM071/
+Cabinet        : CDCCM071
+Support Group  : LON_UNIX_ES UK UNIX SUPPORT
+Brand          : SUN MICROSYSTEMS
+Model          : M5000
+Serial Number  : BCF07510AV
+OS             : SOLARIS SPARC 10
+Console        : lonshspltp24b-m.uk.db.com
+Host Flag      : PHYSICAL
+Business Area  : IES ES (US-UK-APAC)
+
+bash-3.00$ hclssh -ser lonshspltp24b
+
+The target server you have requested to access
+[ lonshspltp24b ]
+is classified as DR status. Please confirm whether you have a valid
+requirement to access this server
+Specify Y (Yes) to continue or N (No) to exit ( Y or N ) : y
+
+Please specify the related Tivoli event/Remedy Ticket number, if appropriate
+(if access is necessary as a result of a support hotline call, specify
+'Hotline', and a brief reason why you require access to this DR
+classified server.
+Specify in format 'nnnnn : rrrrr', where 'nnnnn' is the Remedy/Tivoli ticket
+number/Hotline call and 'rrrrr' is the free text reason
+:
+Keystroke logging enabled for this session
+
+
+
+Use email address: vijay-k.sidhani|HCL.comEnter PASSCODE:
+                                                         Last login: Tue Jul 27 16:18:25 2010 from loninsathb1.uk.
+Access to this computer is prohibited unless authorised
+Accessing programs or data unrelated to your job is prohibited
+If you are not authorised, disconnect now.
+
+This server is supported by IES UNIX Support Group:    LON_UNIX_ES
+
+For IES ES support group contact details please refer to:
+http://dcsupport.ies.gto.intranet.db.com/tiki-index.php?page=Region+Support    ocations
+
+
+For server information details please search for server 'lonshspltp24b' in the G
+Asset Centre system:
+http://amiweb.uk.db.com:8080
+
+Where the Asset Centre 'HCL Access' field value equals 'Yes - In Scope',  t
+server is then subject
+to  24 x 7  first level direct support by HCL Comnet, who's contact details
+are available at:
+http://dcsupport.ies.gto.intranet.db.com/db-region_support.php?region=hcl
+You have mail.
+ROOT@lonshspltp24b [DR Active] /root# uname -a
+SunOS lonshspltp24b 5.10 Generic_138888-08 sun4u sparc SUNW,SPARC-Enterprise
+ROOT@lonshspltp24b [DR Active] /root# uptime
+  4:44pm  up 289 day(s), 17:09,  1 user,  load average: 4.29, 4.41, 4.67
+ROOT@lonshspltp24b [DR Active] /root# date
+Tuesday, 27 July 2010 16:44:15 BST
+ROOT@lonshspltp24b [DR Active] /root# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+  19 dapoptu1         running    /zones/hosts/dapoptu1          native   shared
+  20 gfoinu1          running    /zones/hosts/gfoinu1           native   shared
+  21 dbnexusu1        running    /zones/hosts/dbnexusu1         native   shared
+  22 rmanu1           running    /zones/hosts/rmanu1            native   shared
+  25 isiu1            running    /zones/hosts/isiu1             native   shared
+  26 speaccu1         running    /zones/hosts/speaccu1          native   shared
+  30 gesctau1         running    /zones/hosts/gesctau1          native   shared
+  31 gesctdu1         running    /zones/hosts/gesctdu1          native   shared
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root# zlogin dapoptu1
+[Connected to zone 'dapoptu1' pts/19]
+Last login: Tue Jul 27 13:42:35 from loninsathb1.uk.
+Access to this computer is prohibited unless authorised
+Accessing programs or data unrelated to your job is prohibited
+If you are not authorised, disconnect now.
+
+This server is supported by IES UNIX Support Group: LON_UNIX_ES
+
+For IES ES support group contact details please refer to:
+http://dcsupport.ies.gto.intranet.db.com/tiki-index.php?page=Region+Support+Locations
+
+For server information details please search for server 'lonshspltp24b' in the G
+Asset Centre system:
+http://amiweb.uk.db.com:8080
+
+Where the Asset Centre 'HCL Access' field value equals 'Yes - In Scope', the
+server is then subject to 24 x 7 first level direct support by HCL Comnet.  Who'
+s contact details are available at:
+http://dcsupport.ies.gto.intranet.db.com/db-region_support.php?region=hcl
+You have mail.
+ROOT@dapoptu1 [UAT Active] /root# df -h /data/oracle/LNOPTRU1/data01
+Filesystem             size   used  avail capacity  Mounted on
+/data/oracle/LNOPTRU1/data01
+                       7.0G   5.5G   1.4G    80%    /data/oracle/LNOPTRU1/data01
+ROOT@dapoptu1 [UAT Active] /root# df -h /data/oracle/LNOPTRU1/data02
+Filesystem             size   used  avail capacity  Mounted on
+/data/oracle/LNOPTRU1/data02
+                       166G   123G    40G    76%    /data/oracle/LNOPTRU1/data02
+ROOT@dapoptu1 [UAT Active] /root# exit
+
+[Connection to zone 'dapoptu1' pts/19 closed]
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root# df -h | grep -i /data/oracle/LNOPTRU1/data01
+/dev/vx/dsk/dapoptu1_dg/dapoptu1_LNOPTRU1_data01   7.0G   5.5G   1.4G    80%    /zones/filesystems/dapoptu1/data/oracle/LNOPTRU1/data01
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root# df -h | grep -i /data/oracle/LNOPTRU1/data02
+/dev/vx/dsk/dapoptu1_dg/dapoptu1_LNOPTRU1_data02   166G   123G    40G    76%    /zones/filesystems/dapoptu1/data/oracle/LNOPTRU1/data02
+ROOT@lonshspltp24b [DR Active] /root# vxprint -htv dapoptu1_LNOPTRU1_data02
+Disk group: dapoptu1_dg
+
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+DC NAME         PARENTVOL    LOGVOL
+SP NAME         SNAPVOL      DCO
+EX NAME         ASSOC        VC                       PERMS    MODE     STATE
+
+v  dapoptu1_LNOPTRU1_data02 - ENABLED ACTIVE   348127232 SELECT   dapoptu1_LNOPTRU1_data02-01 fsgen
+pl dapoptu1_LNOPTRU1_data02-01 dapoptu1_LNOPTRU1_data02 ENABLED ACTIVE 348127232 STRIPE 4/128 RW
+sd dapoptu1_01-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_01 3145728 44465920 0/0 emcpower12 ENA
+sd dapoptu1_05-04 dapoptu1_LNOPTRU1_data02-01 dapoptu1_05 6296576 197120 0/44465920 emcpower16 ENA
+sd dapoptu1_09-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_09 5242880 42368768 0/44663040 emcpower20 ENA
+sd dapoptu1_02-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_02 3145728 44465920 1/0 emcpower13 ENA
+sd dapoptu1_06-04 dapoptu1_LNOPTRU1_data02-01 dapoptu1_06 6296576 197120 1/44465920 emcpower17 ENA
+sd dapoptu1_10-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_10 5242880 42368768 1/44663040 emcpower21 ENA
+sd dapoptu1_03-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_03 3145728 44465920 2/0 emcpower14 ENA
+sd dapoptu1_07-04 dapoptu1_LNOPTRU1_data02-01 dapoptu1_07 6296576 197120 2/44465920 emcpower18 ENA
+sd dapoptu1_11-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_11 5242880 42368768 2/44663040 emcpower22 ENA
+sd dapoptu1_04-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_04 3145728 44465920 3/0 emcpower15 ENA
+sd dapoptu1_08-04 dapoptu1_LNOPTRU1_data02-01 dapoptu1_08 6296576 197120 3/44465920 emcpower19 ENA
+sd dapoptu1_12-02 dapoptu1_LNOPTRU1_data02-01 dapoptu1_12 5242880 42368768 3/44663040 emcpower23 ENA
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root# vxprint -htv dapoptu1_LNOPTRU1_data01
+Disk group: dapoptu1_dg
+
+V  NAME         RVG/VSET/CO  KSTATE   STATE    LENGTH   READPOL   PREFPLEX UTYPE
+PL NAME         VOLUME       KSTATE   STATE    LENGTH   LAYOUT    NCOL/WID MODE
+SD NAME         PLEX         DISK     DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+SV NAME         PLEX         VOLNAME  NVOLLAYR LENGTH   [COL/]OFF AM/NM    MODE
+SC NAME         PLEX         CACHE    DISKOFFS LENGTH   [COL/]OFF DEVICE   MODE
+DC NAME         PARENTVOL    LOGVOL
+SP NAME         SNAPVOL      DCO
+EX NAME         ASSOC        VC                       PERMS    MODE     STATE
+
+v  dapoptu1_LNOPTRU1_data01 - ENABLED ACTIVE   14680064 SELECT    dapoptu1_LNOPTRU1_data01-01 fsgen
+pl dapoptu1_LNOPTRU1_data01-01 dapoptu1_LNOPTRU1_data01 ENABLED ACTIVE 14680064 STRIPE 4/128 RW
+sd dapoptu1_05-03 dapoptu1_LNOPTRU1_data01-01 dapoptu1_05 2626560 3670016 0/0 emcpower16 ENA
+sd dapoptu1_06-03 dapoptu1_LNOPTRU1_data01-01 dapoptu1_06 2626560 3670016 1/0 emcpower17 ENA
+sd dapoptu1_07-03 dapoptu1_LNOPTRU1_data01-01 dapoptu1_07 2626560 3670016 2/0 emcpower18 ENA
+sd dapoptu1_08-03 dapoptu1_LNOPTRU1_data01-01 dapoptu1_08 2626560 3670016 3/0 emcpower19 ENA
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root#
+ROOT@lonshspltp24b [DR Active] /root# vxassist -g dapoptu1_dg maxsize ncol=4 layout=stripe
+Maximum volume size: 90677248 (44276Mb)
+ROOT@lonshspltp24b [DR Active] /root# bc -l
+44276/1024
+43.23828125000000000000
+quit
+ROOT@lonshspltp24b [DR Active] /root# exit
+Connection to lonshspltp24b closed.

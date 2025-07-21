@@ -1,0 +1,10 @@
+When VCS starts, the configuration is loaded from the *.cf files on disk into memory.  Changes to a running config are made in memory but not the *.cf files on disk.  This means it is possible that the running configuration in memory won't match the configuration stored on disk.  
+
+The .stale file was implemented to help manage this.  When you make changes you need to first open the configuration (haconf -makerw), this it puts a .stale file in the directory with the *.cf files to indicated that the disk configuration is not in sync with the running configuration.  After you make your changes you need to update the *.cf files on disk using haconf -dump -makero that will write the configuration to  disk  and  remove  the designation  stale i.e. configuration on disk is now in sync with the running configuration in memory.
+
+In versions of VCS prior to 5.0 it was common for admins to open the config, creating a .stale file, and then forget to dump the config.  When this happened the .stale file became problematic as they would prevent the config from loading if you ever re-started the cluster.  From 5.0 onwards there is function to auto-backup/auto-dump the config, and so since this is in place believe the behaviour has been changed so VCS will start even if there is a stale file
+
+=================================================================================================================
+
+If main.cf got deleted on the fly by mistake, you can restore it using haconf -dump
+If deleted on both nodes, then second node automatically read and dump main.cf from first node during remote build

@@ -1,0 +1,37 @@
+swap -l
+echo | format | more
+symcfg list
+symcfg discover
+symcfg list
+/etc/powercf -q
+echo | format | more
+for i in `cat`; do echo "l\ny"|format $i;done
+echo | format | more
+vxdctl enable
+vxdisk list
+/etc/vx/bin/vxdisksetup -i emcpower933
+/etc/vx/bin/vxdisksetup -i emcpower934
+vxdisk list
+swap -l
+vxdg -g rootdg adddisk rootdg_VMAX_933=emcpower933
+vxdisk list
+vxdg -g rootdg adddisk rootdg_VMAX_934=emcpower934
+vxdisk list
+swap -l
+vxassist -g rootdg make swapvol4 95191040 rootdg_VMAX_933 rootdg_VMAX_934
+vxinfo -pg rootdg
+swap -a /dev/vx/dsk/rootdg/swapvol4
+swap -l
+vxprint -htg rootdg
+vi /etc/vfstab-->Change old swapvol3 to new swapvol4
+swap -l
+swap -d /dev/vx/dsk/rootdg/swapvol3
+swap -l
+vxassist -g rootdg remove volume swapvol3
+vxinfo -pg rootdg
+vxprint -htg rootdg
+vxprint -htg rootdg | grep ^dm | grep -v VMAX
+for i in `cat`;do vxdg -g rootdg rmdisk $i;done
+vxprint -htg rootdg | grep ^dm | grep -v VMAX
+vxdg list
+for i in `cat`;do vxdg -g RECLAIMED_dg adddisk $i;done

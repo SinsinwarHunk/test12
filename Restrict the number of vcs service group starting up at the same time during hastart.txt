@@ -1,0 +1,20 @@
+Restrict the number of vcs service group starting up at the same time during hastart
+=====================================================================================
+
+
+There is no way to serialize the service group online without service group dependancies.  However, you can lower the NumThreads for a given resource type to minimize the number of operations done for a given resource type.  This would be handy if you have a large number of a single resource.
+
+For instance your application is using "Application" resource type and you want no more than 2 applications starting at the same time on the same system use:
+
+hatype -modify Application NumThreads=2
+ 
+I would recommend increasing the OnlineRetryLimit for the resource that is having problems.  This will tell VCS to attempt to online the resource a given number of times if it is not online after the online entry point completes.  It might take some playing to get a value that works for you.  I would start with either a value of 2 or 3 and see how that does. 
+
+
+Or 
+
+You can disable the AutoStart attribute of some SGs to prevent all SGs to startup at the same time after hastart
+
+haconf -makerw
+hagrp -modify <SG> AutoStart 0
+haconf -dump -makero

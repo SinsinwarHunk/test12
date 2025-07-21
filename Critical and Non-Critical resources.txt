@@ -1,0 +1,4 @@
+Critical and Non-Critical resources
+=================================== 
+
+The Critical attribute for a resource defines whether a service group fails over when the resource faults. If a resource is configured as non-critical (by setting the Critical attribute to 0) and no resources depending on the failed resource are critical, the service group will not fail over. VCS takes the failed resource offline and updates the group status to online|partial. The attribute also determines whether a service group tries to come online on another node if, during the group's online process, a resource fails to come online

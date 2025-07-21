@@ -1,0 +1,14 @@
+AutoRestart attribute in VCS
+=============================
+
+If a persistent resource on a service group (GROUP_1) faults, VCS fails the service group over to another system if the following conditions are met: 
+
+•The AutoFailOver attribute is set. 
+•Another system in the cluster exists to which GROUP_1 can fail over. 
+
+If neither of these conditions is met, GROUP_1 remains offline and faulted, even after the faulted resource becomes online. 
+
+Setting the AutoRestart attribute enables a service group to be brought back online without manual intervention. If no failover targets are available, setting the AutoRestart attribute enables VCS to bring the group back online on the first available system after the group's faulted resource came online on that system. 
+
+For example, NIC is a persistent resource. In some cases, when a system boots and VCS starts, VCS probes all resources on the system. When VCS probes the NIC resource, the resource may not be online because the networking is not up and fully operational. In such situations, VCS marks the NIC resource as faulted, and does not bring the service group online. However, when the NIC resource becomes online and if AutoRestart is enabled, the service group is brought online. 
+

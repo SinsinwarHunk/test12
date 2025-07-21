@@ -1,0 +1,54 @@
+Converting a volume from gen to fsgen
+======================================
+
+There might be situations where one has to convert a volume from gen type to fsgen type.  Before going any further on the topic lets see what really fsgen and gen mean.
+
+fsgen assumes that the volume contains a filesystem while gen assumes there is no filesystem.   fsgen and gen volume types provide similar but not identical semantics for operations using the vxplex utility.  In particular fsgen usage type attempts to flush in-memory data cached for the filesystem residing on the volume.  For most file systems this is the calling of sync to attempt to flush all in-memory data to disk.   I believe it is for this reason we associate all volumes that are using filesystems to be of fsgen type.    
+
+Sometimes, It becomes necessary to change the volume usage type to fsgen so that file systems will synch up if the volume is mirrored.
+
+vxassist uses fsgen as the default type, where as vxmake uses gen as the default type…
+
+Conversion of volume from one usage type to other cannot be done on the fly, it requires a volume downtime.   
+
+Lets take a look at this output…
+
+
+Following is the command to create a volume with a usage of gen and the vxprint of this volume:
+
+# vxassist -g <dgname> -U gen make simplevol 4g
+
+
+v simplevol gen ENABLED ACTIVE 8388608 SELECT -
+
+pl simplevol-01 simplevol ENABLED ACTIVE 8392167 CONCAT – RW
+
+sd simple01-01 simplevol-01 simple-01 0 8392167 0 c1t0d0 ENA
+
+
+As you can see from the output, we have a gen volume named simplevol, we now need to convert this simplevol from gen to fsgen type.  These are the steps that needs to be followed.
+
+1. vxprint -g dgname -rhmvps simplevol > simplevol.vxout
+
+2. Open the file simplevol.vxout using your fav editor and change the use_type field alone from gen to fsgen.
+
+3. Save the file.  make sure you edit the use_type field alone…
+
+4. Umount the filesystem  ; umount /simplevol
+
+5. Stop the volume ; vxvol -g dgname stop simplevol
+
+6. Remove the volume ; vxedit -g dgname -rf rm simplevol
+
+7. Using vxmake rebuild the volume from the saved file ; vxmake -g dgname -d simplevol.vxout
+
+8. Check the vxprint out; vxprint -g dgname -hrt ; (check for the usage type; it would be fsgen)
+
+9. Start the volume; vxvol -g dgname start simplevol
+
+10. Do a fsck for the volume; fsck -y /dev/vx/rdsk/dgname/simplevol
+
+11. Mount the filesystem ; mount /simplevol
+
+You are ready to perform I/O for the filesystem..
+

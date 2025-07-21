@@ -1,0 +1,418 @@
+========================= OFF Line ==============================================
+1- offline the zones
+	hagrp -offline <zone name> -sys <host to be down i.e. B1>
+	hagrp -offline ravenu1 -sys longmgctrskpltb1
+
+	wait for few minutes to make sure that resource be "OFFLINE"
+
+2- freeze the node / resorces
+	hagrp -freeze <zones running on another node> -sys <another node i.e. P1> -persistent
+	hagrp -freeze ratappp1 -sys longmgctrskpltp1 -persistent
+	hagrp -freeze ravenp1 -sys longmgctrskpltp1 -persistent	
+	
+	check for groups frozen hastatus -sum
+
+3- rename the VCS start script
+	cd /etc/rc3.dcd /etc/rc3.d
+	mv S99vcs s99vcs
+
+4- Stop the VCS Engine
+	hastop -local -force
+
+5- confirm that VCS engine has stoped
+	hastatus -sum #this should not work
+
+6- init 0
+
+============================= ON LINE ==============================================
+
+1- if VCS not started (hastatus not work) start the VCS:
+
+	hastart
+
+2- unfreez the groups:
+	hagrp -unfreeze ratappp1 -sys longmgctrskpltp1 -persistent
+	hagrp -unfreeze ravenp1 -sys longmgctrskpltp1 -persistent
+
+3- check if resources are offline, make it online.
+
+4- match the hastatus -sum output.
+
+5- rename the s99vcs to S99vcs in /etc/rc3.d
+
+====================================================================================
+
+
+
+ROOT@longmgctrskpltb1 [DR Active] /root# ps -ef | grep had
+    root  4695     1   0   Feb 24 ?           0:00 /opt/VRTSvcs/bin/hashadow
+    root  4687     1   0   Feb 24 ?           4:50 /opt/VRTSvcs/bin/had
+    root 14512 10019   0 10:19:48 pts/1       0:00 grep had
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               ONLINE
+ROOT@longmgctrskpltb1 [DR Active] /root#
+ROOT@longmgctrskpltb1 [DR Active] /root#
+ROOT@longmgctrskpltb1 [DR Active] /root#
+ROOT@longmgctrskpltb1 [DR Active] /root# ps -ef | grep pmon
+    root 14634 10019   0 10:20:25 pts/1       0:00 grep pmon
+ROOT@longmgctrskpltb1 [DR Active] /root# ps -ef |grep dataser
+    root 14654 10019   0 10:20:34 pts/1       0:00 grep dataser
+ROOT@longmgctrskpltb1 [DR Active] /root# hagrp -offline ravenu1 -sys longmgctrskpltb1
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               STOPPING|PARTIAL
+
+-- RESOURCES OFFLINING
+-- Group           Type            Resource             System               IState
+
+F  ravenu1         DBvcszone       ravenu1_ZONE         longmgctrskpltb1     W_OFFLINE_PROPAGATE
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               STOPPING|PARTIAL
+
+-- RESOURCES OFFLINING
+-- Group           Type            Resource             System               IState
+
+F  ravenu1         DBvcszone       ravenu1_ZONE         longmgctrskpltb1     W_OFFLINE_PROPAGATE
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum|egrep 'longmgctrskpltb1'
+A  longmgctrskpltb1     RUNNING              0
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenu1         longmgctrskpltb1     Y          N               STOPPING|PARTIAL
+F  ravenu1         DBvcszone       ravenu1_ZONE         longmgctrskpltb1     W_OFFLINE_PROPAGATE
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               OFFLINE
+ROOT@longmgctrskpltb1 [DR Active] /root#
+ROOT@longmgctrskpltb1 [DR Active] /root# hagrp -freeze ratappp1 -sys longmgctrskpltp1 -persistent
+ROOT@longmgctrskpltb1 [DR Active] /root# hagrp -freeze ravenp1 -sys longmgctrskpltp1 -persistent
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               OFFLINE
+
+-- GROUPS FROZEN
+-- Group
+
+G  ratappp1
+G  ravenp1
+
+-- RESOURCES DISABLED
+-- Group           Type            Resource
+
+H  ratappp1        DBvcszone       ratappp1_ZON
+H  ratappp1        DiskGroup       ratappp1_DG_ratappp1_dg
+H  ratappp1        IP              ratappp1_TSM
+H  ratappp1        Mount           ratappp1_FS_ratappp1_dg_export_home
+H  ratappp1        Mount           ratappp1_FS_ratappp1_dg_opt_dbtools
+H  ratappp1        Mount           ratappp1_FS_ratappp1_dg_opt_exxiap
+H  ratappp1        Mount           ratappp1_FS_ratappp1_dg_usr_local
+H  ratappp1        Mount           ratappp1_FS_ratappp1_dg_zones_filesystems_ratappp1
+H  ratappp1        Mount           ratappp1_FS_ratappp1_dg_zones_hosts_ratappp1
+H  ratappp1        Proxy           ratappp1_PXY
+H  ratappp1        Volume          ratappp1_VOL_ratappp1_dg_export_home
+H  ratappp1        Volume          ratappp1_VOL_ratappp1_dg_opt_dbtools
+H  ratappp1        Volume          ratappp1_VOL_ratappp1_dg_opt_exxiap
+H  ratappp1        Volume          ratappp1_VOL_ratappp1_dg_usr_local
+H  ratappp1        Volume          ratappp1_VOL_ratappp1_dg_zones_filesystems_ratappp1
+H  ratappp1        Volume          ratappp1_VOL_ratappp1_dg_zones_hosts_ratappp1
+H  ravenp1         DBsybraw        ravenp1_DBSYBRAW
+H  ravenp1         DBtruecopy      ravenp1_TRUECOPY
+H  ravenp1         DBvcszone       ravenp1_ZONE
+H  ravenp1         DiskGroup       ravenp1_DG
+H  ravenp1         IP              ravenp1_TSM
+H  ravenp1         Mount           ravenp1_data_sybase_MNT
+H  ravenp1         Mount           ravenp1_lon_rvn_sql_prd_MNT
+H  ravenp1         Mount           ravenp1_lon_rvn_sql_prd_data_MNT
+H  ravenp1         Mount           ravenp1_lon_rvn_sql_prd_dump_MNT
+H  ravenp1         Mount           ravenp1_opt_foglight_MNT
+H  ravenp1         Mount           ravenp1_usr_local_MNT
+H  ravenp1         Mount           ravenp1_zone_filesystems_MNT
+H  ravenp1         Mount           ravenp1_zone_hosts_MNT
+H  ravenp1         Proxy           ravenp1_PXY
+H  ravenp1         Volume          ravenp1_data_sybase_VOL
+H  ravenp1         Volume          ravenp1_lon_rvn_sql_prd_VOL
+H  ravenp1         Volume          ravenp1_lon_rvn_sql_prd_data_VOL
+H  ravenp1         Volume          ravenp1_lon_rvn_sql_prd_dump_VOL
+H  ravenp1         Volume          ravenp1_opt_foglight_VOL
+H  ravenp1         Volume          ravenp1_usr_local_VOL
+H  ravenp1         Volume          ravenp1_zone_filesystems_VOL
+H  ravenp1         Volume          ravenp1_zone_hosts_VOL
+ROOT@longmgctrskpltb1 [DR Active] /root#
+ROOT@longmgctrskpltb1 [DR Active] /root#
+ROOT@longmgctrskpltb1 [DR Active] /root#
+ROOT@longmgctrskpltb1 [DR Active] /root# cd /etc/rc3.d
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# ls -ltr
+total 80
+-rwxr-xr-x   3 root     other       8697 May 13  2003 S99xxTivoli_lcf1
+-rw-r--r--   1 root     root         926 May 13  2003 S99Tivoli_config
+-rwxr--r--   6 root     sys          344 Jan 21  2005 S80mipagent
+-rwxr--r--   6 root     sys          474 Jan 21  2005 S16boot.server
+-rw-r--r--   1 root     sys         1285 Jan 21  2005 README
+-rwxr--r--   3 root     sys         2437 May  4  2006 S99vcs
+-rwxr--r--   6 root     sys          660 Jul 18  2007 S84patchserver
+lrwxrwxrwx   1 root     root          20 Apr 26  2009 S00umask.sh -> /etc/init.d/umask.sh
+-r-xr-x---   3 root     root        4322 Apr 26  2009 S69esmrc
+lrwxrwxrwx   1 root     other         18 May  1  2009 S75vxsmfd -> /etc/init.d/vxsmfd
+-r-x------   4 root     sys         1309 Jul 23  2009 S99dbpatch
+lrwxrwxrwx   1 root     root          24 Sep  6  2009 S99TivoliHealth -> /etc/init.d/TivoliHealth
+lrwxrwxrwx   1 root     root          18 Feb 14  2010 S99HORCM -> ../init.d/HORCM.sh
+-rwxr-xr-x   1 root     root        7503 Jun 18  2010 S99xRun_level_message
+-rwxr-xr-x   1 root     root         353 Aug 28  2010 S01.dbsybraw.ravenp1
+lrwxrwxrwx   1 root     root          27 Feb  5 02:15 S99tecad_logfile_1 -> /etc/init.d/tecad_logfile_1
+-rwxr-xr-x   1 root     root         353 Feb 24 06:59 S01.dbsybraw.ravenu1
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# mv S99vcs s99vcs
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# hastop -local -force
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# hastatus -sum
+VCS ERROR V-16-1-10600 Cannot connect to VCS engine
+VCS WARNING V-16-1-11046 Local system not available
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d#
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d#
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d#
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# init 0
+=======================================================================================
+ROOT@longmgctrskpltb1 [DR Active] /root# hastart
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     REMOTE_BUILD         0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          Y               OFFLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          Y               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          Y               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          Y               OFFLINE
+
+-- GROUPS FROZEN
+-- Group
+
+G  ratappp1
+G  ravenp1
+
+-- RESOURCES DISABLED
+-- Group           Type            Resource
+
+H  ratappp1        DiskGroup       ratappp1_DG_ratappp1_dg
+H  ratappp1        Mount           ratappp1_FS_ratappp1_dg_zones_hosts_ratappp1
+H  ratappp1        Proxy           ratappp1_PXY
+H  ratappp1        Volume          ratappp1_VOL_ratappp1_dg_zones_hosts_ratappp1
+H  ravenp1         DBsybraw        ravenp1_DBSYBRAW
+H  ravenp1         DBtruecopy      ravenp1_TRUECOPY
+H  ravenp1         DBvcszone       ravenp1_ZONE
+H  ravenp1         DiskGroup       ravenp1_DG
+H  ravenp1         IP              ravenp1_TSM
+H  ravenp1         Mount           ravenp1_data_sybase_MNT
+H  ravenp1         Mount           ravenp1_lon_rvn_sql_prd_MNT
+H  ravenp1         Mount           ravenp1_lon_rvn_sql_prd_data_MNT
+H  ravenp1         Mount           ravenp1_lon_rvn_sql_prd_dump_MNT
+H  ravenp1         Mount           ravenp1_opt_foglight_MNT
+H  ravenp1         Mount           ravenp1_usr_local_MNT
+H  ravenp1         Mount           ravenp1_zone_filesystems_MNT
+H  ravenp1         Mount           ravenp1_zone_hosts_MNT
+H  ravenp1         Proxy           ravenp1_PXY
+H  ravenp1         Volume          ravenp1_data_sybase_VOL
+H  ravenp1         Volume          ravenp1_lon_rvn_sql_prd_VOL
+H  ravenp1         Volume          ravenp1_lon_rvn_sql_prd_data_VOL
+H  ravenp1         Volume          ravenp1_lon_rvn_sql_prd_dump_VOL
+H  ravenp1         Volume          ravenp1_opt_foglight_VOL
+H  ravenp1         Volume          ravenp1_usr_local_VOL
+H  ravenp1         Volume          ravenp1_zone_filesystems_VOL
+H  ravenp1         Volume          ravenp1_zone_hosts_VOL
+ROOT@longmgctrskpltb1 [DR Active] /root# hagrp -unfreeze ratappp1 -sys longmgctrskpltp1 -persistent
+ROOT@longmgctrskpltb1 [DR Active] /root# hagrp -unfreeze ravenp1 -sys longmgctrskpltp1 -persistent
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               STARTING|PARTIAL
+
+-- RESOURCES ONLINING
+-- Group           Type            Resource             System               IState
+
+E  ravenu1         Volume          ravenu1_data_sybase_VOL longmgctrskpltb1     W_ONLINE
+E  ravenu1         Volume          ravenu1_lon_rvn_sql_uat_VOL longmgctrskpltb1     W_ONLINE
+E  ravenu1         Volume          ravenu1_lon_rvn_sql_uat_data_VOL longmgctrskpltb1     W_ONLINE
+E  ravenu1         Volume          ravenu1_lon_rvn_sql_uat_dump_VOL longmgctrskpltb1     W_ONLINE
+E  ravenu1         Volume          ravenu1_opt_foglight_VOL longmgctrskpltb1     W_ONLINE
+E  ravenu1         Volume          ravenu1_usr_local_VOL longmgctrskpltb1     W_ONLINE
+E  ravenu1         Volume          ravenu1_zone_filesystems_VOL longmgctrskpltb1     W_ONLINE
+E  ravenu1         Volume          ravenu1_zone_hosts_VOL longmgctrskpltb1     W_ONLINE
+ROOT@longmgctrskpltb1 [DR Active] /root# zoneadm list -cv
+  ID NAME             STATUS     PATH                           BRAND    IP
+   0 global           running    /                              native   shared
+   1 ravenu1          running    /zones/hosts/ravenu1           native   shared
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               ONLINE
+ROOT@longmgctrskpltb1 [DR Active] /root# cd /etc/rc3.d
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# ls -ltr
+total 80
+-rwxr-xr-x   3 root     other       8697 May 13  2003 S99xxTivoli_lcf1
+-rw-r--r--   1 root     root         926 May 13  2003 S99Tivoli_config
+-rwxr--r--   6 root     sys          344 Jan 21  2005 S80mipagent
+-rwxr--r--   6 root     sys          474 Jan 21  2005 S16boot.server
+-rw-r--r--   1 root     sys         1285 Jan 21  2005 README
+-rwxr--r--   3 root     sys         2437 May  4  2006 s99vcs
+-rwxr--r--   6 root     sys          660 Jul 18  2007 S84patchserver
+lrwxrwxrwx   1 root     root          20 Apr 26  2009 S00umask.sh -> /etc/init.d/umask.sh
+-r-xr-x---   3 root     root        4322 Apr 26  2009 S69esmrc
+lrwxrwxrwx   1 root     other         18 May  1  2009 S75vxsmfd -> /etc/init.d/vxsmfd
+-r-x------   4 root     sys         1309 Jul 23  2009 S99dbpatch
+lrwxrwxrwx   1 root     root          24 Sep  6  2009 S99TivoliHealth -> /etc/init.d/TivoliHealth
+lrwxrwxrwx   1 root     root          18 Feb 14  2010 S99HORCM -> ../init.d/HORCM.sh
+-rwxr-xr-x   1 root     root        7503 Jun 18  2010 S99xRun_level_message
+-rwxr-xr-x   1 root     root         353 Aug 28  2010 S01.dbsybraw.ravenp1
+lrwxrwxrwx   1 root     root          27 Feb  5 02:15 S99tecad_logfile_1 -> /etc/init.d/tecad_logfile_1
+-rwxr-xr-x   1 root     root         353 Feb 26 12:21 S01.dbsybraw.ravenu1
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# mv s99vcs S99vcs
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# ls -ltr
+total 80
+-rwxr-xr-x   3 root     other       8697 May 13  2003 S99xxTivoli_lcf1
+-rw-r--r--   1 root     root         926 May 13  2003 S99Tivoli_config
+-rwxr--r--   6 root     sys          344 Jan 21  2005 S80mipagent
+-rwxr--r--   6 root     sys          474 Jan 21  2005 S16boot.server
+-rw-r--r--   1 root     sys         1285 Jan 21  2005 README
+-rwxr--r--   3 root     sys         2437 May  4  2006 S99vcs
+-rwxr--r--   6 root     sys          660 Jul 18  2007 S84patchserver
+lrwxrwxrwx   1 root     root          20 Apr 26  2009 S00umask.sh -> /etc/init.d/umask.sh
+-r-xr-x---   3 root     root        4322 Apr 26  2009 S69esmrc
+lrwxrwxrwx   1 root     other         18 May  1  2009 S75vxsmfd -> /etc/init.d/vxsmfd
+-r-x------   4 root     sys         1309 Jul 23  2009 S99dbpatch
+lrwxrwxrwx   1 root     root          24 Sep  6  2009 S99TivoliHealth -> /etc/init.d/TivoliHealth
+lrwxrwxrwx   1 root     root          18 Feb 14  2010 S99HORCM -> ../init.d/HORCM.sh
+-rwxr-xr-x   1 root     root        7503 Jun 18  2010 S99xRun_level_message
+-rwxr-xr-x   1 root     root         353 Aug 28  2010 S01.dbsybraw.ravenp1
+lrwxrwxrwx   1 root     root          27 Feb  5 02:15 S99tecad_logfile_1 -> /etc/init.d/tecad_logfile_1
+-rwxr-xr-x   1 root     root         353 Feb 26 12:21 S01.dbsybraw.ravenu1
+ROOT@longmgctrskpltb1 [DR Active] /etc/rc3.d# cd
+ROOT@longmgctrskpltb1 [DR Active] /root# hastatus -sum
+
+-- SYSTEM STATE
+-- System               State                Frozen
+
+A  longmgctrskpltb1     RUNNING              0
+A  longmgctrskpltp1     RUNNING              0
+
+-- GROUP STATE
+-- Group           System               Probed     AutoDisabled    State
+
+B  mnicb00         longmgctrskpltb1     Y          N               ONLINE
+B  mnicb00         longmgctrskpltp1     Y          N               ONLINE
+B  ratappp1        longmgctrskpltb1     Y          N               OFFLINE
+B  ratappp1        longmgctrskpltp1     Y          N               ONLINE
+B  ravenp1         longmgctrskpltb1     Y          N               OFFLINE
+B  ravenp1         longmgctrskpltp1     Y          N               ONLINE
+B  ravenu1         longmgctrskpltb1     Y          N               ONLINE
+

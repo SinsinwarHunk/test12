@@ -1,0 +1,17 @@
+Use below loop if 50 disks from ora_uat_disk_01 to ora_uat_disk_50 are already there in DG and we want to add thereafter like ora_uat_disk_51, ora_uat_disk_52 etc ===================================================================================================================================================================
+
+ROOT@nyhshspltp34b:/root # export count=51
+
+ROOT@nyhshspltp34b:/root # for i in `cat /tmp/disks`
+
+> do
+
+> echo $i
+
+> vxdg -g ora_uat_dg adddisk ora_uat_disk_$count=$i
+
+> count=`expr $count + 1`
+
+> done
+
+

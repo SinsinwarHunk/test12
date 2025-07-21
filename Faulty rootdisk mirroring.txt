@@ -1,0 +1,32 @@
+1. Bring down application on the server. 
+
+2. Remove failing flag on rootdisk 
+    1) Remove all the mirror volumes from rootdg 
+    2) As all data is migrated to localdg, remove all the volumes 
+    3) Create swapvol2/3/4/5/6/7 on localdg and remove all swapvolumes ( beside the swapvol) on rootdg. 
+    Basically rootdg should have 
+    a) rootvol 
+    b) swapvol 
+
+3. dsmc incr 
+
+4. Take all config backups & move out of the server 
+
+5.  Create a new slice on c1t1d0s0 and ufsdump / cpio from rootvol 
+
+6.  Sanity reboot - ( try to boot from root mirror disk if ufsdump / cpio is complete ) 
+
+7.  Boot back from rootdisk and un-encapsulate the rootdisk 
+
+8.  do ufsdump to mirror disk & run installboot bootblk 
+
+9.  reboot via mirror & see if it comes up 
+
+
+Based on the above task, below 2 outcomes are possible. 
+
+Outcome-1 
+1) if it comes up, we can make c1t1 as rootvol and replace c0t0 and make that as mirror 
+
+Outcome-2 
+1) if the system doesn't come up from root-mirror, we might have to plan to reinstall after root disk replacement. 

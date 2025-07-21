@@ -1,0 +1,60 @@
+ROOT@hbrgmlemgdev1:/root # vxdmpadm listctlr all
+CTLR-NAME       ENCLR-TYPE      STATE      ENCLR-NAME
+=====================================================
+emcp            EMC             ENABLED      EMC3
+c0              Disk            ENABLED      Disk
+
+
+
+=======================================================================
+nyceqsrdsd1:/root # vxdmpadm listctlr all
+CTLR-NAME       ENCLR-TYPE      STATE      ENCLR-NAME
+=====================================================
+emcp            EMC             ENABLED      EMC0
+                                DISABLED
+                DISKS           DISABLED
+c5              Disk            ENABLED      Disk
+                                DISABLED
+                DISKS           DISABLED
+
+
+
+=======================================================================
+vxdmpadm getsubpaths ctlr=emcp --> more details
+=======================================================================
+nyceqsrdsd1:/root # vxdmpadm getsubpaths ctlr=emcp 
+NAME STATE[A] PATH-TYPE[M] DMPNODENAME ENCLR-TYPE ENCLR-NAME ATTRS 
+================================================================================ 
+DISABLED - c6t16d140s2 - 
+DISABLED - c6t16d140s2 103234 - 
+DISABLED - c6t16d127s2 - 
+DISABLED - c6t16d127s2 103234 - 
+DISABLED - c6t16d134s2 - 
+DISABLED - c6t16d134s2 103234 - 
+DISABLED - c6t16d138s2 - 
+DISABLED - c6t16d132s2 - 
+DISABLED - c6t16d138s2 103234 - 
+DISABLED - c6t16d132s2 103234 - 
+DISABLED - c6t16d144s2 - 
+DISABLED - c6t16d144s2 103234 - 
+DISABLED - c6t16d136s2 - 
+DISABLED - c6t16d136s2 103234 - 
+emcpower0c ENABLED(A) - c6t16d144s2 EMC EMC0 - 
+emcpower6c ENABLED(A) - c6t16d132s2 EMC EMC0 - 
+emcpower7c ENABLED(A) - c6t16d138s2 EMC EMC0 - 
+emcpower10c ENABLED(A) - c6t16d134s2 EMC EMC0 - 
+emcpower11c ENABLED(A) - c6t16d136s2 EMC EMC0 - 
+emcpower12c ENABLED(A) - c6t16d140s2 EMC EMC0 - 
+emcpower16c ENABLED(A) - c6t16d127s2 EMC EMC0 - 
+
+
+nyceqsrdsd1:/root # vxdmpadm getsubpaths ctlr=c5 
+NAME STATE[A] PATH-TYPE[M] DMPNODENAME ENCLR-TYPE ENCLR-NAME ATTRS 
+================================================================================ 
+DISABLED - c5t0d0s2 DISKS - 
+DISABLED - c5t0d0s2 - 
+c5t0d0s2 ENABLED(A) - c5t0d0s2 Disk Disk - 
+c5t2d0s2 ENABLED(A) - c5t2d0s2 Disk Disk - 
+
+
+

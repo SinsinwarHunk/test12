@@ -1,0 +1,74 @@
+vxassist -g odsu1dg make volume odsu1_IRDSU1_data03 295g
+vxprint -htv odsu1_IRDSU1_data03
+df -h | grep -i odsu1_IRDSU1_data03
+zoneadm list -cv
+mkfs  -F vxfs /dev/vx/rdsk/odsu1dg/odsu1_IRDSU1_data03
+mount -F vxfs /dev/vx/dsk/odsu1dg/odsu1_IRDSU1_data03 /zones/filesystems/odsu1/data/oracle/NYIRDSU1/data03
+df -h /zones/filesystems/odsu1/data/oracle/NYIRDSU1/data03
+cat /etc/mnttab | grep -i  /zones/filesystems/odsu1/data/oracle/NYIRDSU1/data01
+mount -F lofs /zones/filesystems/odsu1/data/oracle/NYIRDSU1/data03 /zones/hosts/odsu1/root/data/oracle/NYIRDSU1/data03
+cd /etc/VRTSvcs/conf/config
+hacf -cftocmd . -dest /tmp
+cd /tmp
+ls -ltr main*
+more main.cmd | grep -i IRDSU1 | grep -i data01
+vi addfs.sh
+sh -x addfs.sh
+hastatus -summ
+zoneadm list -cv
+hagrp -resources odsu1 | grep -i odsu1_IRDSU1_data03
+hares -state FS_odsu1_IRDSU1_data03
+hagrp -resources odsu1 | grep -i VOL_odsu1_IRDSU1_data03
+hares -state VOL_odsu1_IRDSU1_data03
+for i in `cat` ; do hares -state $i | grep -i nyhshspltp30b | grep -i offline ; done
+df -h | grep -i /zones/filesystems/odsu1/data/oracle/NYODSU1/data0
+
+====================================================================================================================================================================
+ROOT@nyhshspltp30b:/tmp # more main.cmd | grep -i IRDSU1 | grep -i data01
+hares -modify ZONE_odsu1 LofsMounts  "/export/home" "/usr/local" "/data/dbdatau5" "/data/oracle/product" "/data/oracle/NYODSU1/admin" "/data/oracle/NYODSU1/backup" "/data/oracle/NYODSU1/data01" "/data/oracle/NYODSU1/data02" "/data/oracle/NYODSU1/redo01" "/data/oracle/NYODSU1/redo02" "/data/oracle/NYODSU1/temp01" "/opt/foglight" "/data/oracle/NYRDRTU1/admin" "/data/oracle/NYRDRTU1/archive" "/data/oracle/NYRDRTU1/backup" "/data/oracle/NYRDRTU1/data01" "/data/oracle/NYRDRTU1/data02" "/data/oracle/NYRDRTU1/flashback" "/data/oracle/NYRDRTU1/redo01" "/data/oracle/NYRDRTU1/redo02" "/data/oracle/NYRDRTU1/temp01" "/data/apps/goldengate" "/data/oracle/NYIRDSU1/admin" "/data/oracle/NYIRDSU1/archive" "/data/oracle/NYIRDSU1/backup" "/data/oracle/NYIRDSU1/data01" "/data/oracle/NYIRDSU1/data02" "/data/oracle/NYIRDSU1/flashback" "/data/oracle/NYIRDSU1/redo01" "/data/oracle/NYIRDSU1/redo02" "/data/oracle/NYIRDSU1/temp01" "/data/oracle/NYODSU1/archive" "/data/oracle/NYODSU1/flashback" "/apps/informatica"
+hares -add FS_odsu1_IRDSU1_data01 Mount odsu1
+hares -modify FS_odsu1_IRDSU1_data01 MountPoint "/zones/filesystems/odsu1/data/oracle/NYIRDSU1/data01"
+hares -modify FS_odsu1_IRDSU1_data01 BlockDevice "/dev/vx/dsk/odsu1dg/odsu1_IRDSU1_data01"
+hares -modify FS_odsu1_IRDSU1_data01 FSType vxfs
+hares -modify FS_odsu1_IRDSU1_data01 FsckOpt "%-y"
+hares -modify FS_odsu1_IRDSU1_data01 CkptUmount 1
+hares -modify FS_odsu1_IRDSU1_data01 SecondLevelMonitor 0
+hares -modify FS_odsu1_IRDSU1_data01 SecondLevelTimeout 30
+hares -modify FS_odsu1_IRDSU1_data01 VxFSMountLock 1
+hares -modify FS_odsu1_IRDSU1_data01 Enabled 1
+
+hares -add VOL_odsu1_IRDSU1_data01 Volume odsu1
+hares -modify VOL_odsu1_IRDSU1_data01 Volume odsu1_IRDSU1_data01
+hares -modify VOL_odsu1_IRDSU1_data01 DiskGroup odsu1dg
+hares -modify VOL_odsu1_IRDSU1_data01 Enabled 1
+
+hares -link FS_odsu1_IRDSU1_data01 FS_odsu1_zones_fs
+hares -link FS_odsu1_IRDSU1_data01 VOL_odsu1_IRDSU1_data01
+
+hares -link VOL_odsu1_IRDSU1_data01 DG_odsu1dg
+
+
+
+===========================================================================================================
+
+ROOT@nyhshspltp30b:/tmp # more addfs.sh
+hares -modify ZONE_odsu1 LofsMounts  "/export/home" "/usr/local" "/data/dbdatau5" "/data/oracle/product" "/data/oracle/NYODSU1/admin" "/data/oracle/NYODSU1/backup" "/data/oracle/NYODSU1/data01" "/data/oracle/NYODSU1/data02" "/data/oracle/NYODSU1/redo01" "/data/oracle/NYODSU1/redo02" "/data/oracle/NYODSU1/temp01" "/opt/foglight" "/data/oracle/NYRDRTU1/admin" "/data/oracle/NYRDRTU1/archive" "/data/oracle/NYRDRTU1/backup" "/data/oracle/NYRDRTU1/data01" "/data/oracle/NYRDRTU1/data02" "/data/oracle/NYRDRTU1/flashback" "/data/oracle/NYRDRTU1/redo01" "/data/oracle/NYRDRTU1/redo02" "/data/oracle/NYRDRTU1/temp01" "/data/apps/goldengate" "/data/oracle/NYIRDSU1/admin" "/data/oracle/NYIRDSU1/archive" "/data/oracle/NYIRDSU1/backup" "/data/oracle/NYIRDSU1/data01" "/data/oracle/NYIRDSU1/data02" "/data/oracle/NYIRDSU1/data03" "/data/oracle/NYIRDSU1/flashback" "/data/oracle/NYIRDSU1/redo01" "/data/oracle/NYIRDSU1/redo02" "/data/oracle/NYIRDSU1/temp01" "/data/oracle/NYODSU1/archive" "/data/oracle/NYODSU1/flashback" "/apps/informatica"
+hares -add FS_odsu1_IRDSU1_data03 Mount odsu1
+hares -modify FS_odsu1_IRDSU1_data03 MountPoint "/zones/filesystems/odsu1/data/oracle/NYIRDSU1/data03"
+hares -modify FS_odsu1_IRDSU1_data03 BlockDevice "/dev/vx/dsk/odsu1dg/odsu1_IRDSU1_data03"
+hares -modify FS_odsu1_IRDSU1_data03 FSType vxfs
+hares -modify FS_odsu1_IRDSU1_data03 FsckOpt "%-y"
+hares -modify FS_odsu1_IRDSU1_data03 CkptUmount 1
+hares -modify FS_odsu1_IRDSU1_data03 SecondLevelMonitor 0
+hares -modify FS_odsu1_IRDSU1_data03 SecondLevelTimeout 30
+hares -modify FS_odsu1_IRDSU1_data03 VxFSMountLock 1
+hares -modify FS_odsu1_IRDSU1_data03 Enabled 1
+
+hares -add VOL_odsu1_IRDSU1_data03 Volume odsu1
+hares -modify VOL_odsu1_IRDSU1_data03 Volume odsu1_IRDSU1_data03
+hares -modify VOL_odsu1_IRDSU1_data03 DiskGroup odsu1dg
+hares -modify VOL_odsu1_IRDSU1_data03 Enabled 1
+
+hares -link FS_odsu1_IRDSU1_data03 FS_odsu1_zones_fs
+hares -link FS_odsu1_IRDSU1_data03 VOL_odsu1_IRDSU1_data03
+hares -link VOL_odsu1_IRDSU1_data03 DG_odsu1dg

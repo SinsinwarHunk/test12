@@ -1,0 +1,21 @@
+Move a disk group
+==================
+
+(Stop any applications associated with all volumes in the disk group, Unmount and stop all volumes in the disk group)
+
+Deport (disable local access) the disk group to be moved on first system
+
+        # vxdg deport <diskgroup>
+
+
+Import (enable local access) the disk group and its disks from the second system
+
+        # vxdg import <diskgroup>
+
+
+Start all volumes in the disk group on the second system
+
+        # vxrecover -g <diskgroup> -sb
+
+    or  # vxvol -g <diskgroup> startall
+
